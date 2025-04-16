@@ -1,8 +1,8 @@
-# 📦 Object-Oriented Programming Project – Academic Year 2024/2025
+# 📦 OOP Project – Academic Year 2024/2025
 
 # Multimedia Library
 
-This repository contains the Object-Oriented Programming (OOP) project developed during the 2024/2025 academic year for the course taught by Professor Francesco Ranzato.
+This repository contains the Object-Oriented Programming (OOP) project developed during the 2024/2025 academic year for the course taught by Professor Francesco Ranzato (SC1167 - Computer Science @UniPD).
 
 The project demonstrates core OOP principles such as encapsulation, inheritance, polymorphism, and abstraction. It is designed following best practices in software design and aims to provide a clean, modular, and maintainable codebase.
 
