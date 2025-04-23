@@ -1,3 +1,6 @@
+#ifndef MEDIA_H
+#define MEDIA_H
+
 #include<string>
 #include "Date.h"
 
@@ -30,3 +33,5 @@ class Media{
         void setIsAvailable(bool isAv);
         bool getIsAvailable() const;
 };
+
+#endif // MEDIA_H
