@@ -1,2 +1,2 @@
-*.cpp linguistic-language=C++
-*.h linguistic-language=C++
+*.cpp linguistic-language=Cpp
+*.h linguistic-language=Cpp
