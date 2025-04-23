@@ -17,16 +17,16 @@ class Media{
         Media();
         virtual ~Media() = 0; // Pure virtual destructor
 
-        virtual void setTile(const std::string& title);
-        virtual const std::string& getTitle() const;
-        virtual void setAuthor(const std::string& author);
-        virtual const std::string& getAuthor() const;
-        virtual void setGenre(const std::string& genre);
-        virtual const std::string& getGenre() const;
-        virtual void setReleaseDate(const Date& releaseDate);
-        virtual const Date& getReleaseDate() const;
-        virtual void setKbSize(unsigned int kbSize);
-        virtual unsigned int getKbSize() const;
-        virtual void setIsAvailable(bool isAvailable);
-        virtual bool getIsAvailable() const;
+        void setTile(const std::string& t);
+        const std::string& getTitle() const;
+        void setAuthor(const std::string& a);
+        const std::string& getAuthor() const;
+        void setGenre(const std::string& g);
+        const std::string& getGenre() const;
+        void setReleaseDate(const Date& rD);
+        const Date& getReleaseDate() const;
+        void setKbSize(unsigned int kb);
+        unsigned int getKbSize() const;
+        void setIsAvailable(bool isAv);
+        bool getIsAvailable() const;
 };

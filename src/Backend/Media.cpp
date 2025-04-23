@@ -15,6 +15,48 @@ Media::Media() : title(""), author(""), genre(""), relaseDate(Date()), kbSize(0)
 
 Media::~Media() {} // Pure virtual destructor
 
-void Media::setTile(const std::string& title) {
-    
+void Media::setTile(const std::string& t) {
+    title = t;
+}
+
+const std::string& Media::getTitle() const {
+    return title;
+}
+void Media::setAuthor(const std::string& a) {
+    author = a;
+}
+const std::string& Media::getAuthor() const {
+    return author;
+}
+
+void Media::setGenre(const std::string& g) {
+    genre = g;
+}
+
+const std::string& Media::getGenre() const {
+    return genre;
+}
+
+void Media::setReleaseDate(const Date& rD) {
+    relaseDate = rD;
+}
+
+const Date& Media::getReleaseDate() const {
+    return relaseDate;
+}
+
+void Media::setKbSize(unsigned int kb) {
+    kbSize = kb;
+}
+
+unsigned int Media::getKbSize() const {
+    return kbSize;
+}
+
+void Media::setIsAvailable(bool isAv) {
+    isAvailable = isAv;
+}
+
+bool Media::getIsAvailable() const {
+    return isAvailable;
 }
