@@ -23,5 +23,9 @@ The project demonstrates core OOP principles such as encapsulation, inheritance,
 
 ## 🤝 Contributors
 
+<a href = "https://github.com/DavideColabove">
+  <img src = "https://github.com/DavideColabove"/>
+</a>
+
 - **Davide** - [GitHub](https://github.com/DavideColabove)
 - **Oussama** - [GitHub](https://github.com/m4hd1-exe)
