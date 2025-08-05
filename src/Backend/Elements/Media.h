@@ -30,8 +30,9 @@ class Media{
         const std::string& getGenre() const;
         Media& setReleaseDate(const Date& rD);
         const Date& getReleaseDate() const;
-        Media& setKbSize(unsigned int kb);
         Media& setID(unsigned int id);
+        unsigned int getID() const;
+        Media& setKbSize(unsigned int kb);
         unsigned int getKbSize() const;
         Media& setIsAvailable(bool isAv);
         bool getIsAvailable() const;

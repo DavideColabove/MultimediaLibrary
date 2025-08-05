@@ -16,7 +16,6 @@ Media& Media::setTitle(const std::string& t) {
     this->title = t;
     return *this;
 }
-
 const std::string& Media::getTitle() const {
     return title;
 }
@@ -33,7 +32,6 @@ Media& Media::setGenre(const std::string& g) {
     this->genre = g;
     return *this;
 }
-
 const std::string& Media::getGenre() const {
     return genre;
 }
@@ -42,7 +40,6 @@ Media& Media::setReleaseDate(const Date& rD) {
     this->releaseDate = rD;
     return *this;
 }
-
 const Date& Media::getReleaseDate() const {
     return releaseDate;
 }
@@ -51,12 +48,14 @@ Media& Media::setID(unsigned int id) {
     this->id = id;
     return *this;
 }
+unsigned int Media::getID() const {
+    return id;
+}
 
 Media& Media::setKbSize(unsigned int kb) {
     this->kbSize = kb;
     return *this;
 }
-
 unsigned int Media::getKbSize() const {
     return kbSize;
 }
@@ -65,7 +64,6 @@ Media& Media::setIsAvailable(bool isAv) {
     this->isAvailable = isAv;
     return *this;
 }
-
 bool Media::getIsAvailable() const {
     return isAvailable;
 }
@@ -74,7 +72,6 @@ Media& Media::setImagePath(const std::string& im) {
     this->imagePath = im;
     return *this;
 }
-
 const std::string& Media::getImagePath() const {
     return imagePath;
 }
