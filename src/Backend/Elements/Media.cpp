@@ -4,56 +4,77 @@
 #include<string>
 #include<iostream>
 
-Media::Media(std::string t, std::string a, std::string g, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im): title(t), author(a), genre(g), relaseDate(rD), id(id), kbSize(kb), isAvailable(isAv), imagePath(im) {}
+Media::Media(std::string t, std::string a, std::string g, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im): title(t), author(a), genre(g), releaseDate(rD), id(id), kbSize(kb), isAvailable(isAv), imagePath(im) {}
 
-Media::Media(const Media& media): title(media.title), id(media.id), author(media.author), genre(media.genre), relaseDate(media.relaseDate), kbSize(media.kbSize), isAvailable(media.isAvailable), imagePath(media.imagePath) {}
+Media::Media(const Media& media): title(media.title), id(media.id), author(media.author), genre(media.genre), releaseDate(media.releaseDate), kbSize(media.kbSize), isAvailable(media.isAvailable), imagePath(media.imagePath) {}
 
-Media::Media() : title(""), id(0), author(""), genre(""), relaseDate(Date()), kbSize(0), isAvailable(false), imagePath("") {}
+Media::Media() : title(""), id(0), author(""), genre(""), releaseDate(Date()), kbSize(0), isAvailable(false), imagePath("") {}
 
-Media::~Media() {} // Pure virtual destructor
+Media::~Media() {}
 
-void Media::setTile(const std::string& t) {
-    title = t;
+Media& Media::setTitle(const std::string& t) {
+    this->title = t;
+    return *this;
 }
 
 const std::string& Media::getTitle() const {
     return title;
 }
-void Media::setAuthor(const std::string& a) {
-    author = a;
+
+Media& Media::setAuthor(const std::string& a) {
+    this->author = a;
+    return *this;
 }
 const std::string& Media::getAuthor() const {
     return author;
 }
 
-void Media::setGenre(const std::string& g) {
-    genre = g;
+Media& Media::setGenre(const std::string& g) {
+    this->genre = g;
+    return *this;
 }
 
 const std::string& Media::getGenre() const {
     return genre;
 }
 
-void Media::setReleaseDate(const Date& rD) {
-    relaseDate = rD;
+Media& Media::setReleaseDate(const Date& rD) {
+    this->releaseDate = rD;
+    return *this;
 }
 
 const Date& Media::getReleaseDate() const {
-    return relaseDate;
+    return releaseDate;
 }
 
-void Media::setKbSize(unsigned int kb) {
-    kbSize = kb;
+Media& Media::setID(unsigned int id) {
+    this->id = id;
+    return *this;
+}
+
+Media& Media::setKbSize(unsigned int kb) {
+    this->kbSize = kb;
+    return *this;
 }
 
 unsigned int Media::getKbSize() const {
     return kbSize;
 }
 
-void Media::setIsAvailable(bool isAv) {
-    isAvailable = isAv;
+Media& Media::setIsAvailable(bool isAv) {
+    this->isAvailable = isAv;
+    return *this;
 }
 
 bool Media::getIsAvailable() const {
     return isAvailable;
+}
+
+Media& Media::setImagePath(const std::string& im) {
+    this->imagePath = im;
+    return *this;
+}
+
+const std::string& Media::getImagePath() const {
+    return imagePath;
 }

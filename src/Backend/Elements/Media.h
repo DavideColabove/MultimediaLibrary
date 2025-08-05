@@ -9,7 +9,7 @@ class Media{
         std::string title;
         std::string author;
         std::string genre;
-        Date relaseDate;
+        Date releaseDate;
         unsigned int id;
         unsigned int kbSize;
         bool isAvailable;
@@ -22,18 +22,21 @@ class Media{
         Media();
         virtual ~Media() = 0; // Pure virtual destructor
 
-        void setTile(const std::string& t);
+        Media& setTitle(const std::string& t);
         const std::string& getTitle() const;
-        void setAuthor(const std::string& a);
+        Media& setAuthor(const std::string& a);
         const std::string& getAuthor() const;
-        void setGenre(const std::string& g);
+        Media& setGenre(const std::string& g);
         const std::string& getGenre() const;
-        void setReleaseDate(const Date& rD);
+        Media& setReleaseDate(const Date& rD);
         const Date& getReleaseDate() const;
-        void setKbSize(unsigned int kb);
+        Media& setKbSize(unsigned int kb);
+        Media& setID(unsigned int id);
         unsigned int getKbSize() const;
-        void setIsAvailable(bool isAv);
+        Media& setIsAvailable(bool isAv);
         bool getIsAvailable() const;
+        Media& setImagePath(const std::string& im);
+        const std::string& getImagePath() const;
 };
 
 #endif // MEDIA_H
