@@ -10,12 +10,14 @@ class Media{
         std::string author;
         std::string genre;
         Date relaseDate;
+        unsigned int id;
         unsigned int kbSize;
         bool isAvailable;
+        std::string imagePath;
         //int Rating;
         //string Review;
     public:
-        Media(std::string t, std::string a, std::string g, Date rD, unsigned int kb, bool isAv);
+        Media(std::string t, std::string a, std::string g, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im);
         Media(const Media& media);
         Media();
         virtual ~Media() = 0; // Pure virtual destructor
