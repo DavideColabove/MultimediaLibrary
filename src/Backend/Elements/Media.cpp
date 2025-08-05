@@ -4,11 +4,11 @@
 #include<string>
 #include<iostream>
 
-Media::Media(std::string t, std::string a, std::string g, Date rD, unsigned int kb, bool isAv): title(t), author(a), genre(g), relaseDate(rD), kbSize(kb), isAvailable(isAv) {}
+Media::Media(std::string t, std::string a, std::string g, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im): title(t), author(a), genre(g), relaseDate(rD), mediaID(id), kbSize(kb), isAvailable(isAv), imagePath(im) {}
 
-Media::Media(const Media& media): title(media.title), author(media.author), genre(media.genre), relaseDate(media.relaseDate), kbSize(media.kbSize), isAvailable(media.isAvailable) {}
+Media::Media(const Media& media): title(media.title), mediaID(media.mediaID), author(media.author), genre(media.genre), relaseDate(media.relaseDate), kbSize(media.kbSize), isAvailable(media.isAvailable), imagePath(media.imagePath) {}
 
-Media::Media() : title(""), author(""), genre(""), relaseDate(Date()), kbSize(0), isAvailable(false) {}
+Media::Media() : title(""), mediaID(0), author(""), genre(""), relaseDate(Date()), kbSize(0), isAvailable(false), imagePath("") {}
 
 Media::~Media() {} // Pure virtual destructor
 
