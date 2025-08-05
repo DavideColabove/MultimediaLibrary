@@ -20,7 +20,7 @@ class Media{
         Media(std::string t, std::string a, std::string g, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im);
         Media(const Media& media);
         Media();
-        virtual ~Media() = 0; // Pure virtual destructor
+        virtual ~Media() = 0;
 
         Media& setTitle(const std::string& t);
         const std::string& getTitle() const;
