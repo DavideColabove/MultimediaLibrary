@@ -1,16 +1,15 @@
 #include "Media.h"
-#include "Date.h"
 
 #include<string>
 #include<iostream>
 
-Media::Media(std::string t, std::string a, std::string g, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im): title(t), author(a), genre(g), releaseDate(rD), id(id), kbSize(kb), isAvailable(isAv), imagePath(im) {}
+Media::Media(std::string t, std::string a, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im): title(t), author(a), releaseDate(rD), id(id), kbSize(kb), isAvailable(isAv), imagePath(im) {}
 
-Media::Media(const Media& media): title(media.title), id(media.id), author(media.author), genre(media.genre), releaseDate(media.releaseDate), kbSize(media.kbSize), isAvailable(media.isAvailable), imagePath(media.imagePath) {}
+Media::Media(const Media& media): title(media.title), id(media.id), author(media.author), releaseDate(media.releaseDate), kbSize(media.kbSize), isAvailable(media.isAvailable), imagePath(media.imagePath) {}
 
-Media::Media() : title(""), id(0), author(""), genre(""), releaseDate(Date()), kbSize(0), isAvailable(false), imagePath("") {}
+Media::Media() : title(""), id(0), author(""), releaseDate(), kbSize(0), isAvailable(false), imagePath("") {}
 
-Media::~Media() {}
+
 
 Media& Media::setTitle(const std::string& t) {
     this->title = t;
@@ -28,13 +27,7 @@ const std::string& Media::getAuthor() const {
     return author;
 }
 
-Media& Media::setGenre(const std::string& g) {
-    this->genre = g;
-    return *this;
-}
-const std::string& Media::getGenre() const {
-    return genre;
-}
+
 
 Media& Media::setReleaseDate(const Date& rD) {
     this->releaseDate = rD;

@@ -1,28 +1,53 @@
 #ifndef MOVIE_H
 #define MOVIE_H
 
-#include "Date.h"
 #include "Media.h"
-#include<string>
+#include <string>
+#include "../Enums/Genres.h"
+#include "../Enums/Languages.h"
 
 class Movie : public Media {
     private:
         std::string director;
-        unsigned int duration;
-        std::string language;
+        unsigned int duration; // in minutes
+        std::string studio;
+        std::string rating; // PG, PG-13, R, etc.
+        Enums::Language language;
+        std::string country;
+        Enums::MovieGenre genre;
         
     public:
-        Movie(std::string t, std::string a, std::string g, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im, std::string dir, unsigned int dur, std::string lang);
+        // Constructors
+        Movie(std::string title, std::string author, Enums::MovieGenre genre, Date releaseDate, 
+              unsigned int id, unsigned int kbSize, bool isAvailable, std::string imagePath,
+              std::string director, unsigned int duration, std::string studio, std::string rating,
+              Enums::Language language, std::string country);
         Movie(const Movie& movie);
         Movie();
-        ~Movie();
+        virtual ~Movie();
 
+        // Virtual method implementations for non-trivial polymorphism
+        virtual bool isValid() const override;
+
+        // Movie-specific getters and setters
+        std::string getDirector() const;
         Movie& setDirector(const std::string& dir);
-        const std::string& getDirector() const;
-        Movie& setDuration(unsigned int dur);
         unsigned int getDuration() const;
-        Movie& setLanguage(const std::string& lang);
-        const std::string& getLanguage() const;
+        Movie& setDuration(unsigned int dur);
+        std::string getStudio() const;
+        Movie& setStudio(const std::string& stu);
+        std::string getRating() const;
+        Movie& setRating(const std::string& rat);
+        Enums::Language getLanguage() const;
+        Movie& setLanguage(Enums::Language lang);
+        std::string getLanguageString() const;
+        std::string getCountry() const;
+        Movie& setCountry(const std::string& cou);
+        
+        // Genre-specific methods
+        Enums::MovieGenre getGenre() const;
+        Movie& setGenre(Enums::MovieGenre genre);
+        std::string getGenreString() const;
 };
 
 #endif // MOVIE_H

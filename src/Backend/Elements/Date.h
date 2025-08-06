@@ -1,33 +1,40 @@
 #ifndef DATE_H
 #define DATE_H
-#include <iostream>
+
+#include <string>
 
 class Date {
-    protected:
-        int day;
-        int month;
-        int year;
-
-    public:
-        Date(int d, int m, int y);
-        Date(const Date& date);
-        Date();
-        virtual ~Date();
-
-        void setDay(int d);
-        int getDay() const;
-        void setMonth(int m);
-        int getMonth() const;
-        void setYear(int y);
-        int getYear() const;
-        bool operator==(const Date& d) const;
-        bool operator!=(const Date& d) const;
-        bool operator<(const Date& d) const;
-        bool operator>(const Date& d) const;
-        bool operator<=(const Date& d) const;
-        bool operator>=(const Date& d) const;
-
-        void printDate() const;
+private:
+    int year;
+    int month;
+    int day;
+    
+public:
+    // Constructors
+    Date(int y, int m, int d);
+    Date(const Date& date);
+    Date();
+    
+    // Getters and setters
+    int getYear() const;
+    Date& setYear(int y);
+    int getMonth() const;
+    Date& setMonth(int m);
+    int getDay() const;
+    Date& setDay(int d);
+    
+    // Utility methods
+    bool isValid() const;
+    std::string toString() const;
+    std::string toString(const std::string& format) const; // format: "YYYY-MM-DD", "DD/MM/YYYY", etc.
+    
+    // Operators
+    bool operator==(const Date& other) const;
+    bool operator!=(const Date& other) const;
+    bool operator<(const Date& other) const;
+    bool operator>(const Date& other) const;
+    bool operator<=(const Date& other) const;
+    bool operator>=(const Date& other) const;
 };
 
-#endif 
+#endif // DATE_H 

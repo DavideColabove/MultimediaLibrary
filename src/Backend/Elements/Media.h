@@ -3,31 +3,32 @@
 
 #include<string>
 #include "Date.h"
+#include "../Enums/Genres.h"
+#include "../Enums/Languages.h"
 
 class Media{ 
     protected:
         std::string title;
         std::string author;
-        std::string genre;
+        // Genre will be handled by derived classes with specific enum types
         Date releaseDate;
         unsigned int id;
         unsigned int kbSize;
         bool isAvailable;
         std::string imagePath;
-        //int Rating;
-        //string Review;
     public:
-        Media(std::string t, std::string a, std::string g, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im);
+        Media(std::string t, std::string a, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im);
         Media(const Media& media);
         Media();
-        virtual ~Media() = 0;
+        virtual ~Media() = default; // Virtual destructor
+
+        // Virtual methods for non-trivial polymorphism
+        virtual bool isValid() const = 0; // Validates media-specific attributes
 
         Media& setTitle(const std::string& t);
         const std::string& getTitle() const;
         Media& setAuthor(const std::string& a);
         const std::string& getAuthor() const;
-        Media& setGenre(const std::string& g);
-        const std::string& getGenre() const;
         Media& setReleaseDate(const Date& rD);
         const Date& getReleaseDate() const;
         Media& setID(unsigned int id);
