@@ -1,4 +1,7 @@
 #include <iostream>
+#include <string>
+
+// Backend includes
 #include "Backend/Elements/Media.h"
 #include "Backend/Elements/Book.h"
 #include "Backend/Elements/Movie.h"
@@ -8,7 +11,14 @@
 #include "Backend/Enums/Genres.h"
 #include "Backend/Enums/Languages.h"
 
-int main() {
+// Qt includes (conditional compilation)
+#ifdef USE_QT
+#include <QApplication>
+#include <QStyleFactory>
+#include "Frontend/Windows/MainWindow.h"
+#endif
+
+void testBackend() {
     std::cout << "=== Test Compilazione Multimedia Library ===" << std::endl;
     
     try {
@@ -77,12 +87,81 @@ int main() {
         std::cout << "Genre: " << podcast.getGenreString() << std::endl;
         std::cout << "Valid: " << (podcast.isValid() ? "Yes" : "No") << std::endl;
         
-        std::cout << "\n=== Compilazione completata con successo! ===" << std::endl;
+        std::cout << "\n=== Test Backend completato con successo! ===" << std::endl;
         
     } catch (const std::exception& e) {
         std::cerr << "Errore: " << e.what() << std::endl;
-        return 1;
+        throw;
     }
+}
+
+void showUsage(const char* programName) {
+    std::cout << "Uso: " << programName << " [opzione]" << std::endl;
+    std::cout << "Opzioni:" << std::endl;
+    std::cout << "  --test     Esegui solo il test del backend (console)" << std::endl;
+#ifdef USE_QT
+    std::cout << "  --gui      Avvia l'interfaccia grafica Qt" << std::endl;
+#endif
+    std::cout << "  --help     Mostra questo messaggio" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Se non viene specificata alcuna opzione, viene eseguito il test del backend." << std::endl;
+}
+
+int main(int argc, char *argv[]) {
+    // Parse command line arguments
+    std::string mode = "test"; // Default: test mode
+    
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--gui" || arg == "-g") {
+#ifdef USE_QT
+            mode = "gui";
+#else
+            std::cerr << "GUI mode not available - Qt not compiled in" << std::endl;
+            return 1;
+#endif
+        } else if (arg == "--test" || arg == "-t") {
+            mode = "test";
+        } else if (arg == "--help" || arg == "-h") {
+            showUsage(argv[0]);
+            return 0;
+        } else {
+            std::cerr << "Opzione sconosciuta: " << arg << std::endl;
+            showUsage(argv[0]);
+            return 1;
+        }
+    }
+    
+    if (mode == "test") {
+        // Test mode - console only
+        try {
+            testBackend();
+            return 0;
+        } catch (const std::exception& e) {
+            std::cerr << "Errore nel test: " << e.what() << std::endl;
+            return 1;
+        }
+    } 
+#ifdef USE_QT
+    else if (mode == "gui") {
+        // GUI mode - Qt application
+        QApplication app(argc, argv);
+        
+        // Set application properties
+        app.setApplicationName("Multimedia Library");
+        app.setApplicationVersion("1.0.0");
+        app.setOrganizationName("MultimediaLibrary");
+        
+        // Set application style
+        app.setStyle(QStyleFactory::create("Fusion"));
+        
+        // Create and show main window
+        MainWindow mainWindow;
+        mainWindow.show();
+        
+        return app.exec();
+    }
+#endif
     
     return 0;
 }
