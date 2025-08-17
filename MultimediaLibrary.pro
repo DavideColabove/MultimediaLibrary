@@ -59,6 +59,11 @@ INCLUDEPATH += \
 # Compiler flags
 QMAKE_CXXFLAGS += -std=c++17 -Wall -Wextra
 
+# Ensure QtSvg module is available
+!qtHaveModule(svg) {
+    error("QtSvg not found. Install the module (e.g., Ubuntu/Debian: 'sudo apt install qt6-base-dev qt6-svg-dev')")
+}
+
 # Output directory
 DESTDIR = build/bin
 

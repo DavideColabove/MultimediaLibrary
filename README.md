@@ -61,6 +61,7 @@ MultimediaLibrary/
 ### **Qt Frontend (Required)**
 - **Qt 6.8.3** installed in `D:\qt\6.8.3\mingw_64`
 - **Qt Creator** for development (optional)
+ - Module QtSvg (required)
 
 ## 🔧 **Installation and Setup**
 
@@ -89,6 +90,18 @@ make
 # Clean
 make clean
 ```
+
+### **Linux quick setup**
+```bash
+# Install build deps (auto-detects distro)
+bash scripts/setup-linux.sh
+
+# Build
+qmake MultimediaLibrary.pro  # or qmake6
+make
+./build/bin/MultimediaLibrary
+```
+Nota: il progetto richiede QtSvg. In assenza del modulo, il file `.pro` fallirà con un messaggio chiaro.
 
 ## 🚀 **Execution**
 
