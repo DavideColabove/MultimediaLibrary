@@ -1,9 +1,12 @@
 ﻿#include "MainWindow.h"
 #include <QApplication>
+#include <QGuiApplication>
 #include <QIcon>
 #include <QStyle>
+#include <QSvgRenderer>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPainterPath>
 #include <QScrollArea>
 #include <QFrame>
 #include <QStackedWidget>
@@ -166,14 +169,16 @@ void MainWindow::setupCentralArea()
     searchInput->setMinimumHeight(35);
     searchLayout->addWidget(searchInput);
     
-    // Advanced search button
-    advancedSearchBtn = new QPushButton("Advanced", searchBar);
+    // Advanced search button (icon-only)
+    advancedSearchBtn = new QPushButton("", searchBar);
+    advancedSearchBtn->setToolTip("Advanced");
     advancedSearchBtn->setObjectName("advancedSearchBtn");
     advancedSearchBtn->setFixedSize(80, 35);
     searchLayout->addWidget(advancedSearchBtn);
 
-    // Clear filters button
-    clearFiltersBtn = new QPushButton("Clear", searchBar);
+    // Clear filters button (icon-only)
+    clearFiltersBtn = new QPushButton("", searchBar);
+    clearFiltersBtn->setToolTip("Clear");
     clearFiltersBtn->setObjectName("clearFiltersBtn");
     clearFiltersBtn->setFixedSize(70, 35);
     searchLayout->addWidget(clearFiltersBtn);
@@ -192,22 +197,29 @@ void MainWindow::setupCentralArea()
         "QComboBox QAbstractItemView { background-color: #3c3c3c; color: #ffffff; border: 1px solid #777; }"
     );
     searchLayout->addWidget(sortCombo);
+    // Move sorting combo to the far left of the search bar
+    searchLayout->removeWidget(sortCombo);
+    searchLayout->insertWidget(0, sortCombo);
     
-    // Action buttons: Add / Import / Export / Save
-    addTopBtn = new QPushButton("Add", searchBar);
-    addTopBtn->setFixedSize(80, 35);
+    // Action buttons: Add / Import / Export / Save (icon-only)
+    addTopBtn = new QPushButton("", searchBar);
+    addTopBtn->setToolTip("Add");
+    addTopBtn->setFixedSize(36, 36);
     searchLayout->addWidget(addTopBtn);
 
-    importTopBtn = new QPushButton("Import", searchBar);
-    importTopBtn->setFixedSize(80, 35);
+    importTopBtn = new QPushButton("", searchBar);
+    importTopBtn->setToolTip("Import");
+    importTopBtn->setFixedSize(36, 36);
     searchLayout->addWidget(importTopBtn);
 
-    exportTopBtn = new QPushButton("Export", searchBar);
-    exportTopBtn->setFixedSize(80, 35);
+    exportTopBtn = new QPushButton("", searchBar);
+    exportTopBtn->setToolTip("Export");
+    exportTopBtn->setFixedSize(36, 36);
     searchLayout->addWidget(exportTopBtn);
 
-    saveTopBtn = new QPushButton("Save", searchBar);
-    saveTopBtn->setFixedSize(80, 35);
+    saveTopBtn = new QPushButton("", searchBar);
+    saveTopBtn->setToolTip("Save");
+    saveTopBtn->setFixedSize(36, 36);
     searchLayout->addWidget(saveTopBtn);
     
     centralLayout->addWidget(searchBar);
@@ -268,19 +280,31 @@ void MainWindow::setupRightPanel()
     backBtn->setMinimumHeight(36);
     detailsLayout->addWidget(backBtn);
     
-    // Cover image
-    coverImage = new QLabel(detailsWidget);
+    // Header card: cover + title grouped consistently like MediaCard
+    QFrame* headerCard = new QFrame(detailsWidget);
+    headerCard->setObjectName("detailsHeaderCard");
+    headerCard->setStyleSheet("#detailsHeaderCard { background-color: #3c3c3c; border: 1px solid #555; border-radius: 8px; } ");
+    QVBoxLayout* headerLay = new QVBoxLayout(headerCard);
+    headerLay->setContentsMargins(12, 12, 12, 12);
+    headerLay->setSpacing(10);
+
+    // Cover image inside header card
+    coverImage = new QLabel(headerCard);
     coverImage->setObjectName("coverImage");
     coverImage->setFixedSize(260, 300);
     coverImage->setAlignment(Qt::AlignCenter);
     coverImage->setStyleSheet("border: none; background: transparent;");
-    detailsLayout->addWidget(coverImage, 0, Qt::AlignCenter);
-    
-    // Title
-    titleLabel = new QLabel(detailsWidget);
+    headerLay->addWidget(coverImage, 0, Qt::AlignHCenter);
+
+    // Title inside header card
+    titleLabel = new QLabel(headerCard);
     titleLabel->setObjectName("titleLabel");
     titleLabel->setAlignment(Qt::AlignCenter);
-    detailsLayout->addWidget(titleLabel);
+    titleLabel->setWordWrap(true);
+    titleLabel->setStyleSheet("color: #ffffff; font-size: 16px; font-weight: bold;");
+    headerLay->addWidget(titleLabel);
+
+    detailsLayout->addWidget(headerCard, 0, Qt::AlignCenter);
     
     // Author
     authorLabel = new QLabel(detailsWidget);
@@ -405,12 +429,29 @@ void MainWindow::setupConnections()
     saveTopBtn->setIcon(loadIconByName("save"));
     if (advancedSearchBtn) advancedSearchBtn->setIcon(loadIconByName("filter-advanced"));
     if (clearFiltersBtn) clearFiltersBtn->setIcon(loadIconByName("filter-clear"));
-    addTopBtn->setIconSize(QSize(18,18));
-    importTopBtn->setIconSize(QSize(18,18));
-    exportTopBtn->setIconSize(QSize(18,18));
-    saveTopBtn->setIconSize(QSize(18,18));
-    if (advancedSearchBtn) advancedSearchBtn->setIconSize(QSize(18,18));
-    if (clearFiltersBtn) clearFiltersBtn->setIconSize(QSize(18,18));
+    // Icon-only buttons
+    const QSize topIconSize(20,20);
+    addTopBtn->setIconSize(topIconSize);
+    importTopBtn->setIconSize(topIconSize);
+    exportTopBtn->setIconSize(topIconSize);
+    saveTopBtn->setIconSize(topIconSize);
+    if (advancedSearchBtn) advancedSearchBtn->setIconSize(topIconSize);
+    if (clearFiltersBtn) clearFiltersBtn->setIconSize(topIconSize);
+
+    auto styleIconButton = [](QPushButton* b){
+        if (!b) return;
+        b->setFlat(true);
+        b->setCursor(Qt::PointingHandCursor);
+        b->setStyleSheet("QPushButton { background-color: transparent; border: none; padding: 6px; } QPushButton:hover { background-color: rgba(255,255,255,0.08); border-radius: 6px; }");
+        b->setMinimumSize(36,36);
+        b->setMaximumSize(36,36);
+    };
+    styleIconButton(addTopBtn);
+    styleIconButton(importTopBtn);
+    styleIconButton(exportTopBtn);
+    styleIconButton(saveTopBtn);
+    styleIconButton(advancedSearchBtn);
+    styleIconButton(clearFiltersBtn);
 
     backBtn->setIcon(loadIconByName("back"));
     editBtn->setIcon(loadIconByName("edit"));
@@ -727,37 +768,68 @@ void MainWindow::showMediaDetails(Media* media)
         coverImage->setText("");
     } else {
         // Fallback: show type icon placeholder, consistent with MediaCard
-        auto typeToIcon = [&](Media* m)->QString{
-            if (dynamic_cast<Book*>(m)) return "book";
-            if (dynamic_cast<Movie*>(m)) return "movie";
-            if (dynamic_cast<Song*>(m)) return "music";
-            if (dynamic_cast<Magazine*>(m)) return "magazine";
-            if (dynamic_cast<Podcast*>(m)) return "podcast";
-            return "";
-        };
-        auto loadIcon = [&](const QString& base)->QPixmap{
-            if (base.isEmpty()) return QPixmap();
+        QString iconName;
+        if (dynamic_cast<Book*>(media)) iconName = "book";
+        else if (dynamic_cast<Movie*>(media)) iconName = "movie";
+        else if (dynamic_cast<Song*>(media)) iconName = "music";
+        else if (dynamic_cast<Magazine*>(media)) iconName = "magazine";
+        else if (dynamic_cast<Podcast*>(media)) iconName = "podcast";
+
+        auto findIconPath = [&](const QString& base)->QString{
             const QString res = QString(":/icons/%1.svg").arg(base);
-            if (QFile::exists(res)) return QPixmap(res);
+            if (QFile::exists(res)) return res;
             const QStringList tries = {
                 QString("src/Frontend/Resources/icons/%1.svg").arg(base),
                 QString("icons/%1.svg").arg(base),
                 QString("../icons/%1.svg").arg(base),
             };
-            for (const QString& p : tries) if (QFile::exists(p)) return QPixmap(p);
-            return QPixmap();
+            for (const QString& p : tries) if (QFile::exists(p)) return p;
+            return QString();
         };
-        QPixmap icon = loadIcon(typeToIcon(media));
-        if (!icon.isNull()) {
-            QPixmap scaled = icon.scaled(coverImage->width()*0.7, coverImage->height()*0.7, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            QPixmap canvas(coverImage->size());
+
+        const QString iconPath = findIconPath(iconName);
+        if (!iconPath.isEmpty()) {
+            const QSize target = coverImage->size();
+            const qreal ratio = 0.6;
+            const qreal dpr = QGuiApplication::primaryScreen() ? QGuiApplication::primaryScreen()->devicePixelRatio() : 1.0;
+
+            // Render SVG crisply at target pixel size
+            QPixmap iconPixmap;
+            if (iconPath.endsWith(".svg", Qt::CaseInsensitive)) {
+                const QSizeF logicalSize(target.width()*ratio, target.height()*ratio);
+                const QSize pixelSize(qMax(1, int(logicalSize.width()*dpr)), qMax(1, int(logicalSize.height()*dpr)));
+                QPixmap tmp(pixelSize);
+                tmp.fill(Qt::transparent);
+                QSvgRenderer renderer(iconPath);
+                QPainter rp(&tmp);
+                rp.setRenderHint(QPainter::Antialiasing, true);
+                rp.setRenderHint(QPainter::SmoothPixmapTransform, true);
+                renderer.render(&rp, QRectF(0, 0, pixelSize.width(), pixelSize.height()));
+                rp.end();
+                tmp.setDevicePixelRatio(dpr);
+                iconPixmap = tmp;
+            } else {
+                // Fallback for raster icons
+                QPixmap raw(iconPath);
+                iconPixmap = raw.scaled(target.width()*ratio, target.height()*ratio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            }
+
+            // Compose rounded canvas and center icon
+            QPixmap canvas(QSize(target.width()*dpr, target.height()*dpr));
             canvas.fill(Qt::transparent);
             QPainter painter(&canvas);
             painter.setRenderHint(QPainter::Antialiasing, true);
-            const int x = (canvas.width() - scaled.width())/2;
-            const int y = (canvas.height() - scaled.height())/2;
-            painter.drawPixmap(x, y, scaled);
+            QPainterPath path;
+            path.addRoundedRect(QRectF(0, 0, canvas.width(), canvas.height()), 8*dpr, 8*dpr);
+            painter.setClipPath(path);
+            painter.fillRect(QRectF(0,0,canvas.width(),canvas.height()), QColor(68,68,68));
+
+            const int x = int((canvas.width()/dpr - iconPixmap.width()/iconPixmap.devicePixelRatio())/2 * dpr);
+            const int y = int((canvas.height()/dpr - iconPixmap.height()/iconPixmap.devicePixelRatio())/2 * dpr);
+            painter.drawPixmap(x, y, iconPixmap);
             painter.end();
+
+            canvas.setDevicePixelRatio(dpr);
             coverImage->setPixmap(canvas);
             coverImage->setText("");
         } else {

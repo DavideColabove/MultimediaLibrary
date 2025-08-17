@@ -277,7 +277,7 @@ void AddMediaDialog::setupBookFields(QFormLayout *layout)
     // Popola da enum invece di hardcodare
     auto languages = Enums::getAllLanguages();
     for (size_t i = 0; i < languages.size(); ++i) {
-        languageCombo->addItem(QString::fromStdString(languages[i]), i);
+        languageCombo->addItem(QString::fromStdString(languages[i]), static_cast<int>(i));
     }
     
     languageCombo->setInsertPolicy(QComboBox::NoInsert);
@@ -290,7 +290,7 @@ void AddMediaDialog::setupBookFields(QFormLayout *layout)
     // Popola da enum invece di hardcodare
     auto bookGenres = Enums::getAllBookGenres();
     for (size_t i = 0; i < bookGenres.size(); ++i) {
-        bookGenreCombo->addItem(QString::fromStdString(bookGenres[i]), i);
+        bookGenreCombo->addItem(QString::fromStdString(bookGenres[i]), static_cast<int>(i));
     }
     
     bookGenreCombo->setInsertPolicy(QComboBox::NoInsert);
@@ -325,7 +325,7 @@ void AddMediaDialog::setupMovieFields(QFormLayout *layout)
     // Popola da enum invece di hardcodare
     auto movieGenres = Enums::getAllMovieGenres();
     for (size_t i = 0; i < movieGenres.size(); ++i) {
-        movieGenreCombo->addItem(QString::fromStdString(movieGenres[i]), i);
+        movieGenreCombo->addItem(QString::fromStdString(movieGenres[i]), static_cast<int>(i));
     }
     
     movieGenreCombo->setInsertPolicy(QComboBox::NoInsert);
@@ -355,7 +355,7 @@ void AddMediaDialog::setupSongFields(QFormLayout *layout)
     // Popola da enum invece di hardcodare
     auto musicGenres = Enums::getAllMusicGenres();
     for (size_t i = 0; i < musicGenres.size(); ++i) {
-        musicGenreCombo->addItem(QString::fromStdString(musicGenres[i]), i);
+        musicGenreCombo->addItem(QString::fromStdString(musicGenres[i]), static_cast<int>(i));
     }
     
     musicGenreCombo->setInsertPolicy(QComboBox::NoInsert);
@@ -394,7 +394,7 @@ void AddMediaDialog::setupMagazineFields(QFormLayout *layout)
     // Popola da enum invece di hardcodare
     auto magazineGenres = Enums::getAllMagazineGenres();
     for (size_t i = 0; i < magazineGenres.size(); ++i) {
-        magazineGenreCombo->addItem(QString::fromStdString(magazineGenres[i]), i);
+        magazineGenreCombo->addItem(QString::fromStdString(magazineGenres[i]), static_cast<int>(i));
     }
     
     magazineGenreCombo->setInsertPolicy(QComboBox::NoInsert);
@@ -435,7 +435,7 @@ void AddMediaDialog::setupPodcastFields(QFormLayout *layout)
     // Popola da enum invece di hardcodare
     auto podcastGenres = Enums::getAllPodcastGenres();
     for (size_t i = 0; i < podcastGenres.size(); ++i) {
-        podcastGenreCombo->addItem(QString::fromStdString(podcastGenres[i]), i);
+        podcastGenreCombo->addItem(QString::fromStdString(podcastGenres[i]), static_cast<int>(i));
     }
     
     podcastGenreCombo->setInsertPolicy(QComboBox::NoInsert);
