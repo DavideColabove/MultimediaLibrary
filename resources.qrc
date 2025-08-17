@@ -1,0 +1,23 @@
+<RCC>
+  <qresource prefix="/icons">
+    <file alias="add.svg">src/Frontend/Resources/icons/add.svg</file>
+    <file alias="import.svg">src/Frontend/Resources/icons/import.svg</file>
+    <file alias="export.svg">src/Frontend/Resources/icons/export.svg</file>
+    <file alias="save.svg">src/Frontend/Resources/icons/save.svg</file>
+    <file alias="back.svg">src/Frontend/Resources/icons/back.svg</file>
+    <file alias="edit.svg">src/Frontend/Resources/icons/edit.svg</file>
+    <file alias="delete.svg">src/Frontend/Resources/icons/delete.svg</file>
+    <file alias="all.svg">src/Frontend/Resources/icons/all.svg</file>
+    <file alias="book.svg">src/Frontend/Resources/icons/book.svg</file>
+    <file alias="movie.svg">src/Frontend/Resources/icons/movie.svg</file>
+    <file alias="music.svg">src/Frontend/Resources/icons/music.svg</file>
+    <file alias="magazine.svg">src/Frontend/Resources/icons/magazine.svg</file>
+    <file alias="podcast.svg">src/Frontend/Resources/icons/podcast.svg</file>
+    <file alias="filter-advanced.svg">src/Frontend/Resources/icons/filter-advanced.svg</file>
+    <file alias="filter-clear.svg">src/Frontend/Resources/icons/filter-clear.svg</file>
+    <file alias="search.svg">src/Frontend/Resources/icons/search.svg</file>
+    <file alias="sort.svg">src/Frontend/Resources/icons/sort_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg</file>
+    <file alias="appicon.svg">src/Frontend/Resources/icons/appicon.svg</file>
+  </qresource>
+</RCC>
+

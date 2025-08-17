@@ -1,0 +1,304 @@
+{
+  "media": [
+    {
+      "type": "Book",
+      "id": 1,
+      "title": "Il Nome della Rosa",
+      "author": "Umberto Eco",
+      "releaseDate": "1980-01-01",
+      "size": 2048,
+      "available": true,
+      "imagePath": "",
+      "book": {
+        "publisher": "Bompiani",
+        "pages": 512,
+        "isbn": "9788845251234",
+        "language": 0,
+        "genre": 8
+      }
+    },
+    {
+      "type": "Book",
+      "id": 2,
+      "title": "Clean Code",
+      "author": "Robert C. Martin",
+      "releaseDate": "2008-08-01",
+      "size": 1536,
+      "available": true,
+      "imagePath": "",
+      "book": {
+        "publisher": "Prentice Hall",
+        "pages": 464,
+        "isbn": "9780132350884",
+        "language": 1,
+        "genre": 10
+      }
+    },
+    {
+      "type": "Movie",
+      "id": 3,
+      "title": "The Matrix",
+      "author": "Wachowski Sisters",
+      "releaseDate": "1999-03-31",
+      "size": 4096,
+      "available": true,
+      "imagePath": "",
+      "movie": {
+        "director": "Lana Wachowski",
+        "duration": 136,
+        "studio": "Warner Bros.",
+        "rating": "R",
+        "language": 1,
+        "country": "USA",
+        "genre": 6
+      }
+    },
+    {
+      "type": "Movie",
+      "id": 4,
+      "title": "Inception",
+      "author": "Christopher Nolan",
+      "releaseDate": "2010-07-16",
+      "size": 5120,
+      "available": false,
+      "imagePath": "",
+      "movie": {
+        "director": "Christopher Nolan",
+        "duration": 148,
+        "studio": "Legendary Pictures",
+        "rating": "PG-13",
+        "language": 1,
+        "country": "USA",
+        "genre": 5
+      }
+    },
+    {
+      "type": "Song",
+      "id": 5,
+      "title": "Bohemian Rhapsody",
+      "author": "Queen",
+      "releaseDate": "1975-10-31",
+      "size": 1024,
+      "available": true,
+      "imagePath": "",
+      "song": {
+        "artist": "Queen",
+        "album": "A Night at the Opera",
+        "duration": 355,
+        "format": "MP3",
+        "label": "EMI",
+        "track": 1,
+        "genre": 0
+      }
+    },
+    {
+      "type": "Song",
+      "id": 6,
+      "title": "Imagine",
+      "author": "John Lennon",
+      "releaseDate": "1971-10-11",
+      "size": 896,
+      "available": true,
+      "imagePath": "",
+      "song": {
+        "artist": "John Lennon",
+        "album": "Imagine",
+        "duration": 183,
+        "format": "FLAC",
+        "label": "Apple",
+        "track": 1,
+        "genre": 1
+      }
+    },
+    {
+      "type": "Magazine",
+      "id": 7,
+      "title": "National Geographic",
+      "author": "Various Authors",
+      "releaseDate": "2024-01-01",
+      "size": 512,
+      "available": true,
+      "imagePath": "",
+      "magazine": {
+        "publisher": "National Geographic Society",
+        "issue": 1,
+        "issn": "0027-9358",
+        "editor": "Susan Goldberg",
+        "pages": 80,
+        "frequency": "Monthly",
+        "genre": 4
+      }
+    },
+    {
+      "type": "Magazine",
+      "id": 8,
+      "title": "Wired",
+      "author": "Condé Nast",
+      "releaseDate": "2024-02-01",
+      "size": 460,
+      "available": false,
+      "imagePath": "",
+      "magazine": {
+        "publisher": "Condé Nast",
+        "issue": 342,
+        "issn": "1059-1028",
+        "editor": "Gideon Lichfield",
+        "pages": 96,
+        "frequency": "Monthly",
+        "genre": 3
+      }
+    },
+    {
+      "type": "Podcast",
+      "id": 9,
+      "title": "Serial",
+      "author": "Sarah Koenig",
+      "releaseDate": "2014-10-03",
+      "size": 256,
+      "available": true,
+      "imagePath": "",
+      "podcast": {
+        "host": "Sarah Koenig",
+        "episodes": 1,
+        "platform": "Spotify",
+        "duration": 45,
+        "series": "Serial",
+        "description": "A true crime podcast",
+        "genre": 10
+      }
+    },
+    {
+      "type": "Podcast",
+      "id": 10,
+      "title": "The Daily",
+      "author": "The New York Times",
+      "releaseDate": "2017-02-01",
+      "size": 300,
+      "available": true,
+      "imagePath": "",
+      "podcast": {
+        "host": "Michael Barbaro",
+        "episodes": 1500,
+        "platform": "Apple Podcasts",
+        "duration": 25,
+        "series": "The Daily",
+        "description": "Top news stories with analysis",
+        "genre": 2
+      }
+    }
+  ]
+}
+{
+  "media": [
+    {
+      "type": "Book",
+      "id": 1,
+      "title": "Il Nome della Rosa",
+      "author": "Umberto Eco",
+      "releaseDate": "1900-01-01",
+      "size": 2048,
+      "available": true,
+      "imagePath": "",
+      "book": {
+        "publisher": "",
+        "pages": 0,
+        "isbn": "",
+        "language": 0,
+        "genre": 0
+      }
+    },
+    {
+      "type": "Movie",
+      "id": 2,
+      "title": "The Matrix",
+      "author": "Wachowski Sisters",
+      "releaseDate": "1900-01-01",
+      "size": 4096,
+      "available": true,
+      "imagePath": "",
+      "movie": {
+        "director": "",
+        "duration": 0,
+        "studio": "",
+        "rating": "",
+        "language": 1,
+        "country": "",
+        "genre": 3
+      }
+    },
+    {
+      "type": "Song",
+      "id": 3,
+      "title": "Bohemian Rhapsody",
+      "author": "Queen",
+      "releaseDate": "1900-01-01",
+      "size": 1024,
+      "available": true,
+      "imagePath": "",
+      "song": {
+        "artist": "",
+        "album": "",
+        "duration": 0,
+        "format": "",
+        "label": "",
+        "track": 0,
+        "genre": 1
+      }
+    },
+    {
+      "type": "Magazine",
+      "id": 4,
+      "title": "National Geographic",
+      "author": "Various Authors",
+      "releaseDate": "1900-01-01",
+      "size": 512,
+      "available": true,
+      "imagePath": "",
+      "magazine": {
+        "publisher": "",
+        "issue": 0,
+        "issn": "",
+        "editor": "",
+        "pages": 0,
+        "frequency": "",
+        "genre": 0
+      }
+    },
+    {
+      "type": "Podcast",
+      "id": 5,
+      "title": "Serial",
+      "author": "Sarah Koenig",
+      "releaseDate": "1900-01-01",
+      "size": 256,
+      "available": true,
+      "imagePath": "",
+      "podcast": {
+        "host": "",
+        "episodes": 0,
+        "platform": "",
+        "duration": 0,
+        "series": "",
+        "description": "",
+        "genre": 7
+      }
+    },
+    {
+      "type": "Book",
+      "id": 6,
+      "title": "fhfc",
+      "author": "zxczxc",
+      "releaseDate": "2025-08-11",
+      "size": 1024,
+      "available": true,
+      "imagePath": "C:/Users/user/Downloads/ChatGPT Image 9 ago 2025, 10_20_35.png",
+      "book": {
+        "publisher": "zczxc",
+        "pages": 298,
+        "isbn": "23123",
+        "language": 1,
+        "genre": 0
+      }
+    }
+  ]
+}
