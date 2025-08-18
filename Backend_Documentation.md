@@ -398,14 +398,19 @@ public:
     bool removeMedia(int id);
     Media* findMediaById(int id);
     std::vector<Media*> getAllMedia() const;
+    std::vector<const Media*> getAllMediaConst() const;
     
     // Search and filters
     std::vector<Media*> searchByTitle(const std::string& title) const;
+    std::vector<const Media*> searchByTitleConst(const std::string& title) const;
     std::vector<Media*> searchByAuthor(const std::string& author) const;
+    std::vector<const Media*> searchByAuthorConst(const std::string& author) const;
     std::vector<Media*> filterByType(const std::string& type) const;
+    std::vector<const Media*> filterByTypeConst(const std::string& type) const;
     std::vector<Media*> filterByGenre(const std::string& genre) const;
     std::vector<Media*> filterByLanguage(const std::string& language) const;
     std::vector<Media*> filterByAvailability(bool available) const;
+    std::vector<const Media*> filterByAvailabilityConst(bool available) const;
     
     // Statistics
     size_t getTotalCount() const;
@@ -455,9 +460,40 @@ std::vector<Media*> Library::searchByTitle(const std::string& title) const
     return results;
 }
 
+std::vector<const Media*> Library::searchByTitleConst(const std::string& title) const
+{
+    std::vector<const Media*> results;
+    std::string lowerTitle = title;
+    std::transform(lowerTitle.begin(), lowerTitle.end(), lowerTitle.begin(), ::tolower);
+    
+    for (const auto& media : mediaCollection) {
+        std::string mediaTitle = media->getTitle();
+        std::transform(mediaTitle.begin(), mediaTitle.end(), mediaTitle.begin(), ::tolower);
+        
+        if (mediaTitle.find(lowerTitle) != std::string::npos) {
+            results.push_back(media.get());
+        }
+    }
+    
+    return results;
+}
+
 std::vector<Media*> Library::filterByType(const std::string& type) const
 {
     std::vector<Media*> results;
+    
+    for (const auto& media : mediaCollection) {
+        if (media->getMediaType() == type) {
+            results.push_back(media.get());
+        }
+    }
+    
+    return results;
+}
+
+std::vector<const Media*> Library::filterByTypeConst(const std::string& type) const
+{
+    std::vector<const Media*> results;
     
     for (const auto& media : mediaCollection) {
         if (media->getMediaType() == type) {

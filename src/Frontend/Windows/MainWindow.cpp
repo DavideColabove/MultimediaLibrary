@@ -295,7 +295,7 @@ void MainWindow::setupRightPanel()
     coverImage->setAlignment(Qt::AlignCenter);
     coverImage->setStyleSheet("border: none; background: transparent;");
     headerLay->addWidget(coverImage, 0, Qt::AlignHCenter);
-
+    
     // Title inside header card
     titleLabel = new QLabel(headerCard);
     titleLabel->setObjectName("titleLabel");
@@ -475,10 +475,10 @@ void MainWindow::refreshMediaGrid()
 {
     clearMediaGrid();
     
-    auto allMedia = library->getAllMedia();
+    auto allMedia = library->getAllMediaConst();
     // Sort according to currentSortMode (locale-aware, case-insensitive, numeric-aware). Keep leading articles.
     QCollator coll; coll.setCaseSensitivity(Qt::CaseInsensitive); coll.setNumericMode(true);
-    std::sort(allMedia.begin(), allMedia.end(), [&](Media* a, Media* b){
+    std::sort(allMedia.begin(), allMedia.end(), [&](const Media* a, const Media* b){
         if (currentSortMode == SortMode::TitleAsc)
             return coll.compare(QString::fromStdString(a->getTitle()), QString::fromStdString(b->getTitle())) < 0;
         if (currentSortMode == SortMode::TitleDesc)
@@ -672,10 +672,10 @@ void MainWindow::onCategoryChanged(int index)
     refreshMediaGrid();
 }
 
-void MainWindow::onMediaCardClicked(Media* media)
+void MainWindow::onMediaCardClicked(const Media* media)
 {
-    selectedMedia = media;
-    showMediaDetails(media);
+    selectedMedia = const_cast<Media*>(media);
+    showMediaDetails(selectedMedia);
 }
 
 void MainWindow::onBackToGridClicked()
@@ -745,7 +745,7 @@ void MainWindow::clearMediaGrid()
     }
 }
 
-void MainWindow::addMediaCard(Media* media, int row, int col)
+void MainWindow::addMediaCard(const Media* media, int row, int col)
 {
     MediaCard* card = new MediaCard(media, mediaGridWidget);
     connect(card, &MediaCard::clicked, this, &MainWindow::onMediaCardClicked);
@@ -935,7 +935,7 @@ void MainWindow::applySearchFilter(const QString& searchText)
     refreshMediaGrid();
 }
 
-bool MainWindow::mediaMatchesFilters(Media* media) const
+bool MainWindow::mediaMatchesFilters(const Media* media) const
 {
     if (!media) return false;
     // Category filter
@@ -974,19 +974,19 @@ bool MainWindow::mediaMatchesFilters(Media* media) const
         if (advFilters.useDateFrom && qd < advFilters.dateFrom) return false;
         if (advFilters.useDateTo && qd > advFilters.dateTo) return false;
         // Type-specific genres via dynamic_cast
-        if (auto b = dynamic_cast<Book*>(media); advFilters.bookGenre >= 0) {
+        if (auto b = dynamic_cast<const Book*>(media); advFilters.bookGenre >= 0) {
             if (b && static_cast<int>(b->getGenre()) != advFilters.bookGenre) return false;
         }
-        if (auto m = dynamic_cast<Movie*>(media); advFilters.movieGenre >= 0) {
+        if (auto m = dynamic_cast<const Movie*>(media); advFilters.movieGenre >= 0) {
             if (m && static_cast<int>(m->getGenre()) != advFilters.movieGenre) return false;
         }
-        if (auto s = dynamic_cast<Song*>(media); advFilters.musicGenre >= 0) {
+        if (auto s = dynamic_cast<const Song*>(media); advFilters.musicGenre >= 0) {
             if (s && static_cast<int>(s->getGenre()) != advFilters.musicGenre) return false;
         }
-        if (auto mg = dynamic_cast<Magazine*>(media); advFilters.magazineGenre >= 0) {
+        if (auto mg = dynamic_cast<const Magazine*>(media); advFilters.magazineGenre >= 0) {
             if (mg && static_cast<int>(mg->getGenre()) != advFilters.magazineGenre) return false;
         }
-        if (auto p = dynamic_cast<Podcast*>(media); advFilters.podcastGenre >= 0) {
+        if (auto p = dynamic_cast<const Podcast*>(media); advFilters.podcastGenre >= 0) {
             if (p && static_cast<int>(p->getGenre()) != advFilters.podcastGenre) return false;
         }
     }

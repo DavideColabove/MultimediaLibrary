@@ -35,10 +35,10 @@ bool JsonPersistence::save(const Library& library, const std::string& filePath) 
     if (!out.is_open()) return false;
 
     out << "{\n  \"media\": [\n";
-    const auto items = library.getAllMedia();
+    const auto items = library.getAllMediaConst();
     for (size_t i = 0; i < items.size(); ++i) {
         const Media* m = items[i];
-        std::string type = const_cast<Library&>(library).getMediaType(m);
+        std::string type = library.getMediaType(m);
         out << "    {\n";
         out << "      \"type\": \"" << MinimalJson::escape(type) << "\",\n";
         out << "      \"id\": " << m->getID() << ",\n";

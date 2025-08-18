@@ -56,40 +56,41 @@ public:
      * @return Pointer to the media item if found, nullptr otherwise
      */
     Media* findMediaById(int id);
+    const Media* findMediaById(int id) const;
     
     /**
      * @brief Retrieves all media items in the library
      * @return Vector of pointers to all media items
      */
-    std::vector<Media*> getAllMedia() const;
+    std::vector<const Media*> getAllMediaConst() const;
     
     /**
      * @brief Searches for media items by title (case-insensitive partial match)
      * @param title The title to search for
      * @return Vector of media items matching the search criteria
      */
-    std::vector<Media*> searchByTitle(const std::string& title) const;
+    std::vector<const Media*> searchByTitleConst(const std::string& title) const;
     
     /**
      * @brief Searches for media items by author (case-insensitive partial match)
      * @param author The author to search for
      * @return Vector of media items matching the search criteria
      */
-    std::vector<Media*> searchByAuthor(const std::string& author) const;
+    std::vector<const Media*> searchByAuthorConst(const std::string& author) const;
     
     /**
      * @brief Filters media items by their type
      * @param type The media type to filter by (Book, Movie, Song, etc.)
      * @return Vector of media items of the specified type
      */
-    std::vector<Media*> filterByType(const std::string& type) const;
+    std::vector<const Media*> filterByTypeConst(const std::string& type) const;
     
     /**
      * @brief Filters media items by availability status
      * @param available The availability status to filter by
      * @return Vector of media items with the specified availability
      */
-    std::vector<Media*> filterByAvailability(bool available) const;
+    std::vector<const Media*> filterByAvailabilityConst(bool available) const;
 
     /**
      * @brief Saves the library data to a JSON file

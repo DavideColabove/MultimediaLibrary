@@ -85,7 +85,7 @@ private slots:
     
     // UI interaction handlers
     void onCategoryChanged(int index);
-    void onMediaCardClicked(Media* media);
+    void onMediaCardClicked(const Media* media);
     void onBackToGridClicked();
     void onSearchTextChanged(const QString& text);
     void onAdvancedSearchClicked();
@@ -106,7 +106,7 @@ private:
     void applyDarkTheme();
     
     // Filter and utility methods
-    bool mediaMatchesFilters(Media* media) const;
+    bool mediaMatchesFilters(const Media* media) const;
     QString categoryToType(const QString& category) const;
     
     // Main layout components
@@ -192,7 +192,7 @@ private:
     // Helper methods for UI management
     void refreshMediaGrid();           // Refreshes the media grid display
     void clearMediaGrid();             // Clears all media cards from grid
-    void addMediaCard(Media* media, int row, int col); // Adds a media card to grid
+    void addMediaCard(const Media* media, int row, int col); // Adds a media card to grid
     void showMediaDetails(Media* media);               // Shows media details panel
     void hideMediaDetails();           // Hides media details panel
     void clearAttributesForm();        // Clears the attributes form

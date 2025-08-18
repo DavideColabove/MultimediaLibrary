@@ -35,20 +35,20 @@ public:
      * @param media Pointer to the media item to display
      * @param parent Parent widget (optional)
      */
-    MediaCard(Media* media, QWidget* parent = nullptr);
+    MediaCard(const Media* media, QWidget* parent = nullptr);
     
     /**
      * @brief Gets the media item associated with this card
      * @return Pointer to the media item
      */
-    Media* getMedia() const { return media; }
+    const Media* getMedia() const { return media; }
 
 signals:
     /**
      * @brief Signal emitted when the card is clicked
      * @param media Pointer to the media item that was clicked
      */
-    void clicked(Media* media);
+    void clicked(const Media* media);
 
 protected:
     /**
@@ -76,7 +76,7 @@ protected:
     void leaveEvent(QEvent* event) override;
 
 private:
-    Media* media;              // Associated media item
+    const Media* media;              // Associated media item
     QLabel* coverLabel;        // Label for cover image or icon
     QLabel* titleLabel;        // Label for media title
     QLabel* yearLabel;         // Label for release year

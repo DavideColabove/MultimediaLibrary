@@ -158,7 +158,7 @@ void MainWindow::refreshMediaGrid()
 {
     clearMediaGrid();
     
-    auto allMedia = library->getAllMedia();
+    auto allMedia = library->getAllMediaConst();
     
     // Dynamic sorting
     std::sort(allMedia.begin(), allMedia.end(), [&](Media* a, Media* b){

@@ -50,69 +50,80 @@ Media* Library::findMediaById(int id)
     return (it != mediaCollection.end()) ? it->get() : nullptr;
 }
 
-std::vector<Media*> Library::getAllMedia() const
+const Media* Library::findMediaById(int id) const
 {
-    std::vector<Media*> result;
+    auto it = std::find_if(
+        mediaCollection.begin(), mediaCollection.end(),
+        [id](const std::unique_ptr<Media>& media) {
+            return media->getID() == static_cast<unsigned int>(id);
+        }
+    );
+    return (it != mediaCollection.end()) ? it->get() : nullptr;
+}
+
+// Removed non-const getAllMedia(); use getAllMediaConst()
+
+std::vector<const Media*> Library::getAllMediaConst() const
+{
+    std::vector<const Media*> result;
     result.reserve(mediaCollection.size());
-    
     for (const auto& media : mediaCollection) {
         result.push_back(media.get());
     }
-    
     return result;
 }
 
-std::vector<Media*> Library::searchByTitle(const std::string& title) const
+// Removed non-const searchByTitle(); use searchByTitleConst()
+
+std::vector<const Media*> Library::searchByTitleConst(const std::string& title) const
 {
-    std::vector<Media*> result;
-    
+    std::vector<const Media*> result;
     for (const auto& media : mediaCollection) {
         std::string mediaTitle = media->getTitle();
         if (mediaTitle.find(title) != std::string::npos) {
             result.push_back(media.get());
         }
     }
-    
     return result;
 }
 
-std::vector<Media*> Library::searchByAuthor(const std::string& author) const
+// Removed non-const searchByAuthor(); use searchByAuthorConst()
+
+std::vector<const Media*> Library::searchByAuthorConst(const std::string& author) const
 {
-    std::vector<Media*> result;
-    
+    std::vector<const Media*> result;
     for (const auto& media : mediaCollection) {
         std::string mediaAuthor = media->getAuthor();
         if (mediaAuthor.find(author) != std::string::npos) {
             result.push_back(media.get());
         }
     }
-    
     return result;
 }
 
-std::vector<Media*> Library::filterByType(const std::string& type) const
+// Removed non-const filterByType(); use filterByTypeConst()
+
+std::vector<const Media*> Library::filterByTypeConst(const std::string& type) const
 {
-    std::vector<Media*> result;
-    
+    std::vector<const Media*> result;
     for (const auto& media : mediaCollection) {
         if (getMediaType(media.get()) == type) {
             result.push_back(media.get());
         }
     }
-    
     return result;
 }
 
-std::vector<Media*> Library::filterByAvailability(bool available) const
+// Removed non-const filterByAvailability(); use filterByAvailabilityConst()
+
+std::vector<const Media*> Library::filterByAvailabilityConst(bool available) const
 {
-    std::vector<Media*> result;
-    
+    std::vector<const Media*> result;
     for (const auto& media : mediaCollection) {
         if (media->getIsAvailable() == available) {
             result.push_back(media.get());
         }
     }
-    
     return result;
 }
 

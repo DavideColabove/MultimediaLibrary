@@ -14,7 +14,7 @@
 #include "../../Backend/Elements/Magazine.h"
 #include "../../Backend/Elements/Podcast.h"
 
-MediaCard::MediaCard(Media* media, QWidget* parent)
+MediaCard::MediaCard(const Media* media, QWidget* parent)
     : QFrame(parent), media(media), isHovered(false)
 {
     setMinimumSize(200, 260);
@@ -117,11 +117,11 @@ void MediaCard::updateCover()
     } else {
         // Show a type icon placeholder 
         QString iconName;
-        if (dynamic_cast<Book*>(media)) iconName = "book";
-        else if (dynamic_cast<Movie*>(media)) iconName = "movie";
-        else if (dynamic_cast<Song*>(media)) iconName = "music";
-        else if (dynamic_cast<Magazine*>(media)) iconName = "magazine";
-        else if (dynamic_cast<Podcast*>(media)) iconName = "podcast";
+        if (dynamic_cast<const Book*>(media)) iconName = "book";
+        else if (dynamic_cast<const Movie*>(media)) iconName = "movie";
+        else if (dynamic_cast<const Song*>(media)) iconName = "music";
+        else if (dynamic_cast<const Magazine*>(media)) iconName = "magazine";
+        else if (dynamic_cast<const Podcast*>(media)) iconName = "podcast";
 
         auto findIconPath = [&](const QString& base)->QString{
             const QString res = QString(":/icons/%1.svg").arg(base);
@@ -190,10 +190,10 @@ void MediaCard::updateCover()
 QString MediaCard::computeType() const
 {
     // Lightweight type name for badge
-    if (dynamic_cast<Book*>(media)) return "Book";
-    if (dynamic_cast<Movie*>(media)) return "Movie";
-    if (dynamic_cast<Song*>(media)) return "Song";
-    if (dynamic_cast<Magazine*>(media)) return "Magazine";
-    if (dynamic_cast<Podcast*>(media)) return "Podcast";
+    if (dynamic_cast<const Book*>(media)) return "Book";
+    if (dynamic_cast<const Movie*>(media)) return "Movie";
+    if (dynamic_cast<const Song*>(media)) return "Song";
+    if (dynamic_cast<const Magazine*>(media)) return "Magazine";
+    if (dynamic_cast<const Podcast*>(media)) return "Podcast";
     return "";
 }

@@ -31,8 +31,8 @@ bool XmlPersistence::save(const Library& library, const std::string& filePath) c
     if (!out.is_open()) return false;
     out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     out << "<library>\n";
-    for (auto m : library.getAllMedia()) {
-        std::string type = const_cast<Library&>(library).getMediaType(m);
+    for (auto m : library.getAllMediaConst()) {
+        std::string type = library.getMediaType(m);
         out << "  <media type=\"" << xmlEscape(type) << "\" id=\"" << m->getID() << "\">\n";
         out << "    <title>" << xmlEscape(m->getTitle()) << "</title>\n";
         out << "    <author>" << xmlEscape(m->getAuthor()) << "</author>\n";
