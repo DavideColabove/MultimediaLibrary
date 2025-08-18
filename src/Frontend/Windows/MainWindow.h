@@ -193,10 +193,10 @@ private:
     void refreshMediaGrid();           // Refreshes the media grid display
     void clearMediaGrid();             // Clears all media cards from grid
     void addMediaCard(const Media* media, int row, int col); // Adds a media card to grid
-    void showMediaDetails(Media* media);               // Shows media details panel
+    void showMediaDetails(const Media* media);               // Shows media details panel
     void hideMediaDetails();           // Hides media details panel
     void clearAttributesForm();        // Clears the attributes form
-    void populateAttributesForm(Media* media); // Populates attributes form with media data
+    void populateAttributesForm(const Media* media); // Populates attributes form with media data
     void filterMediaByCategory(const QString& category); // Filters media by category
     void applySearchFilter(const QString& searchText);   // Applies search filter
     int computeColumnsForWidth(int availableWidth) const; // Computes optimal column count

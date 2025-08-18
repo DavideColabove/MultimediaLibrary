@@ -85,18 +85,18 @@ class Movie : public Media {
         virtual void accept(MediaVisitor& visitor) const override;
 
         // Movie-specific attribute accessors
-        std::string getDirector() const;
+        const std::string& getDirector() const;
         Movie& setDirector(const std::string& dir);
         unsigned int getDuration() const;
         Movie& setDuration(unsigned int dur);
-        std::string getStudio() const;
+        const std::string& getStudio() const;
         Movie& setStudio(const std::string& stu);
-        std::string getRating() const;
+        const std::string& getRating() const;
         Movie& setRating(const std::string& rat);
         Enums::Language getLanguage() const;
         Movie& setLanguage(Enums::Language lang);
         std::string getLanguageString() const;
-        std::string getCountry() const;
+        const std::string& getCountry() const;
         Movie& setCountry(const std::string& cou);
         
         // Genre management methods

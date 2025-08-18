@@ -752,7 +752,7 @@ void MainWindow::addMediaCard(const Media* media, int row, int col)
     mediaGridLayout->addWidget(card, row, col);
 }
 
-void MainWindow::showMediaDetails(Media* media)
+void MainWindow::showMediaDetails(const Media* media)
 {
     if (!media) return;
     
@@ -769,11 +769,11 @@ void MainWindow::showMediaDetails(Media* media)
     } else {
         // Fallback: show type icon placeholder, consistent with MediaCard
         QString iconName;
-        if (dynamic_cast<Book*>(media)) iconName = "book";
-        else if (dynamic_cast<Movie*>(media)) iconName = "movie";
-        else if (dynamic_cast<Song*>(media)) iconName = "music";
-        else if (dynamic_cast<Magazine*>(media)) iconName = "magazine";
-        else if (dynamic_cast<Podcast*>(media)) iconName = "podcast";
+        if (dynamic_cast<const Book*>(media)) iconName = "book";
+        else if (dynamic_cast<const Movie*>(media)) iconName = "movie";
+        else if (dynamic_cast<const Song*>(media)) iconName = "music";
+        else if (dynamic_cast<const Magazine*>(media)) iconName = "magazine";
+        else if (dynamic_cast<const Podcast*>(media)) iconName = "podcast";
 
         auto findIconPath = [&](const QString& base)->QString{
             const QString res = QString(":/icons/%1.svg").arg(base);
@@ -873,18 +873,18 @@ void MainWindow::clearAttributesForm()
     }
 }
 
-void MainWindow::populateAttributesForm(Media* media)
+void MainWindow::populateAttributesForm(const Media* media)
 {
     if (!media || !attributesForm) return;
     
-    if (auto b = dynamic_cast<Book*>(media)) {
+    if (auto b = dynamic_cast<const Book*>(media)) {
         attributesForm->addRow("Type:", new QLabel("Book", attributesWidget));
         attributesForm->addRow("Publisher:", new QLabel(QString::fromStdString(b->getPublisher()), attributesWidget));
         attributesForm->addRow("Pages:", new QLabel(QString::number(b->getPages()), attributesWidget));
         attributesForm->addRow("ISBN:", new QLabel(QString::fromStdString(b->getIsbn()), attributesWidget));
         attributesForm->addRow("Language:", new QLabel(QString::fromStdString(b->getLanguageString()), attributesWidget));
         attributesForm->addRow("Genre:", new QLabel(QString::fromStdString(b->getGenreString()), attributesWidget));
-    } else if (auto m = dynamic_cast<Movie*>(media)) {
+    } else if (auto m = dynamic_cast<const Movie*>(media)) {
         attributesForm->addRow("Type:", new QLabel("Movie", attributesWidget));
         attributesForm->addRow("Director:", new QLabel(QString::fromStdString(m->getDirector()), attributesWidget));
         attributesForm->addRow("Duration:", new QLabel(QString::number(m->getDuration()) + " min", attributesWidget));
@@ -893,7 +893,7 @@ void MainWindow::populateAttributesForm(Media* media)
         attributesForm->addRow("Language:", new QLabel(QString::fromStdString(m->getLanguageString()), attributesWidget));
         attributesForm->addRow("Country:", new QLabel(QString::fromStdString(m->getCountry()), attributesWidget));
         attributesForm->addRow("Genre:", new QLabel(QString::fromStdString(m->getGenreString()), attributesWidget));
-    } else if (auto s = dynamic_cast<Song*>(media)) {
+    } else if (auto s = dynamic_cast<const Song*>(media)) {
         attributesForm->addRow("Type:", new QLabel("Song", attributesWidget));
         attributesForm->addRow("Artist:", new QLabel(QString::fromStdString(s->getArtist()), attributesWidget));
         attributesForm->addRow("Album:", new QLabel(QString::fromStdString(s->getAlbum()), attributesWidget));
@@ -902,7 +902,7 @@ void MainWindow::populateAttributesForm(Media* media)
         attributesForm->addRow("Label:", new QLabel(QString::fromStdString(s->getLabel()), attributesWidget));
         attributesForm->addRow("Track:", new QLabel(QString::number(s->getTrackNumber()), attributesWidget));
         attributesForm->addRow("Genre:", new QLabel(QString::fromStdString(s->getGenreString()), attributesWidget));
-    } else if (auto mg = dynamic_cast<Magazine*>(media)) {
+    } else if (auto mg = dynamic_cast<const Magazine*>(media)) {
         attributesForm->addRow("Type:", new QLabel("Magazine", attributesWidget));
         attributesForm->addRow("Publisher:", new QLabel(QString::fromStdString(mg->getPublisher()), attributesWidget));
         attributesForm->addRow("Issue:", new QLabel(QString::number(mg->getIssueNumber()), attributesWidget));
@@ -911,7 +911,7 @@ void MainWindow::populateAttributesForm(Media* media)
         attributesForm->addRow("Pages:", new QLabel(QString::number(mg->getPages()), attributesWidget));
         attributesForm->addRow("Frequency:", new QLabel(QString::fromStdString(mg->getFrequency()), attributesWidget));
         attributesForm->addRow("Genre:", new QLabel(QString::fromStdString(mg->getGenreString()), attributesWidget));
-    } else if (auto p = dynamic_cast<Podcast*>(media)) {
+    } else if (auto p = dynamic_cast<const Podcast*>(media)) {
         attributesForm->addRow("Type:", new QLabel("Podcast", attributesWidget));
         attributesForm->addRow("Host:", new QLabel(QString::fromStdString(p->getHost()), attributesWidget));
         attributesForm->addRow("Episodes:", new QLabel(QString::number(p->getEpisodeNumber()), attributesWidget));

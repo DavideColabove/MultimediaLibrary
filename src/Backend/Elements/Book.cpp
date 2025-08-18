@@ -22,7 +22,7 @@ bool Book::isValid() const {
            pages > 0 && !isbn.empty();
 }
 
-std::string Book::getPublisher() const {
+const std::string& Book::getPublisher() const {
     return publisher;
 }
 
@@ -40,7 +40,7 @@ Book& Book::setPages(unsigned int p) {
     return *this;
 }
 
-std::string Book::getIsbn() const {
+const std::string& Book::getIsbn() const {
     return isbn;
 }
 

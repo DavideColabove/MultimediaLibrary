@@ -84,15 +84,15 @@ class Song : public Media {
         virtual void accept(MediaVisitor& visitor) const override;
 
         // Song-specific attribute accessors
-        std::string getArtist() const;
+        const std::string& getArtist() const;
         Song& setArtist(const std::string& art);
-        std::string getAlbum() const;
+        const std::string& getAlbum() const;
         Song& setAlbum(const std::string& alb);
         unsigned int getDuration() const;
         Song& setDuration(unsigned int dur);
-        std::string getFormat() const;
+        const std::string& getFormat() const;
         Song& setFormat(const std::string& fmt);
-        std::string getLabel() const;
+        const std::string& getLabel() const;
         Song& setLabel(const std::string& lab);
         unsigned int getTrackNumber() const;
         Song& setTrackNumber(unsigned int track);

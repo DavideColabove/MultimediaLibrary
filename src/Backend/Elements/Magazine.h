@@ -85,17 +85,17 @@ class Magazine : public Media {
         virtual void accept(MediaVisitor& visitor) const override;
 
         // Magazine-specific attribute accessors
-        std::string getPublisher() const;
+        const std::string& getPublisher() const;
         Magazine& setPublisher(const std::string& pub);
         unsigned int getIssueNumber() const;
         Magazine& setIssueNumber(unsigned int issue);
-        std::string getIssn() const;
+        const std::string& getIssn() const;
         Magazine& setIssn(const std::string& issn);
-        std::string getEditor() const;
+        const std::string& getEditor() const;
         Magazine& setEditor(const std::string& ed);
         unsigned int getPages() const;
         Magazine& setPages(unsigned int p);
-        std::string getFrequency() const;
+        const std::string& getFrequency() const;
         Magazine& setFrequency(const std::string& freq);
         
         // Genre management methods

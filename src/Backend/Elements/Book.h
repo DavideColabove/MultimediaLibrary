@@ -78,11 +78,11 @@ class Book : public Media {
         virtual void accept(MediaVisitor& visitor) const override;
 
         // Book-specific attribute accessors
-        std::string getPublisher() const;
+        const std::string& getPublisher() const;
         Book& setPublisher(const std::string& pub);
         unsigned int getPages() const;
         Book& setPages(unsigned int p);
-        std::string getIsbn() const;
+        const std::string& getIsbn() const;
         Book& setIsbn(const std::string& isbn);
         Enums::Language getLanguage() const;
         Book& setLanguage(Enums::Language lang);

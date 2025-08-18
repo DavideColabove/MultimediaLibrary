@@ -15,9 +15,6 @@
  * @return Application exit code
  */
 int main(int argc, char *argv[]) {
-    // Ensure crisp icons on HiDPI displays before app construction
-    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
-
     // Initialize the Qt application
     QApplication app(argc, argv);
     
@@ -31,7 +28,7 @@ int main(int argc, char *argv[]) {
     // Set the application style to Fusion for consistent cross-platform appearance
     app.setStyle(QStyleFactory::create("Fusion"));
 
-    // Apply a consistent dark palette across platforms (especially Linux)
+    // Apply a consistent palette across platforms (especially from Windows to Linux)
     QPalette dark;
     dark.setColor(QPalette::Window, QColor(43, 43, 43));
     dark.setColor(QPalette::WindowText, QColor(255, 255, 255));

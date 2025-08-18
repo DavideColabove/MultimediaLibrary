@@ -23,7 +23,7 @@ bool Movie::isValid() const {
            duration > 0 && !rating.empty() && !country.empty();
 }
 
-std::string Movie::getDirector() const {
+const std::string& Movie::getDirector() const {
     return director;
 }
 
@@ -41,7 +41,7 @@ Movie& Movie::setDuration(unsigned int dur) {
     return *this;
 }
 
-std::string Movie::getStudio() const {
+const std::string& Movie::getStudio() const {
     return studio;
 }
 
@@ -50,7 +50,7 @@ Movie& Movie::setStudio(const std::string& stu) {
     return *this;
 }
 
-std::string Movie::getRating() const {
+const std::string& Movie::getRating() const {
     return rating;
 }
 
@@ -72,7 +72,7 @@ std::string Movie::getLanguageString() const {
     return Enums::languageToString(language);
 }
 
-std::string Movie::getCountry() const {
+const std::string& Movie::getCountry() const {
     return country;
 }
 

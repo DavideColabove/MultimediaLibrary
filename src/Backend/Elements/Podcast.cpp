@@ -23,7 +23,7 @@ bool Podcast::isValid() const {
            !platform.empty() && duration > 0 && !series.empty() && !description.empty();
 }
 
-std::string Podcast::getHost() const {
+const std::string& Podcast::getHost() const {
     return host;
 }
 
@@ -41,7 +41,7 @@ Podcast& Podcast::setEpisodeNumber(unsigned int ep) {
     return *this;
 }
 
-std::string Podcast::getPlatform() const {
+const std::string& Podcast::getPlatform() const {
     return platform;
 }
 
@@ -59,7 +59,7 @@ Podcast& Podcast::setDuration(unsigned int dur) {
     return *this;
 }
 
-std::string Podcast::getSeries() const {
+const std::string& Podcast::getSeries() const {
     return series;
 }
 
@@ -68,7 +68,7 @@ Podcast& Podcast::setSeries(const std::string& ser) {
     return *this;
 }
 
-std::string Podcast::getDescription() const {
+const std::string& Podcast::getDescription() const {
     return description;
 }
 

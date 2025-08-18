@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 - **Grid area:** Media grid view with scroll
 - **Right panel:** Detailed view of selected media
 
-**Key Methods:**
+**Key Methods (updated const signatures):**
 ```cpp
 class MainWindow : public QMainWindow
 {
@@ -79,7 +79,7 @@ public:
     
 private slots:
     void refreshMediaGrid();                    // Updates media grid
-    void onMediaCardClicked(Media*);           // Handles media card click
+    void onMediaCardClicked(const Media*);           // Handles media card click
     void onBackToGridClicked();                // Returns to grid view
     void onSearchTextChanged(const QString&);  // Handles textual search
     void onAdvancedSearchClicked();            // Opens advanced search
@@ -90,12 +90,12 @@ private slots:
 private:
     void setupUI();                            // Configures interface
     void setupConnections();                   // Sets up connections
-    void showMediaDetails(Media*);             // Shows media details
+    void showMediaDetails(const Media*);             // Shows media details
     void hideMediaDetails();                   // Hides media details
-    void addMediaCard(Media*, int, int);       // Adds card to grid
+    void addMediaCard(const Media*, int, int);       // Adds card to grid
     int computeColumnsForWidth(int);           // Calculates columns for width
-    void populateAttributesForm(Media*);       // Populates specific attributes form
-    bool mediaMatchesFilters(Media*) const;    // Checks if media matches filters
+    void populateAttributesForm(const Media*);       // Populates specific attributes form
+    bool mediaMatchesFilters(const Media*) const;    // Checks if media matches filters
 };
 ```
 
@@ -123,7 +123,7 @@ void MainWindow::onSearchTextChanged(const QString& text)
     refreshMediaGrid();  // Updates in real-time
 }
 
-bool MainWindow::mediaMatchesFilters(Media* media) const
+bool MainWindow::mediaMatchesFilters(const Media* media) const
 {
     // Category filter
     QString typeNeeded = categoryToType(currentCategoryFilter);
@@ -161,7 +161,7 @@ void MainWindow::refreshMediaGrid()
     auto allMedia = library->getAllMediaConst();
     
     // Dynamic sorting
-    std::sort(allMedia.begin(), allMedia.end(), [&](Media* a, Media* b){
+    std::sort(allMedia.begin(), allMedia.end(), [&](const Media* a, const Media* b){
         if (currentSortMode == SortMode::TitleAsc) return a->getTitle() < b->getTitle();
         if (currentSortMode == SortMode::TitleDesc) return a->getTitle() > b->getTitle();
         const Date& da = a->getReleaseDate(); const Date& db = b->getReleaseDate();
@@ -234,17 +234,17 @@ class MediaCard : public QFrame
     Q_OBJECT
     
 public:
-    MediaCard(Media* media, QWidget* parent = nullptr);
+    MediaCard(const Media* media, QWidget* parent = nullptr);
     
 signals:
-    void clicked(Media* media);
+    void clicked(const Media* media);
     
 private:
     void setupUI();
     void loadCoverImage();
     void setupFallbackIcon();
     
-    Media* media;
+    const Media* media;
     QLabel* coverLabel;
     QLabel* titleLabel;
     QLabel* authorLabel;
@@ -257,12 +257,12 @@ private:
 void MediaCard::setupFallbackIcon()
 {
     // Determines media type and loads appropriate icon
-    auto typeToIcon = [&](Media* m)->QString{
-        if (dynamic_cast<Book*>(m)) return "book";
-        if (dynamic_cast<Movie*>(m)) return "movie";
-        if (dynamic_cast<Song*>(m)) return "music";
-        if (dynamic_cast<Magazine*>(m)) return "magazine";
-        if (dynamic_cast<Podcast*>(m)) return "podcast";
+    auto typeToIcon = [&](const Media* m)->QString{
+        if (dynamic_cast<const Book*>(m)) return "book";
+        if (dynamic_cast<const Movie*>(m)) return "movie";
+        if (dynamic_cast<const Song*>(m)) return "music";
+        if (dynamic_cast<const Magazine*>(m)) return "magazine";
+        if (dynamic_cast<const Podcast*>(m)) return "podcast";
         return "";
     };
     
@@ -642,3 +642,16 @@ QPixmap MainWindow::loadIconByName(const QString& baseName)
 ---
 
 **The Frontend is now in an advanced and production-ready state, with all core functionality implemented and a focus on performance and UX improvements.** 🎯✨
+
+## 🧩 Const-correct MediaCard
+“Refactor” significa riorganizzare il codice senza cambiarne il comportamento esterno. Obiettivi tipici:
+- Migliorare leggibilità e manutenibilità
+- Applicare best practice (es. const-correctness)
+- Ridurre duplicazioni e cast superflui
+- Migliorare performance micro (evitare copie inutili)
+
+Nel nostro caso il refactor ha:
+- Propagato `const Media*` in tutta la UI di sola lettura
+- Rimosso le API non const nel backend a favore di versioni `Const`
+- Ottimizzato getter stringa con ritorno `const std::string&`
+- Eliminato un attributo Qt deprecato

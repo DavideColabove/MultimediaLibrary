@@ -22,7 +22,7 @@ bool Magazine::isValid() const {
            !issn.empty() && !editor.empty() && pages > 0 && !frequency.empty();
 }
 
-std::string Magazine::getPublisher() const {
+const std::string& Magazine::getPublisher() const {
     return publisher;
 }
 
@@ -40,7 +40,7 @@ Magazine& Magazine::setIssueNumber(unsigned int issue) {
     return *this;
 }
 
-std::string Magazine::getIssn() const {
+const std::string& Magazine::getIssn() const {
     return issn;
 }
 
@@ -49,7 +49,7 @@ Magazine& Magazine::setIssn(const std::string& issn) {
     return *this;
 }
 
-std::string Magazine::getEditor() const {
+const std::string& Magazine::getEditor() const {
     return editor;
 }
 
@@ -67,7 +67,7 @@ Magazine& Magazine::setPages(unsigned int p) {
     return *this;
 }
 
-std::string Magazine::getFrequency() const {
+const std::string& Magazine::getFrequency() const {
     return frequency;
 }
 

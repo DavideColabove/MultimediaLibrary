@@ -22,7 +22,7 @@ bool Song::isValid() const {
            duration > 0 && !format.empty() && !label.empty() && trackNumber > 0;
 }
 
-std::string Song::getArtist() const {
+const std::string& Song::getArtist() const {
     return artist;
 }
 
@@ -31,7 +31,7 @@ Song& Song::setArtist(const std::string& art) {
     return *this;
 }
 
-std::string Song::getAlbum() const {
+const std::string& Song::getAlbum() const {
     return album;
 }
 
@@ -49,7 +49,7 @@ Song& Song::setDuration(unsigned int dur) {
     return *this;
 }
 
-std::string Song::getFormat() const {
+const std::string& Song::getFormat() const {
     return format;
 }
 
@@ -58,7 +58,7 @@ Song& Song::setFormat(const std::string& fmt) {
     return *this;
 }
 
-std::string Song::getLabel() const {
+const std::string& Song::getLabel() const {
     return label;
 }
 
