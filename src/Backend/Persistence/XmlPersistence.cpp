@@ -105,6 +105,8 @@ bool XmlPersistence::load(Library& library, const std::string& filePath) const {
             bool available = availStr.find("true") != std::string::npos;
             Date releaseDate; Date::parseIso(rdate, releaseDate);
 
+            // Expect explicit <imagePath> value in XML; no auto inference.
+
             std::unique_ptr<Media> media;
             if (type == "Book") {
                 // Extract book attrs from singleton tag

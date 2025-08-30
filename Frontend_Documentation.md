@@ -10,14 +10,18 @@ The Frontend of the MultimediaLibrary project is built using the Qt 6 framework 
 
 ```
 src/Frontend/
-├── Windows/           # Main windows and dialogs
-│   ├── MainWindow.h/.cpp      # Main window
-│   ├── MediaCard.h/.cpp       # Card for each media
-│   ├── AddMediaDialog.h/.cpp  # Add/edit dialog
-│   └── SearchDialog.h/.cpp    # Advanced search dialog
-├── Resources/         # Graphic resources (icons, images)
-│   └── icons/        # SVG icons for each media type
-└── main.cpp          # Application entry point
+├── View/                 # Classic UI layer (replaces legacy Windows/)
+│   ├── ClassicMainWindow.h/.cpp   # Main application window (toolbar + list + detail)
+│   ├── ListWidgets/                # List & card widgets
+│   │   ├── ItemListWidget.h/.cpp
+│   │   └── ItemCardWidget.h/.cpp
+│   ├── DetailWidgets/              # Detail view widgets
+│   │   └── ItemDetailWidget.h/.cpp
+│   └── EditWidgets/                # Create/Edit dialog
+│       └── ItemEditDialog.h/.cpp
+├── Resources/            # Graphic resources (icons, images)
+│   └── icons/            # SVG icons for each media type
+└── main.cpp              # Application entry point
 ```
 
 ---
@@ -51,8 +55,8 @@ int main(int argc, char *argv[]) {
 
 ---
 
-### 2. **MainWindow.h** - Main Window Header
-**Path:** `src/Frontend/Windows/MainWindow.h`
+### 2. **ClassicMainWindow.h** - Main Window Header
+**Path:** `src/Frontend/View/ClassicMainWindow.h`
 
 **Function:** Declaration of the main class that manages the complete user interface.
 
@@ -101,8 +105,8 @@ private:
 
 ---
 
-### 3. **MainWindow.cpp** - Main Window Implementation
-**Path:** `src/Frontend/Windows/MainWindow.cpp`
+### 3. **ClassicMainWindow.cpp** - Main Window Implementation
+**Path:** `src/Frontend/View/ClassicMainWindow.cpp`
 
 **Function:** Complete implementation of main window logic and user interface management.
 
@@ -216,8 +220,8 @@ int MainWindow::computeColumnsForWidth(int availableWidth) const
 
 ---
 
-### 4. **MediaCard.h/.cpp** - Media Card
-**Path:** `src/Frontend/Windows/MediaCard.h` / `src/Frontend/Windows/MediaCard.cpp`
+### 4. **ItemCardWidget.h/.cpp** - Media Card
+**Path:** `src/Frontend/View/ListWidgets/ItemCardWidget.h` / `src/Frontend/View/ListWidgets/ItemCardWidget.cpp`
 
 **Function:** Custom widget that represents each media in the grid with responsive design and fallback for missing images.
 
@@ -284,8 +288,8 @@ void MediaCard::setupFallbackIcon()
 
 ---
 
-### 5. **AddMediaDialog.h/.cpp** - Add/Edit Dialog
-**Path:** `src/Frontend/Windows/AddMediaDialog.h` / `src/Frontend/Windows/AddMediaDialog.cpp`
+### 5. **ItemEditDialog.h/.cpp** - Add/Edit Dialog
+**Path:** `src/Frontend/View/EditWidgets/ItemEditDialog.h` / `src/Frontend/View/EditWidgets/ItemEditDialog.cpp`
 
 **Function:** Complete dialog for media creation and modification with validation, dynamic fields, and backend enum integration.
 
@@ -360,8 +364,7 @@ void AddMediaDialog::setupBookFields()
 
 ---
 
-### 6. **SearchDialog.h/.cpp** - Advanced Search Dialog
-**Path:** `src/Frontend/Windows/SearchDialog.h` / `src/Frontend/Windows/SearchDialog.cpp`
+// Legacy SearchDialog removed during simplification; advanced multi-field dialog can be reintroduced if necessary.
 
 **Function:** Dialog for advanced search with multiple filters, logical combinations, and backend enum integration.
 
@@ -508,12 +511,10 @@ QPixmap MainWindow::loadIconByName(const QString& baseName)
 - **Performance:** Optimized for large collections
 - **Integration:** Works with other filters
 
-### **Advanced Filters**
-- **By Type:** Book, Movie, Song, Magazine, Podcast
-- **By Genre:** All available genres by type
-- **By Language:** 40+ supported languages
-- **By Date:** Customizable range
-- **By Availability:** Only available/unavailable
+### **Filtering (Simplified)**
+- **Type Filter:** Book, Movie, Song, Magazine, Podcast
+- **Availability:** Toggle to show only available items
+Advanced multi-field dialog removed; focus on fast inline filtering. (Reintroduction possible.)
 
 ### **Logical Combinations**
 - **AND:** All filters must match
@@ -546,13 +547,7 @@ QPixmap MainWindow::loadIconByName(const QString& baseName)
 ## ⌨️ **Shortcuts and UX**
 
 ### **Keyboard Shortcuts**
-- **Ctrl+F:** Focus on search bar
-- **Ctrl+N:** New media
-- **Ctrl+O:** Open file
-- **Ctrl+S:** Save
-- **Ctrl+Q:** Exit
-- **F5:** Refresh grid
-- **Esc:** Close dialog
+Ctrl+N (new) • Ctrl+O (open) • Ctrl+S (save) • Ctrl+Q (quit) • Ctrl+E (edit) • Delete (remove) • Ctrl+F (focus search) • Ctrl+T (cycle type) • Ctrl+A (toggle availability)
 
 ### **UX Improvements**
 - **Placeholder Text:** Input field suggestions

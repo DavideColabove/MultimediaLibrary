@@ -1,14 +1,14 @@
 ﻿#include <QApplication>
 #include <QStyleFactory>
 #include <QIcon>
-#include "Frontend/Windows/MainWindow.h"
+#include "Frontend/View/ClassicMainWindow.h"
 
 /**
  * @brief Main entry point for the Multimedia Library application
  * 
  * This function initializes the Qt application, configures the application
- * properties, sets up the visual style, creates the main window, and
- * starts the event loop. It serves as the application's bootstrap process.
+ * properties, sets up the visual style, creates the classic migrated main window,
+ * and starts the event loop.
  * 
  * @param argc Number of command line arguments
  * @param argv Array of command line argument strings

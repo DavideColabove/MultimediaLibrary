@@ -36,11 +36,15 @@ MultimediaLibrary/
 │   │       ├── JsonPersistence.h/.cpp
 │   │       └── XmlPersistence.h/.cpp
 │   ├── Frontend/
-│   │   ├── Windows/               # Main interfaces
-│   │   │   ├── MainWindow.h/.cpp  # Main window
-│   │   │   ├── MediaCard.h/.cpp   # Card for each media
-│   │   │   ├── AddMediaDialog.h/.cpp # Add/edit dialog
-│   │   │   └── SearchDialog.h/.cpp   # Advanced search dialog
+│   │   ├── View/                  # New classic UI layer (replaces legacy Windows/)
+│   │   │   ├── ClassicMainWindow.h/.cpp   # Primary application window
+│   │   │   ├── ListWidgets/                # List & card widgets
+│   │   │   │   ├── ItemListWidget.h/.cpp
+│   │   │   │   └── ItemCardWidget.h/.cpp
+│   │   │   ├── DetailWidgets/              # Detail/inspection widgets
+│   │   │   │   └── ItemDetailWidget.h/.cpp
+│   │   │   └── EditWidgets/                # Create/Edit dialog
+│   │   │       └── ItemEditDialog.h/.cpp
 │   │   └── Resources/             # Graphic resources
 │   │       └── icons/             # SVG icons for each media type
 │   └── main.cpp                   # Application entry point
@@ -122,21 +126,20 @@ Nota: il progetto richiede QtSvg. In assenza del modulo, il file `.pro` fallirà
 - **Validation**: Data integrity checks
 
 ### **✅ Advanced Qt Frontend**
-- **MainWindow**: Main interface with adaptive layout
-- **MediaCard**: Responsive card for each media with fallback icon
-- **Search Bar**: Real-time textual search
-- **Advanced Search**: Complex filters for genre, dates, type
-- **Add/Edit Dialog**: Media creation and modification with validation
-- **Sidebar**: Category navigation with SVG icons
-- **Responsive Grid**: Grid that automatically adapts
+- **ClassicMainWindow**: Unified main window (toolbar + list + detail)
+- **ItemListWidget / ItemCardWidget**: Sortable & filterable list with per-type icon
+- **ItemDetailWidget**: Rich metadata + edit/delete actions
+- **ItemEditDialog**: Unified create/edit dialog (dynamic subtype pages)
+- **Inline Search & Filters**: Title/author search, type & availability filters
+- **Sorting**: Title (A↔Z) and date (newest/oldest)
+- **Keyboard Shortcuts**: Productivity-focused key bindings
 
 ### **✅ Advanced UX/UI**
-- **Dark Theme**: Material UI with vibrant colors
-- **SVG Icons**: Scalable and customizable
-- **Adaptive Layout**: Automatically resizes
-- **Keyboard Shortcuts**: Ctrl+F (search), Ctrl+N (new), etc.
-- **Animations**: Smooth transitions between views
-- **Responsive Design**: Adapts to different window sizes
+- **Dark Theme**: Material-inspired palette
+- **SVG Icons**: Scalable per media type
+- **Split Layout**: Persistent list + detail in splitter
+- **Keyboard Shortcuts**: Comprehensive set
+- **Responsive Design**: Panels adapt on resize
 
 ## 📚 **Architecture and Design Patterns**
 
@@ -156,20 +159,20 @@ Nota: il progetto richiede QtSvg. In assenza del modulo, il file `.pro` fallirà
 ## 🎨 **User Interface**
 
 ### **Main Components**
-- **Menu Bar**: File, Edit, View, Help with shortcuts
-- **Search Bar**: Quick search + advanced filters
-- **Sidebar**: Categories with SVG icons
-- **Media Grid**: Responsive grid with cards
-- **Details Panel**: Detailed view with cover and attributes
-- **Status Bar**: Information and status messages
+- **Toolbar**: File ops, create/edit/delete, filters, sorting
+- **Search Field**: Real-time title/author query
+- **Type & Availability Filters**: Inline combobox + checkbox
+- **List Panel**: Vertical list of media cards
+- **Detail Panel**: Contextual attributes & actions
+- **Status Feedback**: Dialogs / selection cues
 
 ### **UI Features**
-- **Instant Search**: Filters in real-time by title/author
-- **Sorting**: By title or date (ascending/descending)
-- **Advanced Filters**: By genre, language, availability, dates
-- **Drag & Drop**: Cover images
-- **Responsive Grid**: Automatically adapts to window
-- **Dark Theme**: Material UI colors with vibrant icons
+- **Instant Search**: Title/author, persistent across rebuilds
+- **Sorting**: Title (A→Z/Z→A) & Date (newest/oldest)
+- **Inline Filters**: Type + availability toggle
+- **Unified Dialog**: Single edit dialog for all subtypes
+- **Responsive Splitter**: Remembers sizing
+- **Dark Theme**: SVG icon support
 
 ## 🔍 **Search System**
 
@@ -179,11 +182,7 @@ Nota: il progetto richiede QtSvg. In assenza del modulo, il file `.pro` fallirà
 - **Multi-field**: Searches in title AND author
 - **Integrated**: Works with other filters
 
-### **Advanced Search (SearchDialog)**
-- **Multiple Filters**: Genre, language, dates, availability
-- **Logical Combinations**: Logically combinable filters
-- **Persistence**: Maintains filters between sessions
-- **Reset**: Button to clear all filters
+<!-- Legacy Advanced Search dialog removed; simplified inline search + filters retained. -->
 
 ## 💾 **Data Management**
 
@@ -298,14 +297,14 @@ make --version
 - ✅ **Validation**: Complete integrity checks
 
 ### **Frontend (95% ✅)**
-- ✅ **MainWindow**: Complete main interface
-- ✅ **MediaCard**: Responsive card with fallback
-- ✅ **Search System**: Quick + advanced search
-- ✅ **Add/Edit Dialog**: Media creation and modification
-- ✅ **Sidebar**: Category navigation
-- ✅ **Grid System**: Adaptive and responsive grid
-- ✅ **Theme System**: Complete Material UI dark theme
-- ✅ **Shortcuts**: Keyboard shortcuts
+- ✅ **ClassicMainWindow**: Unified list + detail layout
+- ✅ **ItemListWidget / ItemCardWidget**: Listing with filtering & sorting
+- ✅ **ItemDetailWidget**: Detailed metadata + actions
+- ✅ **ItemEditDialog**: Create/Edit unified dialog
+- ✅ **Search & Filters**: Inline search, type & availability
+- ✅ **Sorting**: Title/date modes
+- ✅ **Theme & Icons**: Dark theme + SVG icons
+- ✅ **Shortcuts**: Comprehensive set
 - 🔄 **Performance**: Optimizations in progress
 
 ### **Documentation (90% ✅)**
@@ -321,6 +320,8 @@ make --version
 - 🔄 **Integration Tests**: Integration tests planned
 
 ---
+
+Legacy GUI components (MainWindow, MediaCard, AddMediaDialog, SearchDialog) have been removed from source and build in favor of the lean Classic view architecture.
 
 **Developed with ❤️ using C++17, Qt 6.8.3 and Make** 🚀
 

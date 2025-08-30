@@ -17,7 +17,7 @@ CXX           = g++
 DEFINES       = -DUSE_QT -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_SVG_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -std=c++17 -Wall -Wextra -O2 -std=gnu++1z -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -Isrc/Backend/Elements -Isrc/Backend/Enums -Isrc/Backend/Library -Isrc/Frontend/Windows -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtSvg -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++
+INCPATH       = -I. -Isrc/Backend/Elements -Isrc/Backend/Enums -Isrc/Backend/Library -Isrc/Frontend/View -Isrc/Frontend/View/ListWidgets -Isrc/Frontend/View/DetailWidgets -Isrc/Frontend/View/EditWidgets -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtSvg -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++
 QMAKE         = /usr/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = MultimediaLibrary1.0.0
-DISTDIR = /home/student/Documents/MultimediaLibrary/.tmp/MultimediaLibrary1.0.0
+DISTDIR = /home/student/Desktop/MultimediaLibrary/.tmp/MultimediaLibrary1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1 -Wl,-rpath-link,/usr/lib/x86_64-linux-gnu
 LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt6Widgets.so /usr/lib/x86_64-linux-gnu/libQt6Svg.so /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libQt6Gui.so /usr/lib/x86_64-linux-gnu/libGLX.so /usr/lib/x86_64-linux-gnu/libOpenGL.so /usr/lib/x86_64-linux-gnu/libQt6Core.so -lpthread -lGLX -lOpenGL   
@@ -65,14 +65,16 @@ SOURCES       = src/main.cpp \
 		src/Backend/Library/Library.cpp \
 		src/Backend/Persistence/JsonPersistence.cpp \
 		src/Backend/Persistence/XmlPersistence.cpp \
-		src/Frontend/Windows/MainWindow.cpp \
-		src/Frontend/Windows/MediaCard.cpp \
-		src/Frontend/Windows/AddMediaDialog.cpp \
-		src/Frontend/Windows/SearchDialog.cpp qrc_resources.cpp \
-		moc_MainWindow.cpp \
-		moc_MediaCard.cpp \
-		moc_AddMediaDialog.cpp \
-		moc_SearchDialog.cpp
+		src/Frontend/View/ClassicMainWindow.cpp \
+		src/Frontend/View/ListWidgets/ItemCardWidget.cpp \
+		src/Frontend/View/ListWidgets/ItemListWidget.cpp \
+		src/Frontend/View/DetailWidgets/ItemDetailWidget.cpp \
+		src/Frontend/View/EditWidgets/ItemEditDialog.cpp qrc_resources.cpp \
+		moc_ClassicMainWindow.cpp \
+		moc_ItemCardWidget.cpp \
+		moc_ItemListWidget.cpp \
+		moc_ItemDetailWidget.cpp \
+		moc_ItemEditDialog.cpp
 OBJECTS       = main.o \
 		Date.o \
 		Media.o \
@@ -86,15 +88,17 @@ OBJECTS       = main.o \
 		Library.o \
 		JsonPersistence.o \
 		XmlPersistence.o \
-		MainWindow.o \
-		MediaCard.o \
-		AddMediaDialog.o \
-		SearchDialog.o \
+		ClassicMainWindow.o \
+		ItemCardWidget.o \
+		ItemListWidget.o \
+		ItemDetailWidget.o \
+		ItemEditDialog.o \
 		qrc_resources.o \
-		moc_MainWindow.o \
-		moc_MediaCard.o \
-		moc_AddMediaDialog.o \
-		moc_SearchDialog.o
+		moc_ClassicMainWindow.o \
+		moc_ItemCardWidget.o \
+		moc_ItemListWidget.o \
+		moc_ItemDetailWidget.o \
+		moc_ItemEditDialog.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/common/linux.conf \
@@ -144,7 +148,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/spec_post.prf \
-		.qmake.stash \
+		../../.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/default_pre.prf \
@@ -178,10 +182,11 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/spec_pre.prf \
 		src/Backend/Persistence/IPersistence.h \
 		src/Backend/Persistence/JsonPersistence.h \
 		src/Backend/Persistence/XmlPersistence.h \
-		src/Frontend/Windows/MainWindow.h \
-		src/Frontend/Windows/MediaCard.h \
-		src/Frontend/Windows/AddMediaDialog.h \
-		src/Frontend/Windows/SearchDialog.h src/main.cpp \
+		src/Frontend/View/ClassicMainWindow.h \
+		src/Frontend/View/ListWidgets/ItemCardWidget.h \
+		src/Frontend/View/ListWidgets/ItemListWidget.h \
+		src/Frontend/View/DetailWidgets/ItemDetailWidget.h \
+		src/Frontend/View/EditWidgets/ItemEditDialog.h src/main.cpp \
 		src/Backend/Elements/Date.cpp \
 		src/Backend/Elements/Media.cpp \
 		src/Backend/Elements/Book.cpp \
@@ -194,10 +199,11 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/spec_pre.prf \
 		src/Backend/Library/Library.cpp \
 		src/Backend/Persistence/JsonPersistence.cpp \
 		src/Backend/Persistence/XmlPersistence.cpp \
-		src/Frontend/Windows/MainWindow.cpp \
-		src/Frontend/Windows/MediaCard.cpp \
-		src/Frontend/Windows/AddMediaDialog.cpp \
-		src/Frontend/Windows/SearchDialog.cpp
+		src/Frontend/View/ClassicMainWindow.cpp \
+		src/Frontend/View/ListWidgets/ItemCardWidget.cpp \
+		src/Frontend/View/ListWidgets/ItemListWidget.cpp \
+		src/Frontend/View/DetailWidgets/ItemDetailWidget.cpp \
+		src/Frontend/View/EditWidgets/ItemEditDialog.cpp
 QMAKE_TARGET  = MultimediaLibrary
 DESTDIR       = build/bin/
 TARGET        = build/bin/MultimediaLibrary
@@ -259,7 +265,7 @@ Makefile: MultimediaLibrary.pro /usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++/
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/spec_post.prf \
-		.qmake.stash \
+		../../.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/default_pre.prf \
@@ -335,7 +341,7 @@ Makefile: MultimediaLibrary.pro /usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++/
 /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/qt_config.prf:
 /usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++/qmake.conf:
 /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/spec_post.prf:
-.qmake.stash:
+../../.qmake.stash:
 /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/exclusive_builds.prf:
 /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/toolchain.prf:
 /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/default_pre.prf:
@@ -377,8 +383,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents src/Backend/Elements/Date.h src/Backend/Elements/Media.h src/Backend/Elements/MediaVisitor.h src/Backend/Elements/Book.h src/Backend/Elements/Movie.h src/Backend/Elements/Song.h src/Backend/Elements/Magazine.h src/Backend/Elements/Podcast.h src/Backend/Enums/Genres.h src/Backend/Enums/Languages.h src/Backend/Library/Library.h src/Backend/Persistence/IPersistence.h src/Backend/Persistence/JsonPersistence.h src/Backend/Persistence/XmlPersistence.h src/Frontend/Windows/MainWindow.h src/Frontend/Windows/MediaCard.h src/Frontend/Windows/AddMediaDialog.h src/Frontend/Windows/SearchDialog.h $(DISTDIR)/
-	$(COPY_FILE) --parents src/main.cpp src/Backend/Elements/Date.cpp src/Backend/Elements/Media.cpp src/Backend/Elements/Book.cpp src/Backend/Elements/Movie.cpp src/Backend/Elements/Song.cpp src/Backend/Elements/Magazine.cpp src/Backend/Elements/Podcast.cpp src/Backend/Enums/Genres.cpp src/Backend/Enums/Languages.cpp src/Backend/Library/Library.cpp src/Backend/Persistence/JsonPersistence.cpp src/Backend/Persistence/XmlPersistence.cpp src/Frontend/Windows/MainWindow.cpp src/Frontend/Windows/MediaCard.cpp src/Frontend/Windows/AddMediaDialog.cpp src/Frontend/Windows/SearchDialog.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents src/Backend/Elements/Date.h src/Backend/Elements/Media.h src/Backend/Elements/MediaVisitor.h src/Backend/Elements/Book.h src/Backend/Elements/Movie.h src/Backend/Elements/Song.h src/Backend/Elements/Magazine.h src/Backend/Elements/Podcast.h src/Backend/Enums/Genres.h src/Backend/Enums/Languages.h src/Backend/Library/Library.h src/Backend/Persistence/IPersistence.h src/Backend/Persistence/JsonPersistence.h src/Backend/Persistence/XmlPersistence.h src/Frontend/View/ClassicMainWindow.h src/Frontend/View/ListWidgets/ItemCardWidget.h src/Frontend/View/ListWidgets/ItemListWidget.h src/Frontend/View/DetailWidgets/ItemDetailWidget.h src/Frontend/View/EditWidgets/ItemEditDialog.h $(DISTDIR)/
+	$(COPY_FILE) --parents src/main.cpp src/Backend/Elements/Date.cpp src/Backend/Elements/Media.cpp src/Backend/Elements/Book.cpp src/Backend/Elements/Movie.cpp src/Backend/Elements/Song.cpp src/Backend/Elements/Magazine.cpp src/Backend/Elements/Podcast.cpp src/Backend/Enums/Genres.cpp src/Backend/Enums/Languages.cpp src/Backend/Library/Library.cpp src/Backend/Persistence/JsonPersistence.cpp src/Backend/Persistence/XmlPersistence.cpp src/Frontend/View/ClassicMainWindow.cpp src/Frontend/View/ListWidgets/ItemCardWidget.cpp src/Frontend/View/ListWidgets/ItemListWidget.cpp src/Frontend/View/DetailWidgets/ItemDetailWidget.cpp src/Frontend/View/EditWidgets/ItemEditDialog.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -388,7 +394,6 @@ clean: compiler_clean
 
 distclean: clean 
 	-$(DEL_FILE) $(TARGET) 
-	-$(DEL_FILE) .qmake.stash
 	-$(DEL_FILE) Makefile
 
 
@@ -433,58 +438,33 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/data/dummy.cpp
 	g++ -pipe -std=c++17 -Wall -Wextra -O2 -std=gnu++1z -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_MainWindow.cpp moc_MediaCard.cpp moc_AddMediaDialog.cpp moc_SearchDialog.cpp
+compiler_moc_header_make_all: moc_ClassicMainWindow.cpp moc_ItemCardWidget.cpp moc_ItemListWidget.cpp moc_ItemDetailWidget.cpp moc_ItemEditDialog.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_MainWindow.cpp moc_MediaCard.cpp moc_AddMediaDialog.cpp moc_SearchDialog.cpp
-moc_MainWindow.cpp: src/Frontend/Windows/MainWindow.h \
-		src/Backend/Elements/Media.h \
-		src/Backend/Elements/Date.h \
-		src/Backend/Enums/Genres.h \
-		src/Backend/Enums/Languages.h \
-		src/Backend/Elements/MediaVisitor.h \
-		src/Backend/Elements/Book.h \
-		src/Backend/Elements/Movie.h \
-		src/Backend/Elements/Song.h \
-		src/Backend/Elements/Magazine.h \
-		src/Backend/Elements/Podcast.h \
-		src/Backend/Library/Library.h \
-		src/Frontend/Windows/MediaCard.h \
-		src/Frontend/Windows/AddMediaDialog.h \
-		src/Frontend/Windows/SearchDialog.h \
+	-$(DEL_FILE) moc_ClassicMainWindow.cpp moc_ItemCardWidget.cpp moc_ItemListWidget.cpp moc_ItemDetailWidget.cpp moc_ItemEditDialog.cpp
+moc_ClassicMainWindow.cpp: src/Frontend/View/ClassicMainWindow.h \
 		moc_predefs.h \
 		/usr/lib/qt6/libexec/moc
-	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/student/Documents/MultimediaLibrary/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/student/Documents/MultimediaLibrary -I/home/student/Documents/MultimediaLibrary/src/Backend/Elements -I/home/student/Documents/MultimediaLibrary/src/Backend/Enums -I/home/student/Documents/MultimediaLibrary/src/Backend/Library -I/home/student/Documents/MultimediaLibrary/src/Frontend/Windows -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtSvg -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include src/Frontend/Windows/MainWindow.h -o moc_MainWindow.cpp
+	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/student/Desktop/MultimediaLibrary/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/student/Desktop/MultimediaLibrary -I/home/student/Desktop/MultimediaLibrary/src/Backend/Elements -I/home/student/Desktop/MultimediaLibrary/src/Backend/Enums -I/home/student/Desktop/MultimediaLibrary/src/Backend/Library -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/ListWidgets -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/DetailWidgets -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/EditWidgets -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtSvg -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include src/Frontend/View/ClassicMainWindow.h -o moc_ClassicMainWindow.cpp
 
-moc_MediaCard.cpp: src/Frontend/Windows/MediaCard.h \
-		src/Backend/Elements/Media.h \
-		src/Backend/Elements/Date.h \
-		src/Backend/Enums/Genres.h \
-		src/Backend/Enums/Languages.h \
-		src/Backend/Elements/MediaVisitor.h \
+moc_ItemCardWidget.cpp: src/Frontend/View/ListWidgets/ItemCardWidget.h \
 		moc_predefs.h \
 		/usr/lib/qt6/libexec/moc
-	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/student/Documents/MultimediaLibrary/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/student/Documents/MultimediaLibrary -I/home/student/Documents/MultimediaLibrary/src/Backend/Elements -I/home/student/Documents/MultimediaLibrary/src/Backend/Enums -I/home/student/Documents/MultimediaLibrary/src/Backend/Library -I/home/student/Documents/MultimediaLibrary/src/Frontend/Windows -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtSvg -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include src/Frontend/Windows/MediaCard.h -o moc_MediaCard.cpp
+	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/student/Desktop/MultimediaLibrary/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/student/Desktop/MultimediaLibrary -I/home/student/Desktop/MultimediaLibrary/src/Backend/Elements -I/home/student/Desktop/MultimediaLibrary/src/Backend/Enums -I/home/student/Desktop/MultimediaLibrary/src/Backend/Library -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/ListWidgets -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/DetailWidgets -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/EditWidgets -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtSvg -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include src/Frontend/View/ListWidgets/ItemCardWidget.h -o moc_ItemCardWidget.cpp
 
-moc_AddMediaDialog.cpp: src/Frontend/Windows/AddMediaDialog.h \
-		src/Backend/Elements/Media.h \
-		src/Backend/Elements/Date.h \
-		src/Backend/Enums/Genres.h \
-		src/Backend/Enums/Languages.h \
-		src/Backend/Elements/MediaVisitor.h \
-		src/Backend/Elements/Book.h \
-		src/Backend/Elements/Movie.h \
-		src/Backend/Elements/Song.h \
-		src/Backend/Elements/Magazine.h \
-		src/Backend/Elements/Podcast.h \
+moc_ItemListWidget.cpp: src/Frontend/View/ListWidgets/ItemListWidget.h \
 		moc_predefs.h \
 		/usr/lib/qt6/libexec/moc
-	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/student/Documents/MultimediaLibrary/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/student/Documents/MultimediaLibrary -I/home/student/Documents/MultimediaLibrary/src/Backend/Elements -I/home/student/Documents/MultimediaLibrary/src/Backend/Enums -I/home/student/Documents/MultimediaLibrary/src/Backend/Library -I/home/student/Documents/MultimediaLibrary/src/Frontend/Windows -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtSvg -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include src/Frontend/Windows/AddMediaDialog.h -o moc_AddMediaDialog.cpp
+	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/student/Desktop/MultimediaLibrary/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/student/Desktop/MultimediaLibrary -I/home/student/Desktop/MultimediaLibrary/src/Backend/Elements -I/home/student/Desktop/MultimediaLibrary/src/Backend/Enums -I/home/student/Desktop/MultimediaLibrary/src/Backend/Library -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/ListWidgets -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/DetailWidgets -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/EditWidgets -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtSvg -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include src/Frontend/View/ListWidgets/ItemListWidget.h -o moc_ItemListWidget.cpp
 
-moc_SearchDialog.cpp: src/Frontend/Windows/SearchDialog.h \
-		src/Backend/Enums/Genres.h \
+moc_ItemDetailWidget.cpp: src/Frontend/View/DetailWidgets/ItemDetailWidget.h \
 		moc_predefs.h \
 		/usr/lib/qt6/libexec/moc
-	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/student/Documents/MultimediaLibrary/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/student/Documents/MultimediaLibrary -I/home/student/Documents/MultimediaLibrary/src/Backend/Elements -I/home/student/Documents/MultimediaLibrary/src/Backend/Enums -I/home/student/Documents/MultimediaLibrary/src/Backend/Library -I/home/student/Documents/MultimediaLibrary/src/Frontend/Windows -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtSvg -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include src/Frontend/Windows/SearchDialog.h -o moc_SearchDialog.cpp
+	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/student/Desktop/MultimediaLibrary/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/student/Desktop/MultimediaLibrary -I/home/student/Desktop/MultimediaLibrary/src/Backend/Elements -I/home/student/Desktop/MultimediaLibrary/src/Backend/Enums -I/home/student/Desktop/MultimediaLibrary/src/Backend/Library -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/ListWidgets -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/DetailWidgets -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/EditWidgets -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtSvg -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include src/Frontend/View/DetailWidgets/ItemDetailWidget.h -o moc_ItemDetailWidget.cpp
+
+moc_ItemEditDialog.cpp: src/Frontend/View/EditWidgets/ItemEditDialog.h \
+		moc_predefs.h \
+		/usr/lib/qt6/libexec/moc
+	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/student/Desktop/MultimediaLibrary/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/student/Desktop/MultimediaLibrary -I/home/student/Desktop/MultimediaLibrary/src/Backend/Elements -I/home/student/Desktop/MultimediaLibrary/src/Backend/Enums -I/home/student/Desktop/MultimediaLibrary/src/Backend/Library -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/ListWidgets -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/DetailWidgets -I/home/student/Desktop/MultimediaLibrary/src/Frontend/View/EditWidgets -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtSvg -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include src/Frontend/View/EditWidgets/ItemEditDialog.h -o moc_ItemEditDialog.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -502,21 +482,7 @@ compiler_clean: compiler_rcc_clean compiler_moc_predefs_clean compiler_moc_heade
 
 ####### Compile
 
-main.o: src/main.cpp src/Frontend/Windows/MainWindow.h \
-		src/Backend/Elements/Media.h \
-		src/Backend/Elements/Date.h \
-		src/Backend/Enums/Genres.h \
-		src/Backend/Enums/Languages.h \
-		src/Backend/Elements/MediaVisitor.h \
-		src/Backend/Elements/Book.h \
-		src/Backend/Elements/Movie.h \
-		src/Backend/Elements/Song.h \
-		src/Backend/Elements/Magazine.h \
-		src/Backend/Elements/Podcast.h \
-		src/Backend/Library/Library.h \
-		src/Frontend/Windows/MediaCard.h \
-		src/Frontend/Windows/AddMediaDialog.h \
-		src/Frontend/Windows/SearchDialog.h
+main.o: src/main.cpp src/Frontend/View/ClassicMainWindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o src/main.cpp
 
 Date.o: src/Backend/Elements/Date.cpp src/Backend/Elements/Date.h
@@ -621,24 +587,19 @@ XmlPersistence.o: src/Backend/Persistence/XmlPersistence.cpp src/Backend/Persist
 		src/Backend/Elements/Podcast.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o XmlPersistence.o src/Backend/Persistence/XmlPersistence.cpp
 
-MainWindow.o: src/Frontend/Windows/MainWindow.cpp src/Frontend/Windows/MainWindow.h \
-		src/Backend/Elements/Media.h \
-		src/Backend/Elements/Date.h \
-		src/Backend/Enums/Genres.h \
-		src/Backend/Enums/Languages.h \
-		src/Backend/Elements/MediaVisitor.h \
-		src/Backend/Elements/Book.h \
-		src/Backend/Elements/Movie.h \
-		src/Backend/Elements/Song.h \
-		src/Backend/Elements/Magazine.h \
-		src/Backend/Elements/Podcast.h \
+ClassicMainWindow.o: src/Frontend/View/ClassicMainWindow.cpp src/Frontend/View/ClassicMainWindow.h \
 		src/Backend/Library/Library.h \
-		src/Frontend/Windows/MediaCard.h \
-		src/Frontend/Windows/AddMediaDialog.h \
-		src/Frontend/Windows/SearchDialog.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MainWindow.o src/Frontend/Windows/MainWindow.cpp
+		src/Backend/Elements/Media.h \
+		src/Backend/Elements/Date.h \
+		src/Backend/Enums/Genres.h \
+		src/Backend/Enums/Languages.h \
+		src/Backend/Elements/MediaVisitor.h \
+		src/Frontend/View/ListWidgets/ItemListWidget.h \
+		src/Frontend/View/DetailWidgets/ItemDetailWidget.h \
+		src/Frontend/View/EditWidgets/ItemEditDialog.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ClassicMainWindow.o src/Frontend/View/ClassicMainWindow.cpp
 
-MediaCard.o: src/Frontend/Windows/MediaCard.cpp src/Frontend/Windows/MediaCard.h \
+ItemCardWidget.o: src/Frontend/View/ListWidgets/ItemCardWidget.cpp src/Frontend/View/ListWidgets/ItemCardWidget.h \
 		src/Backend/Elements/Media.h \
 		src/Backend/Elements/Date.h \
 		src/Backend/Enums/Genres.h \
@@ -649,9 +610,18 @@ MediaCard.o: src/Frontend/Windows/MediaCard.cpp src/Frontend/Windows/MediaCard.h
 		src/Backend/Elements/Song.h \
 		src/Backend/Elements/Magazine.h \
 		src/Backend/Elements/Podcast.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MediaCard.o src/Frontend/Windows/MediaCard.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ItemCardWidget.o src/Frontend/View/ListWidgets/ItemCardWidget.cpp
 
-AddMediaDialog.o: src/Frontend/Windows/AddMediaDialog.cpp src/Frontend/Windows/AddMediaDialog.h \
+ItemListWidget.o: src/Frontend/View/ListWidgets/ItemListWidget.cpp src/Frontend/View/ListWidgets/ItemListWidget.h \
+		src/Frontend/View/ListWidgets/ItemCardWidget.h \
+		src/Backend/Elements/Media.h \
+		src/Backend/Elements/Date.h \
+		src/Backend/Enums/Genres.h \
+		src/Backend/Enums/Languages.h \
+		src/Backend/Elements/MediaVisitor.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ItemListWidget.o src/Frontend/View/ListWidgets/ItemListWidget.cpp
+
+ItemDetailWidget.o: src/Frontend/View/DetailWidgets/ItemDetailWidget.cpp src/Frontend/View/DetailWidgets/ItemDetailWidget.h \
 		src/Backend/Elements/Media.h \
 		src/Backend/Elements/Date.h \
 		src/Backend/Enums/Genres.h \
@@ -662,26 +632,39 @@ AddMediaDialog.o: src/Frontend/Windows/AddMediaDialog.cpp src/Frontend/Windows/A
 		src/Backend/Elements/Song.h \
 		src/Backend/Elements/Magazine.h \
 		src/Backend/Elements/Podcast.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o AddMediaDialog.o src/Frontend/Windows/AddMediaDialog.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ItemDetailWidget.o src/Frontend/View/DetailWidgets/ItemDetailWidget.cpp
 
-SearchDialog.o: src/Frontend/Windows/SearchDialog.cpp src/Frontend/Windows/SearchDialog.h \
-		src/Backend/Enums/Genres.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SearchDialog.o src/Frontend/Windows/SearchDialog.cpp
+ItemEditDialog.o: src/Frontend/View/EditWidgets/ItemEditDialog.cpp src/Frontend/View/EditWidgets/ItemEditDialog.h \
+		src/Backend/Library/Library.h \
+		src/Backend/Elements/Media.h \
+		src/Backend/Elements/Date.h \
+		src/Backend/Enums/Genres.h \
+		src/Backend/Enums/Languages.h \
+		src/Backend/Elements/MediaVisitor.h \
+		src/Backend/Elements/Book.h \
+		src/Backend/Elements/Movie.h \
+		src/Backend/Elements/Song.h \
+		src/Backend/Elements/Magazine.h \
+		src/Backend/Elements/Podcast.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ItemEditDialog.o src/Frontend/View/EditWidgets/ItemEditDialog.cpp
 
 qrc_resources.o: qrc_resources.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_resources.o qrc_resources.cpp
 
-moc_MainWindow.o: moc_MainWindow.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_MainWindow.o moc_MainWindow.cpp
+moc_ClassicMainWindow.o: moc_ClassicMainWindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_ClassicMainWindow.o moc_ClassicMainWindow.cpp
 
-moc_MediaCard.o: moc_MediaCard.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_MediaCard.o moc_MediaCard.cpp
+moc_ItemCardWidget.o: moc_ItemCardWidget.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_ItemCardWidget.o moc_ItemCardWidget.cpp
 
-moc_AddMediaDialog.o: moc_AddMediaDialog.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_AddMediaDialog.o moc_AddMediaDialog.cpp
+moc_ItemListWidget.o: moc_ItemListWidget.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_ItemListWidget.o moc_ItemListWidget.cpp
 
-moc_SearchDialog.o: moc_SearchDialog.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_SearchDialog.o moc_SearchDialog.cpp
+moc_ItemDetailWidget.o: moc_ItemDetailWidget.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_ItemDetailWidget.o moc_ItemDetailWidget.cpp
+
+moc_ItemEditDialog.o: moc_ItemEditDialog.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_ItemEditDialog.o moc_ItemEditDialog.cpp
 
 ####### Install
 

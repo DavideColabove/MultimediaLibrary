@@ -160,7 +160,7 @@ bool JsonPersistence::load(Library& library, const std::string& filePath) const 
         std::string type = getStr("type");
         std::string title = getStr("title");
         std::string author = getStr("author");
-        std::string imagePath = getStr("imagePath");
+    std::string imagePath = getStr("imagePath");
         unsigned id = static_cast<unsigned>(getInt("id"));
         unsigned sizeKb = static_cast<unsigned>(getInt("size"));
         bool available = getBool("available");

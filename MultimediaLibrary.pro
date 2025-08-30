@@ -22,11 +22,15 @@ SOURCES += \
     src/Backend/Enums/Languages.cpp \
     src/Backend/Library/Library.cpp \
     src/Backend/Persistence/JsonPersistence.cpp \
-    src/Backend/Persistence/XmlPersistence.cpp \
-    src/Frontend/Windows/MainWindow.cpp \
-    src/Frontend/Windows/MediaCard.cpp \
-    src/Frontend/Windows/AddMediaDialog.cpp \
-    src/Frontend/Windows/SearchDialog.cpp
+    src/Backend/Persistence/XmlPersistence.cpp
+
+# Classic (legacy style) view adaptation sources (work in progress)
+SOURCES += \
+    src/Frontend/View/ClassicMainWindow.cpp \
+    src/Frontend/View/ListWidgets/ItemCardWidget.cpp \
+    src/Frontend/View/ListWidgets/ItemListWidget.cpp \
+    src/Frontend/View/DetailWidgets/ItemDetailWidget.cpp \
+    src/Frontend/View/EditWidgets/ItemEditDialog.cpp
 
 # Backend headers
 HEADERS += \
@@ -43,18 +47,25 @@ HEADERS += \
     src/Backend/Library/Library.h \
     src/Backend/Persistence/IPersistence.h \
     src/Backend/Persistence/JsonPersistence.h \
-    src/Backend/Persistence/XmlPersistence.h \
-    src/Frontend/Windows/MainWindow.h \
-    src/Frontend/Windows/MediaCard.h \
-    src/Frontend/Windows/AddMediaDialog.h \
-    src/Frontend/Windows/SearchDialog.h
+    src/Backend/Persistence/XmlPersistence.h
+
+# Classic (legacy style) view adaptation headers
+HEADERS += \
+    src/Frontend/View/ClassicMainWindow.h \
+    src/Frontend/View/ListWidgets/ItemCardWidget.h \
+    src/Frontend/View/ListWidgets/ItemListWidget.h \
+    src/Frontend/View/DetailWidgets/ItemDetailWidget.h \
+    src/Frontend/View/EditWidgets/ItemEditDialog.h
 
 # Include paths
 INCLUDEPATH += \
     src/Backend/Elements \
     src/Backend/Enums \
     src/Backend/Library \
-    src/Frontend/Windows
+    src/Frontend/View \
+    src/Frontend/View/ListWidgets \
+    src/Frontend/View/DetailWidgets \
+    src/Frontend/View/EditWidgets
 
 # Compiler flags
 QMAKE_CXXFLAGS += -std=c++17 -Wall -Wextra
