@@ -30,7 +30,7 @@ namespace Enums {
         return (it != genreMap.end()) ? it->second : "Unknown";
     }
 
-    // Helper functions to convert string to enum
+    
     MusicGenre stringToMusicGenre(const std::string& genre) {
         static const std::map<std::string, MusicGenre> genreMap = {
             {"Rock", MusicGenre::ROCK},
@@ -308,7 +308,7 @@ namespace Enums {
         return (it != genreMap.end()) ? it->second : PodcastGenre::EDUCATION;
     }
 
-    // Helper functions to get all genres as vectors of strings
+    
     std::vector<std::string> getAllBookGenres() {
         return {"Fiction", "Non-Fiction", "Mystery", "Thriller", "Romance", 
                 "Science Fiction", "Fantasy", "Horror", "Historical Fiction", 

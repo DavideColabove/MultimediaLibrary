@@ -16,7 +16,7 @@ Book::Book() : Media(), publisher(""), pages(0), isbn(""), language(Enums::Langu
 
 Book::~Book() {}
 
-// Check if book has all required fields filled
+
 bool Book::isValid() const {
     return !getTitle().empty() && !getAuthor().empty() && !publisher.empty() && 
            pages > 0 && !isbn.empty();

@@ -26,42 +26,30 @@ MediaCard::MediaCard(Media* media, QWidget* parent)
     layout->setContentsMargins(10, 10, 10, 10);
     
     coverLabel = new QLabel(this);
+    coverLabel->setObjectName("coverBox");
     coverLabel->setFixedSize(180, 180);
     coverLabel->setAlignment(Qt::AlignCenter);
-    coverLabel->setStyleSheet("border: 1px solid #555; border-radius: 8px; background-color: #444;");
     coverLabel->setText("Cover\nImage");
     layout->addWidget(coverLabel, 0, Qt::AlignHCenter);
     
     typeBadgeLabel = new QLabel(this);
+    typeBadgeLabel->setObjectName("typeBadge");
     typeBadgeLabel->setAlignment(Qt::AlignCenter);
-    typeBadgeLabel->setStyleSheet("color: #ffffff; font-size: 10px; padding: 2px 6px; background-color: #555; border-radius: 8px;");
     typeBadgeLabel->setText(computeType());
     layout->addWidget(typeBadgeLabel, 0, Qt::AlignLeft);
 
     titleLabel = new QLabel(QString::fromStdString(media->getTitle()), this);
+    titleLabel->setObjectName("mediaTitle");
     titleLabel->setAlignment(Qt::AlignCenter);
     titleLabel->setWordWrap(true);
-    titleLabel->setStyleSheet("color: #ffffff; font-size: 14px; font-weight: bold;");
     layout->addWidget(titleLabel);
     
     yearLabel = new QLabel(QString::fromStdString(media->getReleaseDate().toString()), this);
+    yearLabel->setObjectName("mediaYear");
     yearLabel->setAlignment(Qt::AlignCenter);
-    yearLabel->setStyleSheet("color: #cccccc; font-size: 12px;");
     layout->addWidget(yearLabel);
     
-    setStyleSheet(R"(
-        #mediaCard {
-            background-color: #3c3c3c;
-            border: 1px solid #555;
-            border-radius: 8px;
-            padding: 10px;
-        }
-        
-        #mediaCard:hover {
-            border: 1px solid #0078d4;
-            background-color: #444;
-        }
-    )");
+    
     
     setCursor(Qt::PointingHandCursor);
     updateCover();
@@ -115,7 +103,7 @@ void MediaCard::updateCover()
         coverLabel->setPixmap(rounded);
         coverLabel->setText("");
     } else {
-        // Show a type icon placeholder 
+        
         QString iconName;
         if (dynamic_cast<Book*>(media)) iconName = "book";
         else if (dynamic_cast<Movie*>(media)) iconName = "movie";
@@ -141,7 +129,7 @@ void MediaCard::updateCover()
             const qreal ratio = 0.6;
             const qreal dpr = QGuiApplication::primaryScreen() ? QGuiApplication::primaryScreen()->devicePixelRatio() : 1.0;
 
-            // Render SVG crisply at target pixel size
+            
             QPixmap iconPixmap;
             if (iconPath.endsWith(".svg", Qt::CaseInsensitive)) {
                 const QSizeF logicalSize(target.width()*ratio, target.height()*ratio);
@@ -157,12 +145,12 @@ void MediaCard::updateCover()
                 tmp.setDevicePixelRatio(dpr);
                 iconPixmap = tmp;
             } else {
-                // Fallback for raster icons
+                
                 QPixmap raw(iconPath);
                 iconPixmap = raw.scaled(target.width()*ratio, target.height()*ratio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
 
-            // Compose rounded canvas and center icon
+            
             QPixmap canvas(QSize(target.width()*dpr, target.height()*dpr));
             canvas.fill(Qt::transparent);
             QPainter painter(&canvas);
@@ -189,7 +177,7 @@ void MediaCard::updateCover()
 
 QString MediaCard::computeType() const
 {
-    // Lightweight type name for badge
+    
     if (dynamic_cast<Book*>(media)) return "Book";
     if (dynamic_cast<Movie*>(media)) return "Movie";
     if (dynamic_cast<Song*>(media)) return "Song";

@@ -157,7 +157,7 @@ namespace Enums {
         return (it != languageMap.end()) ? it->second : Language::ENGLISH;
     }
 
-    // Helper function to get all languages as a vector of strings
+    
     std::vector<std::string> getAllLanguages() {
         return {"Italian", "English", "Spanish", "French", "German", "Portuguese", "Russian", 
                 "Chinese", "Japanese", "Korean", "Arabic", "Hindi", "Dutch", "Swedish", 

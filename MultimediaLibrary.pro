@@ -23,10 +23,16 @@ SOURCES += \
     src/Backend/Library/Library.cpp \
     src/Backend/Persistence/JsonPersistence.cpp \
     src/Backend/Persistence/XmlPersistence.cpp \
+    src/Backend/Persistence/Persistence.cpp \
     src/Frontend/Windows/MainWindow.cpp \
     src/Frontend/Windows/MediaCard.cpp \
     src/Frontend/Windows/AddMediaDialog.cpp \
-    src/Frontend/Windows/SearchDialog.cpp
+    src/Frontend/Windows/SearchDialog.cpp \
+    src/Frontend/Windows/LeftSidebarWidget.cpp \
+    src/Frontend/Windows/TopBarWidget.cpp \
+    src/Frontend/Windows/FlowLayout.cpp \
+    src/Frontend/Windows/MediaGridWidget.cpp \
+    src/Frontend/Windows/DetailsPanel.cpp
 
 # Backend headers
 HEADERS += \
@@ -38,16 +44,26 @@ HEADERS += \
     src/Backend/Elements/Song.h \
     src/Backend/Elements/Magazine.h \
     src/Backend/Elements/Podcast.h \
+    src/Backend/Persistence/MediaFactory.h \
     src/Backend/Enums/Genres.h \
     src/Backend/Enums/Languages.h \
     src/Backend/Library/Library.h \
     src/Backend/Persistence/IPersistence.h \
     src/Backend/Persistence/JsonPersistence.h \
     src/Backend/Persistence/XmlPersistence.h \
+    src/Backend/Persistence/Persistence.h \
     src/Frontend/Windows/MainWindow.h \
     src/Frontend/Windows/MediaCard.h \
     src/Frontend/Windows/AddMediaDialog.h \
-    src/Frontend/Windows/SearchDialog.h
+    src/Frontend/Windows/SearchDialog.h \
+    src/Frontend/Windows/LeftSidebarWidget.h \
+    src/Frontend/Windows/TopBarWidget.h \
+    src/Frontend/Windows/FlowLayout.h \
+    src/Frontend/Windows/MediaGridWidget.h \
+    src/Frontend/Windows/DetailsPanel.h
+
+SOURCES += \
+    src/Backend/Persistence/MediaFactory.cpp
 
 # Include paths
 INCLUDEPATH += \

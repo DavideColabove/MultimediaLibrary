@@ -19,5 +19,8 @@
     <file alias="sort.svg">src/Frontend/Resources/icons/sort_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file alias="appicon.svg">src/Frontend/Resources/icons/appicon.svg</file>
   </qresource>
+  <qresource prefix="/styles">
+    <file alias="dark.qss">src/Frontend/Resources/styles/dark.qss</file>
+  </qresource>
 </RCC>
 

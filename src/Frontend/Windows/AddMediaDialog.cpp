@@ -1,9 +1,6 @@
 ﻿#include "AddMediaDialog.h"
-#include <QApplication>
-#include <QStyle>
 #include <QDate>
 #include <QPainter>
-#include <QMouseEvent>
 #include <QMimeData>
 #include <QFileInfo>
 #include <QFont>
@@ -11,6 +8,7 @@
 #include <QRegularExpressionValidator>
 #include <QCompleter>
 #include <QFileDialog>
+#include <QMessageBox>
 #include "../../Backend/Enums/Genres.h"
 #include "../../Backend/Enums/Languages.h"
 
@@ -21,7 +19,6 @@ CoverDropArea::CoverDropArea(QWidget *parent)
     setMinimumSize(200, 150);
     setMaximumSize(300, 200);
     setFrameStyle(QFrame::Box);
-    setStyleSheet("QFrame { border: 2px dashed #555; border-radius: 8px; background-color: #3c3c3c; padding: 10px; }");
 }
 
 void CoverDropArea::setImagePath(const QString &path)
@@ -41,7 +38,7 @@ void CoverDropArea::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasUrls() || event->mimeData()->hasImage()) {
         event->acceptProposedAction();
-        setStyleSheet("QFrame { border: 2px dashed #0078d4; border-radius: 8px; background-color: #3c3c3c; padding: 10px; }");
+    
     }
 }
 
@@ -83,12 +80,7 @@ void CoverDropArea::paintEvent(QPaintEvent *event)
     }
 }
 
-void CoverDropArea::mousePressEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton) {
-        // No-op here; selection handled by external button to avoid modal inside paint area
-    }
-}
+
 
 AddMediaDialog::AddMediaDialog(QWidget *parent)
     : QDialog(parent)
@@ -212,7 +204,7 @@ void AddMediaDialog::setupCommonFields()
     availableCheckBox->setChecked(true);
     commonLayout->addRow("Available:", availableCheckBox);
     
-    // Cover image area with actions
+    
     QWidget *coverRow = new QWidget(this);
     QHBoxLayout *coverLayout = new QHBoxLayout(coverRow);
     coverLayout->setContentsMargins(0,0,0,0);
@@ -274,7 +266,7 @@ void AddMediaDialog::setupBookFields(QFormLayout *layout)
     languageCombo = new QComboBox(this);
     languageCombo->setEditable(true);
     
-    // Popola da enum invece di hardcodare
+    
     auto languages = Enums::getAllLanguages();
     for (size_t i = 0; i < languages.size(); ++i) {
         languageCombo->addItem(QString::fromStdString(languages[i]), i);
@@ -287,7 +279,7 @@ void AddMediaDialog::setupBookFields(QFormLayout *layout)
     bookGenreCombo = new QComboBox(this);
     bookGenreCombo->setEditable(true);
     
-    // Popola da enum invece di hardcodare
+    
     auto bookGenres = Enums::getAllBookGenres();
     for (size_t i = 0; i < bookGenres.size(); ++i) {
         bookGenreCombo->addItem(QString::fromStdString(bookGenres[i]), i);
@@ -322,7 +314,7 @@ void AddMediaDialog::setupMovieFields(QFormLayout *layout)
     movieGenreCombo = new QComboBox(this);
     movieGenreCombo->setEditable(true);
     
-    // Popola da enum invece di hardcodare
+    
     auto movieGenres = Enums::getAllMovieGenres();
     for (size_t i = 0; i < movieGenres.size(); ++i) {
         movieGenreCombo->addItem(QString::fromStdString(movieGenres[i]), i);
@@ -352,7 +344,7 @@ void AddMediaDialog::setupSongFields(QFormLayout *layout)
     musicGenreCombo = new QComboBox(this);
     musicGenreCombo->setEditable(true);
     
-    // Popola da enum invece di hardcodare
+    
     auto musicGenres = Enums::getAllMusicGenres();
     for (size_t i = 0; i < musicGenres.size(); ++i) {
         musicGenreCombo->addItem(QString::fromStdString(musicGenres[i]), i);
@@ -391,7 +383,7 @@ void AddMediaDialog::setupMagazineFields(QFormLayout *layout)
     magazineGenreCombo = new QComboBox(this);
     magazineGenreCombo->setEditable(true);
     
-    // Popola da enum invece di hardcodare
+    
     auto magazineGenres = Enums::getAllMagazineGenres();
     for (size_t i = 0; i < magazineGenres.size(); ++i) {
         magazineGenreCombo->addItem(QString::fromStdString(magazineGenres[i]), i);
@@ -432,7 +424,7 @@ void AddMediaDialog::setupPodcastFields(QFormLayout *layout)
     podcastGenreCombo = new QComboBox(this);
     podcastGenreCombo->setEditable(true);
     
-    // Popola da enum invece di hardcodare
+    
     auto podcastGenres = Enums::getAllPodcastGenres();
     for (size_t i = 0; i < podcastGenres.size(); ++i) {
         podcastGenreCombo->addItem(QString::fromStdString(podcastGenres[i]), i);
@@ -469,94 +461,7 @@ void AddMediaDialog::setupConnections()
 
 void AddMediaDialog::applyDarkTheme()
 {
-    setStyleSheet(R"(
-        QDialog {
-            background-color: #2b2b2b;
-            color: #ffffff;
-        }
-        
-        QScrollArea {
-            background-color: #2b2b2b;
-            border: none;
-        }
-        
-        QGroupBox {
-            background-color: #3c3c3c;
-            border: 1px solid #555;
-            border-radius: 5px;
-            margin-top: 10px;
-            padding-top: 10px;
-            font-weight: bold;
-        }
-        
-        QGroupBox::title {
-            subcontrol-origin: margin;
-            left: 10px;
-            padding: 0 5px 0 5px;
-            color: #ffffff;
-        }
-        
-        QLineEdit, QSpinBox, QComboBox, QDateEdit {
-            background-color: #555;
-            border: 1px solid #777;
-            border-radius: 3px;
-            padding: 5px;
-            color: #ffffff;
-        }
-        
-        QLineEdit:focus, QSpinBox:focus, QComboBox:focus, QDateEdit:focus {
-            border: 1px solid #0078d4;
-        }
-        
-        QPushButton {
-            background-color: #0078d4;
-            border: none;
-            border-radius: 3px;
-            padding: 8px 16px;
-            color: #ffffff;
-            font-weight: bold;
-        }
-        
-        QPushButton:hover {
-            background-color: #106ebe;
-        }
-        
-        QPushButton:pressed {
-            background-color: #005a9e;
-        }
-        
-        QCheckBox {
-            color: #ffffff;
-        }
-        
-        QCheckBox::indicator {
-            width: 16px;
-            height: 16px;
-        }
-        
-        QCheckBox::indicator:unchecked {
-            background-color: #555;
-            border: 1px solid #777;
-            border-radius: 2px;
-        }
-        
-        QCheckBox::indicator:checked {
-            background-color: #0078d4;
-            border: 1px solid #0078d4;
-            border-radius: 2px;
-        }
-        
-        QFrame {
-            background-color: #3c3c3c;
-            border: 2px dashed #555;
-            border-radius: 8px;
-            padding: 10px;
-        }
-        
-        QFrame:hover {
-            border-color: #777;
-        }
-    )");
+    
 }
 
 void AddMediaDialog::onMediaTypeChanged(int index)
@@ -649,7 +554,7 @@ void AddMediaDialog::onAcceptClicked()
 
     int mediaType = mediaTypeCombo->currentIndex();
     switch (mediaType) {
-        case 0: { // Book
+        case 0: { 
             auto book = std::make_unique<Book>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
@@ -667,7 +572,7 @@ void AddMediaDialog::onAcceptClicked()
             createdMedia = std::move(book);
             break;
         }
-        case 1: { // Movie
+        case 1: { 
             auto movie = std::make_unique<Movie>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
@@ -687,7 +592,7 @@ void AddMediaDialog::onAcceptClicked()
             createdMedia = std::move(movie);
             break;
         }
-        case 2: { // Song
+        case 2: { 
             auto song = std::make_unique<Song>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
@@ -707,7 +612,7 @@ void AddMediaDialog::onAcceptClicked()
             createdMedia = std::move(song);
             break;
         }
-        case 3: { // Magazine
+        case 3: { 
             auto magazine = std::make_unique<Magazine>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
@@ -727,7 +632,7 @@ void AddMediaDialog::onAcceptClicked()
             createdMedia = std::move(magazine);
             break;
         }
-        case 4: { // Podcast
+        case 4: { 
             auto podcast = std::make_unique<Podcast>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
@@ -756,7 +661,7 @@ void AddMediaDialog::onCancelClicked()
     reject();
 }
 
-// Check required fields based on media type
+
 bool AddMediaDialog::validateInput()
 {
     if (titleEdit->text().trimmed().isEmpty()) {
@@ -769,16 +674,16 @@ bool AddMediaDialog::validateInput()
         return false;
     }
     
-    // Type-specific validation
+    
     int mediaType = mediaTypeCombo->currentIndex();
     switch (mediaType) {
-        case 0: // Book
+        case 0: 
             if (publisherEdit->text().trimmed().isEmpty()) {
                 showValidationError("Publisher is required for books.");
                 return false;
             }
             break;
-        case 1: // Movie
+        case 1: 
             if (directorEdit->text().trimmed().isEmpty()) {
                 showValidationError("Director is required for movies.");
                 return false;
@@ -788,19 +693,19 @@ bool AddMediaDialog::validateInput()
                 return false;
             }
             break;
-        case 2: // Song
+        case 2: 
             if (artistEdit->text().trimmed().isEmpty()) {
                 showValidationError("Artist is required for songs.");
                 return false;
             }
             break;
-        case 3: // Magazine
+        case 3: 
             if (magazinePublisherEdit->text().trimmed().isEmpty()) {
                 showValidationError("Publisher is required for magazines.");
                 return false;
             }
             break;
-        case 4: // Podcast
+        case 4: 
             if (hostEdit->text().trimmed().isEmpty()) {
                 showValidationError("Host is required for podcasts.");
                 return false;
@@ -827,7 +732,7 @@ int AddMediaDialog::findIndexByData(QComboBox *combo, int value) const
 void AddMediaDialog::populateFromMedia(Media *media)
 {
     if (!media) return;
-    // Common
+    
     titleEdit->setText(QString::fromStdString(media->getTitle()));
     authorEdit->setText(QString::fromStdString(media->getAuthor()));
     const Date &d = media->getReleaseDate();
@@ -836,7 +741,7 @@ void AddMediaDialog::populateFromMedia(Media *media)
     availableCheckBox->setChecked(media->getIsAvailable());
     coverDropArea->setImagePath(QString::fromStdString(media->getImagePath()));
 
-    // Type-specific
+    
     if (auto book = dynamic_cast<Book*>(media)) {
         mediaTypeCombo->setCurrentIndex(0);
         publisherEdit->setText(QString::fromStdString(book->getPublisher()));

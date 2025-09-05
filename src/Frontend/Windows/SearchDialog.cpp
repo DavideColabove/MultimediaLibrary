@@ -81,21 +81,21 @@ void SearchDialog::setupUI()
     auto magLay = new QFormLayout(magazinePage); magLay->addRow("Magazine genre:", magazineGenreCombo);
     auto podLay = new QFormLayout(podcastPage); podLay->addRow("Podcast genre:", podcastGenreCombo);
 
-    typeStack->addWidget(new QWidget(this)); // Any
+    typeStack->addWidget(new QWidget(this)); 
     typeStack->addWidget(bookPage);
     typeStack->addWidget(moviePage);
     typeStack->addWidget(songPage);
     typeStack->addWidget(magazinePage);
     typeStack->addWidget(podcastPage);
 
-    // Popola i ComboBox dei generi usando gli enum invece di hardcodare
+    
     fillGenres(bookGenreCombo, Enums::getAllBookGenres());
     fillGenres(movieGenreCombo, Enums::getAllMovieGenres());
     fillGenres(musicGenreCombo, Enums::getAllMusicGenres());
     fillGenres(magazineGenreCombo, Enums::getAllMagazineGenres());
     fillGenres(podcastGenreCombo, Enums::getAllPodcastGenres());
 
-    // Buttons
+    
     QHBoxLayout* btns = new QHBoxLayout();
     QPushButton* ok = new QPushButton("Apply", this);
     QPushButton* cancel = new QPushButton("Cancel", this);

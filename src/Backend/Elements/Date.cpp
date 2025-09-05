@@ -49,7 +49,7 @@ Date& Date::setDay(int d) {
     return *this;
 }
 
-// Validate date and handle leap years (year divisible by 4 but not 100, or by 400)
+
 bool Date::isValid() const {
     if (year < 1900 || year > 2100) return false;
     if (month < 1 || month > 12) return false;

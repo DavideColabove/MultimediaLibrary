@@ -1,6 +1,5 @@
 ﻿#include "Library.h"
-#include "../Persistence/JsonPersistence.h"
-#include "../Persistence/XmlPersistence.h"
+#include "../Persistence/Persistence.h"
 #include "../Elements/Media.h"
 #include "../Elements/Book.h"
 #include "../Elements/Movie.h"
@@ -119,26 +118,22 @@ std::vector<Media*> Library::filterByAvailability(bool available) const
 
 bool Library::saveJson(const std::string& filePath) const
 {
-    JsonPersistence pers;
-    return pers.save(*this, filePath);
+    return Persistence::saveJson(*this, filePath);
 }
 
 bool Library::loadJson(const std::string& filePath)
 {
-    JsonPersistence pers;
-    return pers.load(*this, filePath);
+    return Persistence::loadJson(*this, filePath);
 }
 
 bool Library::saveXml(const std::string& filePath) const
 {
-    XmlPersistence pers;
-    return pers.save(*this, filePath);
+    return Persistence::saveXml(*this, filePath);
 }
 
 bool Library::loadXml(const std::string& filePath)
 {
-    XmlPersistence pers;
-    return pers.load(*this, filePath);
+    return Persistence::loadXml(*this, filePath);
 }
 
 size_t Library::getTotalCount() const
@@ -190,7 +185,7 @@ bool Library::isEmpty() const
     return mediaCollection.empty();
 }
 
-// Use Visitor pattern to get media type without dynamic_cast
+
 class TypeNameVisitor : public MediaVisitor {
 public:
     std::string typeName;
@@ -201,7 +196,7 @@ public:
     void visit(const Podcast&) override { typeName = "Podcast"; }
 };
 
-// Get media type using Visitor pattern instead of type checking
+
 std::string Library::getMediaType(const Media* media) const
 {
     if (!media) return "Unknown";

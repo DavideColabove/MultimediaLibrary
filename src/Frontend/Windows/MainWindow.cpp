@@ -13,16 +13,15 @@
 #include <QSpacerItem>
 #include <QShortcut>
 #include <QFile>
-#include <QIcon>
 #include <QScrollBar>
 #include <QTimer>
 #include <QCollator>
 namespace {
 static QIcon loadIconByName(const QString& baseName) {
-    // Try resource first
+    
     const QString resPath = QString(":/icons/%1.svg").arg(baseName);
     if (QFile::exists(resPath)) return QIcon(resPath);
-    // Try common relative paths when running from build directories
+    
     const QStringList tryPaths = {
         QString("icons/%1.svg").arg(baseName),
         QString("../icons/%1.svg").arg(baseName),
@@ -34,6 +33,12 @@ static QIcon loadIconByName(const QString& baseName) {
     }
     return QIcon();
 }
+
+static void setIconAndSize(QPushButton* btn, const QString& iconBase, const QSize& size) {
+    if (!btn) return;
+    btn->setIcon(loadIconByName(iconBase));
+    btn->setIconSize(size);
+}
 }
 #include <QResizeEvent>
 #include <QStandardPaths>
@@ -44,14 +49,11 @@ static QIcon loadIconByName(const QString& baseName) {
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
-#include <QScrollArea>
-#include <QFrame>
-#include <QStackedWidget>
-#include <QComboBox>
-#include <QCheckBox>
-#include <QGroupBox>
-#include <QSpacerItem>
-#include <QTimer>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QDir>
+#include <QFormLayout>
+#include <QPixmap>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), selectedMedia(nullptr)
@@ -71,15 +73,10 @@ MainWindow::MainWindow(QWidget *parent)
     setupConnections();
     applyDarkTheme();
     
-    // Set window properties
+    
     setWindowTitle("Multimedia Library");
     setMinimumSize(1200, 800);
     resize(1400, 900);
-    
-    // Ensure window is visible
-    setVisible(true);
-    raise();
-    activateWindow();
 }
 
 MainWindow::~MainWindow()
@@ -98,47 +95,8 @@ void MainWindow::setupUI()
 
 void MainWindow::setupLeftSidebar()
 {
-    leftSidebar = new QWidget(this);
-    leftSidebar->setFixedWidth(200);
-    leftSidebar->setObjectName("leftSidebar");
-    
-    sidebarLayout = new QVBoxLayout(leftSidebar);
-    sidebarLayout->setSpacing(10);
-    sidebarLayout->setContentsMargins(20, 20, 20, 20);
-    
-    // Title
-    sidebarTitle = new QLabel("Media", leftSidebar);
-    sidebarTitle->setObjectName("sidebarTitle");
-    sidebarTitle->setAlignment(Qt::AlignCenter);
-    sidebarLayout->addWidget(sidebarTitle);
-    
-    // Category list
-    categoryList = new QListWidget(leftSidebar);
-    categoryList->setObjectName("categoryList");
-    categoryList->addItem("All");
-    categoryList->addItem("Books");
-    categoryList->addItem("Movies");
-    categoryList->addItem("Songs");
-    categoryList->addItem("Magazines");
-    categoryList->addItem("Podcasts");
-
-    const struct { int row; const char* iconBase; const char* tip; } catIcons[] = {
-        {0, "all",       "All media"},
-        {1, "book",      "Books"},
-        {2, "movie",     "Movies"},
-        {3, "music",     "Songs"},
-        {4, "magazine",  "Magazines"},
-        {5, "podcast",   "Podcasts"},
-    };
-    for (const auto& ci : catIcons) {
-        if (QListWidgetItem* it = categoryList->item(ci.row)) {
-            it->setIcon(loadIconByName(QString::fromUtf8(ci.iconBase)));
-            it->setToolTip(QString::fromUtf8(ci.tip));
-        }
-    }
-    categoryList->setCurrentRow(0);
-    sidebarLayout->addWidget(categoryList);
-    
+    leftSidebar = new LeftSidebarWidget(this);
+    connect(leftSidebar, &LeftSidebarWidget::categoryChanged, this, &MainWindow::filterMediaByCategory);
     mainLayout->addWidget(leftSidebar);
 }
 
@@ -151,201 +109,42 @@ void MainWindow::setupCentralArea()
     centralLayout->setSpacing(0);
     centralLayout->setContentsMargins(0, 0, 0, 0);
     
-    // Search bar
-    searchBar = new QWidget(centralArea);
-    searchBar->setObjectName("searchBar");
-    searchBar->setFixedHeight(60);
     
-    searchLayout = new QHBoxLayout(searchBar);
-    searchLayout->setContentsMargins(20, 10, 20, 10);
+    topBar = new TopBarWidget(centralArea);
+    centralLayout->addWidget(topBar);
     
-    // Search input
-    searchInput = new QLineEdit(searchBar);
-    searchInput->setObjectName("searchInput");
-    searchInput->setPlaceholderText("Search...");
-    searchInput->setMinimumHeight(35);
-    searchLayout->addWidget(searchInput);
     
-    // Advanced search button
-    advancedSearchBtn = new QPushButton("Advanced", searchBar);
-    advancedSearchBtn->setObjectName("advancedSearchBtn");
-    advancedSearchBtn->setFixedSize(80, 35);
-    searchLayout->addWidget(advancedSearchBtn);
-
-    // Clear filters button
-    clearFiltersBtn = new QPushButton("Clear", searchBar);
-    clearFiltersBtn->setObjectName("clearFiltersBtn");
-    clearFiltersBtn->setFixedSize(70, 35);
-    searchLayout->addWidget(clearFiltersBtn);
-
-    // Sort combo
-    sortCombo = new QComboBox(searchBar);
-    sortCombo->addItem("Title ▲");
-    sortCombo->addItem("Title ▼");
-    sortCombo->addItem("Date ▲");
-    sortCombo->addItem("Date ▼");
-    sortCombo->setFixedSize(100, 35);
-    // Make it visually consistent with the rest of the top bar controls
-    sortCombo->setStyleSheet(
-        "QComboBox { background-color: #555; border: 1px solid #777; border-radius: 5px; color: #ffffff; padding: 5px 10px; }"
-        "QComboBox::drop-down { border: 0px; }"
-        "QComboBox QAbstractItemView { background-color: #3c3c3c; color: #ffffff; border: 1px solid #777; }"
-    );
-    searchLayout->addWidget(sortCombo);
-    
-    // Action buttons: Add / Import / Export / Save
-    addTopBtn = new QPushButton("Add", searchBar);
-    addTopBtn->setFixedSize(80, 35);
-    searchLayout->addWidget(addTopBtn);
-
-    importTopBtn = new QPushButton("Import", searchBar);
-    importTopBtn->setFixedSize(80, 35);
-    searchLayout->addWidget(importTopBtn);
-
-    exportTopBtn = new QPushButton("Export", searchBar);
-    exportTopBtn->setFixedSize(80, 35);
-    searchLayout->addWidget(exportTopBtn);
-
-    saveTopBtn = new QPushButton("Save", searchBar);
-    saveTopBtn->setFixedSize(80, 35);
-    searchLayout->addWidget(saveTopBtn);
-    
-    centralLayout->addWidget(searchBar);
-    
-    // Stacked widget for grid (details page removed; grid stays visible)
-    stackedWidget = new QStackedWidget(centralArea);
-    
-    // Grid page
-    gridPage = new QWidget();
-    QVBoxLayout* gridPageLayout = new QVBoxLayout(gridPage);
-    gridPageLayout->setContentsMargins(20, 20, 20, 20);
-    
-    mediaGridArea = new QScrollArea(gridPage);
-    mediaGridArea->setWidgetResizable(true);
-    mediaGridArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    mediaGridArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    
-    mediaGridWidget = new QWidget(mediaGridArea);
-    mediaGridLayout = new QGridLayout(mediaGridWidget);
-    mediaGridLayout->setSpacing(24);
-    mediaGridLayout->setAlignment(Qt::AlignTop);
-    
-    mediaGridArea->setWidget(mediaGridWidget);
-    gridPageLayout->addWidget(mediaGridArea);
-    
-    stackedWidget->addWidget(gridPage);
-    stackedWidget->setCurrentWidget(gridPage);
-    
-    centralLayout->addWidget(stackedWidget);
+    mediaGrid = new MediaGridWidget(centralArea);
+    centralLayout->addWidget(mediaGrid);
     
     mainLayout->addWidget(centralArea, 1);
     
-    // Connect resize events for better grid management
-    connect(mediaGridArea->horizontalScrollBar(), &QScrollBar::rangeChanged, 
-            this, &MainWindow::onScrollBarRangeChanged);
+    
+    connect(topBar, &TopBarWidget::searchTextChanged, this, &MainWindow::onSearchTextChanged);
+    connect(topBar, &TopBarWidget::advancedSearchRequested, this, &MainWindow::onAdvancedSearchClicked);
+    connect(topBar, &TopBarWidget::clearFiltersRequested, this, &MainWindow::clearAdvancedFilters);
+    connect(topBar, &TopBarWidget::sortChanged, this, &MainWindow::onSortChanged);
+    connect(topBar, &TopBarWidget::addRequested, this, &MainWindow::addMedia);
+    connect(topBar, &TopBarWidget::importRequested, this, &MainWindow::importData);
+    connect(topBar, &TopBarWidget::exportRequested, this, &MainWindow::exportData);
+    connect(topBar, &TopBarWidget::saveRequested, this, &MainWindow::saveTriggered);
+    connect(mediaGrid, &MediaGridWidget::mediaClicked, this, &MainWindow::onMediaCardClicked);
 }
 
 void MainWindow::setupRightPanel()
 {
-    rightPanel = new QWidget(this);
-    rightPanel->setObjectName("rightPanel");
-    rightPanel->setFixedWidth(420);
-    
-    rightLayout = new QVBoxLayout(rightPanel);
-    rightLayout->setSpacing(20);
-    rightLayout->setContentsMargins(20, 20, 20, 20);
-    
-    // Details widget with inline Back button
-    detailsWidget = new QWidget(rightPanel);
-    detailsWidget->setObjectName("detailsWidget");
-    
-    detailsLayout = new QVBoxLayout(detailsWidget);
-    detailsLayout->setSpacing(15);
-    
-    // Back to grid button at top of details panel (icon + text, no duplicate arrow)
-    backBtn = new QPushButton("Back to Grid", detailsWidget);
-    backBtn->setObjectName("backBtn");
-    backBtn->setMinimumHeight(36);
-    detailsLayout->addWidget(backBtn);
-    
-    // Cover image
-    coverImage = new QLabel(detailsWidget);
-    coverImage->setObjectName("coverImage");
-    coverImage->setFixedSize(260, 300);
-    coverImage->setAlignment(Qt::AlignCenter);
-    coverImage->setStyleSheet("border: none; background: transparent;");
-    detailsLayout->addWidget(coverImage, 0, Qt::AlignCenter);
-    
-    // Title
-    titleLabel = new QLabel(detailsWidget);
-    titleLabel->setObjectName("titleLabel");
-    titleLabel->setAlignment(Qt::AlignCenter);
-    detailsLayout->addWidget(titleLabel);
-    
-    // Author
-    authorLabel = new QLabel(detailsWidget);
-    authorLabel->setObjectName("authorLabel");
-    detailsLayout->addWidget(authorLabel);
-    
-    // Year
-    yearLabel = new QLabel(detailsWidget);
-    yearLabel->setObjectName("yearLabel");
-    detailsLayout->addWidget(yearLabel);
-    
-    // Duration
-    durationLabel = new QLabel(detailsWidget);
-    durationLabel->setObjectName("durationLabel");
-    detailsLayout->addWidget(durationLabel);
-    
-    // Summary
-    summaryLabel = new QLabel(detailsWidget);
-    summaryLabel->setObjectName("summaryLabel");
-    summaryLabel->setWordWrap(true);
-    detailsLayout->addWidget(summaryLabel);
-    
-    // Cover path
-    coverPathLabel = new QLabel(detailsWidget);
-    coverPathLabel->setObjectName("coverPathLabel");
-    detailsLayout->addWidget(coverPathLabel);
-
-    // Attributes group (type-specific)
-    attributesGroup = new QGroupBox("Attributes", detailsWidget);
-    attributesWidget = new QWidget(attributesGroup);
-    attributesForm = new QFormLayout(attributesWidget);
-    QVBoxLayout* attrGroupLay = new QVBoxLayout(attributesGroup);
-    attrGroupLay->addWidget(attributesWidget);
-    detailsLayout->addWidget(attributesGroup);
-    
-    detailsLayout->addStretch();
-    
-    // Buttons
-    QHBoxLayout* buttonLayout = new QHBoxLayout();
-    buttonLayout->setSpacing(12);
-    buttonLayout->setAlignment(Qt::AlignHCenter);
-    editBtn = new QPushButton("Edit", detailsWidget);
-    editBtn->setObjectName("editBtn");
-    editBtn->setMinimumSize(110, 36);
-    editBtn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    buttonLayout->addWidget(editBtn);
-    
-    deleteBtn = new QPushButton("Delete", detailsWidget);
-    deleteBtn->setObjectName("deleteBtn");
-    deleteBtn->setMinimumSize(120, 36);
-    deleteBtn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    buttonLayout->addWidget(deleteBtn);
-    
-    detailsLayout->addLayout(buttonLayout);
-    
-    rightLayout->addWidget(detailsWidget);
-    
-    mainLayout->addWidget(rightPanel);
+    detailsPanel = new DetailsPanel(this);
+    connect(detailsPanel, &DetailsPanel::backRequested, this, &MainWindow::onBackToGridClicked);
+    connect(detailsPanel, &DetailsPanel::editRequested, this, &MainWindow::editMedia);
+    connect(detailsPanel, &DetailsPanel::deleteRequested, this, &MainWindow::deleteMedia);
+    mainLayout->addWidget(detailsPanel);
 }
 
 void MainWindow::setupMenuBar()
 {
     QMenuBar *menuBar = this->menuBar();
     
-    // File menu
+    
     QMenu *fileMenu = menuBar->addMenu("&File");
     importAction = fileMenu->addAction("&Import...");
     exportAction = fileMenu->addAction("&Export...");
@@ -353,12 +152,12 @@ void MainWindow::setupMenuBar()
     fileMenu->addSeparator();
     fileMenu->addAction("E&xit", this, &QWidget::close);
     
-    // Edit menu
+    
     QMenu *editMenu = menuBar->addMenu("&Edit");
     addAction = editMenu->addAction("&Add Media...");
     editAction = editMenu->addAction("&Edit Media...");
     deleteAction = editMenu->addAction("&Delete Media");
-    // Shortcuts
+    
     addAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_N));
     editAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_E));
     deleteAction->setShortcut(QKeySequence(Qt::Key_Delete));
@@ -366,7 +165,7 @@ void MainWindow::setupMenuBar()
     exportAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_E));
     saveAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_S));
     
-    // Help menu
+    
     QMenu *helpMenu = menuBar->addMenu("&Help");
     shortcutsAction = helpMenu->addAction("Keyboard &Shortcuts");
     aboutAction = helpMenu->addAction("&About");
@@ -380,7 +179,7 @@ void MainWindow::setupStatusBar()
 
 void MainWindow::setupConnections()
 {
-    // Connect menu actions
+    
     connect(addAction, &QAction::triggered, this, &MainWindow::addMedia);
     connect(editAction, &QAction::triggered, this, &MainWindow::editMedia);
     connect(deleteAction, &QAction::triggered, this, &MainWindow::deleteMedia);
@@ -390,52 +189,18 @@ void MainWindow::setupConnections()
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     connect(shortcutsAction, &QAction::triggered, this, &MainWindow::showShortcuts);
     
-    // Connect new UI elements
-    connect(categoryList, &QListWidget::currentRowChanged, this, &MainWindow::onCategoryChanged);
-    connect(searchInput, &QLineEdit::textChanged, this, &MainWindow::onSearchTextChanged);
-    connect(advancedSearchBtn, &QPushButton::clicked, this, &MainWindow::onAdvancedSearchClicked);
-    connect(clearFiltersBtn, &QPushButton::clicked, this, &MainWindow::clearAdvancedFilters);
-    connect(sortCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::onSortChanged);
-    connect(addTopBtn, &QPushButton::clicked, this, &MainWindow::addMedia);
-    connect(importTopBtn, &QPushButton::clicked, this, &MainWindow::importData);
-    connect(exportTopBtn, &QPushButton::clicked, this, &MainWindow::exportData);
-    addTopBtn->setIcon(loadIconByName("add"));
-    importTopBtn->setIcon(loadIconByName("import"));
-    exportTopBtn->setIcon(loadIconByName("export"));
-    saveTopBtn->setIcon(loadIconByName("save"));
-    if (advancedSearchBtn) advancedSearchBtn->setIcon(loadIconByName("filter-advanced"));
-    if (clearFiltersBtn) clearFiltersBtn->setIcon(loadIconByName("filter-clear"));
-    addTopBtn->setIconSize(QSize(18,18));
-    importTopBtn->setIconSize(QSize(18,18));
-    exportTopBtn->setIconSize(QSize(18,18));
-    saveTopBtn->setIconSize(QSize(18,18));
-    if (advancedSearchBtn) advancedSearchBtn->setIconSize(QSize(18,18));
-    if (clearFiltersBtn) clearFiltersBtn->setIconSize(QSize(18,18));
-
-    backBtn->setIcon(loadIconByName("back"));
-    editBtn->setIcon(loadIconByName("edit"));
-    deleteBtn->setIcon(loadIconByName("delete"));
-    backBtn->setIconSize(QSize(20,20));
-    editBtn->setIconSize(QSize(20,20));
-    deleteBtn->setIconSize(QSize(20,20));
-
-    connect(saveTopBtn, &QPushButton::clicked, this, &MainWindow::saveTriggered);
-    connect(backBtn, &QPushButton::clicked, this, &MainWindow::onBackToGridClicked);
-    connect(editBtn, &QPushButton::clicked, this, &MainWindow::editMedia);
-    connect(deleteBtn, &QPushButton::clicked, this, &MainWindow::deleteMedia);
-
-    // Keyboard shortcut: Ctrl+F focuses the search field
+    
     QShortcut* focusSearch = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_F), this);
-    connect(focusSearch, &QShortcut::activated, [this]() { searchInput->setFocus(); searchInput->selectAll(); });
+    connect(focusSearch, &QShortcut::activated, [this]() {
+        if (topBar && topBar->searchField()) { topBar->searchField()->setFocus(); topBar->searchField()->selectAll(); }
+    });
 }
 
-// Update grid with current sorting and filters, recalculate layout
+
 void MainWindow::refreshMediaGrid()
 {
-    clearMediaGrid();
-    
     auto allMedia = library->getAllMedia();
-    // Sort according to currentSortMode (locale-aware, case-insensitive, numeric-aware). Keep leading articles.
+    
     QCollator coll; coll.setCaseSensitivity(Qt::CaseInsensitive); coll.setNumericMode(true);
     std::sort(allMedia.begin(), allMedia.end(), [&](Media* a, Media* b){
         if (currentSortMode == SortMode::TitleAsc)
@@ -443,193 +208,32 @@ void MainWindow::refreshMediaGrid()
         if (currentSortMode == SortMode::TitleDesc)
             return coll.compare(QString::fromStdString(a->getTitle()), QString::fromStdString(b->getTitle())) > 0;
         const Date& da = a->getReleaseDate(); const Date& db = b->getReleaseDate();
-        if (currentSortMode == SortMode::DateAsc) return da < db;
-        return da > db; // DateDesc
+        if (currentSortMode == SortMode::DateAsc) return da < db; else return da > db;
     });
     
-    // Calculate available width more accurately
-    int availableWidth = mediaGridArea->viewport()->width();
-    int margins = 40; // Left and right margins
-    int colsPerRow = computeColumnsForWidth(availableWidth - margins);
-    
-    int row = 0, col = 0;
-    for (auto media : allMedia) {
-        if (!mediaMatchesFilters(media)) continue;
-        addMediaCard(media, row, col);
-        col++;
-        if (col >= colsPerRow) { 
-            col = 0; 
-            row++; 
-        }
-    }
-    
-    // Force layout update
-    mediaGridWidget->updateGeometry();
-    mediaGridArea->viewport()->update();
-    
-    // Update status bar with count
-    QString statusMessage = QString("Total media: %1").arg(allMedia.size());
-    statusBar()->showMessage(statusMessage);
+    std::vector<Media*> filtered;
+    filtered.reserve(allMedia.size());
+    for (auto* m : allMedia) if (mediaMatchesFilters(m)) filtered.push_back(m);
+    if (mediaGrid) mediaGrid->setMedia(filtered);
+    statusBar()->showMessage(QString("Total media: %1").arg(allMedia.size()));
 }
 
 int MainWindow::computeColumnsForWidth(int availableWidth) const
 {
     const int itemWidth = 240;
-    const int spacing = 24; // Same as mediaGridLayout->setSpacing(24)
+    const int spacing = 24; 
     
-    // Calculate how many items can fit with proper spacing
+    
     int cols = std::max(1, (availableWidth + spacing) / (itemWidth + spacing));
     return cols;
 }
 
 void MainWindow::applyDarkTheme()
 {
-    setStyleSheet(R"(
-        QMainWindow {
-            background-color: #2b2b2b;
-            color: #ffffff;
-            font-family: 'Segoe UI', 'Inter', 'Roboto', sans-serif;
-            font-size: 12px;
-        }
-        
-        #leftSidebar {
-            background-color: #3c3c3c;
-            border-right: 1px solid #555;
-        }
-        
-        #sidebarTitle {
-            color: #ffffff;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 10px;
-        }
-        
-        #categoryList {
-            background-color: #3c3c3c;
-            border: none;
-            color: #f0f0f0;
-            font-size: 14px;
-        }
-        
-        #categoryList::item {
-            padding: 10px;
-            border-radius: 5px;
-            margin: 2px;
-        }
-        
-        #categoryList::item:selected {
-            background-color: #0078d4;
-            color: #ffffff;
-        }
-        
-        #categoryList::item:hover {
-            background-color: #555;
-        }
-        
-        #centralArea {
-            background-color: #2b2b2b;
-        }
-        
-        #searchBar {
-            background-color: #3c3c3c;
-            border-bottom: 1px solid #555;
-        }
-        
-        #searchInput {
-            background-color: #555;
-            border: 1px solid #777;
-            border-radius: 5px;
-            color: #ffffff;
-            padding: 5px 10px;
-            font-size: 14px;
-        }
-        
-        #searchInput:focus {
-            border: 1px solid #0078d4;
-        }
-        
-        #advancedSearchBtn, QPushButton {
-            background-color: #555;
-            border: 1px solid #777;
-            border-radius: 5px;
-            color: #ffffff;
-            padding: 5px 10px;
-        }
-        
-        #advancedSearchBtn:hover, QPushButton:hover {
-            background-color: #666;
-        }
-        
-        #rightPanel {
-            background-color: #3c3c3c;
-            border-left: 1px solid #555;
-        }
-        
-        #detailsWidget {
-            background-color: #3c3c3c;
-        }
-        
-        #titleLabel {
-            color: #ffffff;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        #authorLabel, #yearLabel, #durationLabel, #summaryLabel, #coverPathLabel {
-            color: #e0e0e0;
-            font-size: 14px;
-        }
-        
-        #editBtn, #deleteBtn, #backBtn {
-            background-color: #0078d4;
-            border: none;
-            border-radius: 5px;
-            color: #ffffff;
-            padding: 10px 18px;
-            font-size: 15px;
-        }
-        
-        #editBtn:hover, #backBtn:hover {
-            background-color: #106ebe;
-        }
-        
-        #deleteBtn {
-            background-color: #d13438;
-        }
-        
-        #deleteBtn:hover {
-            background-color: #b02a2e;
-        }
-        
-        QScrollArea {
-            background-color: #2b2b2b;
-            border: none;
-        }
-        
-        QScrollBar:vertical {
-            background-color: #555;
-            width: 12px;
-            border-radius: 6px;
-        }
-        
-        QScrollBar::handle:vertical {
-            background-color: #777;
-            border-radius: 6px;
-            min-height: 20px;
-        }
-        
-        QScrollBar::handle:vertical:hover {
-            background-color: #888;
-        }
-    )");
+    
 }
 
-void MainWindow::onCategoryChanged(int index)
-{
-    QString category = categoryList->item(index)->text();
-    currentCategoryFilter = category;
-    refreshMediaGrid();
-}
+
 
 void MainWindow::onMediaCardClicked(Media* media)
 {
@@ -641,7 +245,7 @@ void MainWindow::onBackToGridClicked()
 {
     hideMediaDetails();
     
-    // Ensure the grid adapts to the new layout
+    
     QTimer::singleShot(100, this, &MainWindow::refreshMediaGrid);
 }
 
@@ -662,7 +266,7 @@ void MainWindow::onAdvancedSearchClicked()
 
 void MainWindow::clearAdvancedFilters()
 {
-    advFilters = AdvancedFilters{}; // reset
+    advFilters = AdvancedFilters{}; 
     currentSearchFilter.clear();
     refreshMediaGrid();
     statusBar()->showMessage("Filtri avanzati rimossi", 2500);
@@ -670,7 +274,7 @@ void MainWindow::clearAdvancedFilters()
 
 void MainWindow::onScrollBarRangeChanged()
 {
-    // Update grid when scrollbar range changes (indicates content size change)
+    
     QTimer::singleShot(100, this, &MainWindow::refreshMediaGrid);
 }
 
@@ -690,166 +294,28 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
     
-    // Delay the grid refresh to ensure the resize is complete
+    
     QTimer::singleShot(100, this, &MainWindow::refreshMediaGrid);
 }
 
-void MainWindow::clearMediaGrid()
-{
-    // Clear existing cards
-    QLayoutItem* item;
-    while ((item = mediaGridLayout->takeAt(0)) != nullptr) {
-        delete item->widget();
-        delete item;
-    }
-}
-
-void MainWindow::addMediaCard(Media* media, int row, int col)
-{
-    MediaCard* card = new MediaCard(media, mediaGridWidget);
-    connect(card, &MediaCard::clicked, this, &MainWindow::onMediaCardClicked);
-    mediaGridLayout->addWidget(card, row, col);
-}
+void MainWindow::clearMediaGrid() {}
+void MainWindow::addMediaCard(Media* , int , int ) {}
 
 void MainWindow::showMediaDetails(Media* media)
 {
     if (!media) return;
-    
-    // Update details
-    titleLabel->setText(QString::fromStdString(media->getTitle()));
-    authorLabel->setText("Author: " + QString::fromStdString(media->getAuthor()));
-    yearLabel->setText("Year: " + QString::fromStdString(media->getReleaseDate().toString()));
-    
-    // Set cover image from path with fallback, scaled to fit nicely without borders
-    QPixmap pix(QString::fromStdString(media->getImagePath()));
-    if (!pix.isNull()) {
-        coverImage->setPixmap(pix.scaled(coverImage->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        coverImage->setText("");
-    } else {
-        // Fallback: show type icon placeholder, consistent with MediaCard
-        auto typeToIcon = [&](Media* m)->QString{
-            if (dynamic_cast<Book*>(m)) return "book";
-            if (dynamic_cast<Movie*>(m)) return "movie";
-            if (dynamic_cast<Song*>(m)) return "music";
-            if (dynamic_cast<Magazine*>(m)) return "magazine";
-            if (dynamic_cast<Podcast*>(m)) return "podcast";
-            return "";
-        };
-        auto loadIcon = [&](const QString& base)->QPixmap{
-            if (base.isEmpty()) return QPixmap();
-            const QString res = QString(":/icons/%1.svg").arg(base);
-            if (QFile::exists(res)) return QPixmap(res);
-            const QStringList tries = {
-                QString("src/Frontend/Resources/icons/%1.svg").arg(base),
-                QString("icons/%1.svg").arg(base),
-                QString("../icons/%1.svg").arg(base),
-            };
-            for (const QString& p : tries) if (QFile::exists(p)) return QPixmap(p);
-            return QPixmap();
-        };
-        QPixmap icon = loadIcon(typeToIcon(media));
-        if (!icon.isNull()) {
-            QPixmap scaled = icon.scaled(coverImage->width()*0.7, coverImage->height()*0.7, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            QPixmap canvas(coverImage->size());
-            canvas.fill(Qt::transparent);
-            QPainter painter(&canvas);
-            painter.setRenderHint(QPainter::Antialiasing, true);
-            const int x = (canvas.width() - scaled.width())/2;
-            const int y = (canvas.height() - scaled.height())/2;
-            painter.drawPixmap(x, y, scaled);
-            painter.end();
-            coverImage->setPixmap(canvas);
-            coverImage->setText("");
-        } else {
-            coverImage->setPixmap(QPixmap());
-            coverImage->setText(" ");
-        }
-    }
-    
-    // Clear and populate attributes form
-    clearAttributesForm();
-    populateAttributesForm(media);
-    
-    // Show the right panel
-    rightPanel->show();
-    
-    // Refresh the grid to ensure proper layout adaptation when showing details
-    QTimer::singleShot(50, this, &MainWindow::refreshMediaGrid);
+    detailsPanel->show();
+    detailsPanel->showMedia(media);
 }
 
 void MainWindow::hideMediaDetails()
 {
-    rightPanel->hide();
+    detailsPanel->hide();
     selectedMedia = nullptr;
-    
-    // Refresh the grid to ensure proper layout adaptation
-    QTimer::singleShot(50, this, &MainWindow::refreshMediaGrid);
 }
 
-void MainWindow::clearAttributesForm()
-{
-    if (!attributesForm) return;
-    // Remove rows safely to avoid QFormLayout::takeAt warnings
-    for (int row = attributesForm->rowCount() - 1; row >= 0; --row) {
-        if (QLayoutItem* l = attributesForm->itemAt(row, QFormLayout::LabelRole)) {
-            if (QWidget* lw = l->widget()) lw->deleteLater();
-        }
-        if (QLayoutItem* f = attributesForm->itemAt(row, QFormLayout::FieldRole)) {
-            if (QWidget* fw = f->widget()) fw->deleteLater();
-        }
-        attributesForm->removeRow(row);
-    }
-}
-
-void MainWindow::populateAttributesForm(Media* media)
-{
-    if (!media || !attributesForm) return;
-    
-    if (auto b = dynamic_cast<Book*>(media)) {
-        attributesForm->addRow("Type:", new QLabel("Book", attributesWidget));
-        attributesForm->addRow("Publisher:", new QLabel(QString::fromStdString(b->getPublisher()), attributesWidget));
-        attributesForm->addRow("Pages:", new QLabel(QString::number(b->getPages()), attributesWidget));
-        attributesForm->addRow("ISBN:", new QLabel(QString::fromStdString(b->getIsbn()), attributesWidget));
-        attributesForm->addRow("Language:", new QLabel(QString::fromStdString(b->getLanguageString()), attributesWidget));
-        attributesForm->addRow("Genre:", new QLabel(QString::fromStdString(b->getGenreString()), attributesWidget));
-    } else if (auto m = dynamic_cast<Movie*>(media)) {
-        attributesForm->addRow("Type:", new QLabel("Movie", attributesWidget));
-        attributesForm->addRow("Director:", new QLabel(QString::fromStdString(m->getDirector()), attributesWidget));
-        attributesForm->addRow("Duration:", new QLabel(QString::number(m->getDuration()) + " min", attributesWidget));
-        attributesForm->addRow("Studio:", new QLabel(QString::fromStdString(m->getStudio()), attributesWidget));
-        attributesForm->addRow("Rating:", new QLabel(QString::fromStdString(m->getRating()), attributesWidget));
-        attributesForm->addRow("Language:", new QLabel(QString::fromStdString(m->getLanguageString()), attributesWidget));
-        attributesForm->addRow("Country:", new QLabel(QString::fromStdString(m->getCountry()), attributesWidget));
-        attributesForm->addRow("Genre:", new QLabel(QString::fromStdString(m->getGenreString()), attributesWidget));
-    } else if (auto s = dynamic_cast<Song*>(media)) {
-        attributesForm->addRow("Type:", new QLabel("Song", attributesWidget));
-        attributesForm->addRow("Artist:", new QLabel(QString::fromStdString(s->getArtist()), attributesWidget));
-        attributesForm->addRow("Album:", new QLabel(QString::fromStdString(s->getAlbum()), attributesWidget));
-        attributesForm->addRow("Duration:", new QLabel(QString::number(s->getDuration()) + " s", attributesWidget));
-        attributesForm->addRow("Format:", new QLabel(QString::fromStdString(s->getFormat()), attributesWidget));
-        attributesForm->addRow("Label:", new QLabel(QString::fromStdString(s->getLabel()), attributesWidget));
-        attributesForm->addRow("Track:", new QLabel(QString::number(s->getTrackNumber()), attributesWidget));
-        attributesForm->addRow("Genre:", new QLabel(QString::fromStdString(s->getGenreString()), attributesWidget));
-    } else if (auto mg = dynamic_cast<Magazine*>(media)) {
-        attributesForm->addRow("Type:", new QLabel("Magazine", attributesWidget));
-        attributesForm->addRow("Publisher:", new QLabel(QString::fromStdString(mg->getPublisher()), attributesWidget));
-        attributesForm->addRow("Issue:", new QLabel(QString::number(mg->getIssueNumber()), attributesWidget));
-        attributesForm->addRow("ISSN:", new QLabel(QString::fromStdString(mg->getIssn()), attributesWidget));
-        attributesForm->addRow("Editor:", new QLabel(QString::fromStdString(mg->getEditor()), attributesWidget));
-        attributesForm->addRow("Pages:", new QLabel(QString::number(mg->getPages()), attributesWidget));
-        attributesForm->addRow("Frequency:", new QLabel(QString::fromStdString(mg->getFrequency()), attributesWidget));
-        attributesForm->addRow("Genre:", new QLabel(QString::fromStdString(mg->getGenreString()), attributesWidget));
-    } else if (auto p = dynamic_cast<Podcast*>(media)) {
-        attributesForm->addRow("Type:", new QLabel("Podcast", attributesWidget));
-        attributesForm->addRow("Host:", new QLabel(QString::fromStdString(p->getHost()), attributesWidget));
-        attributesForm->addRow("Episodes:", new QLabel(QString::number(p->getEpisodeNumber()), attributesWidget));
-        attributesForm->addRow("Platform:", new QLabel(QString::fromStdString(p->getPlatform()), attributesWidget));
-        attributesForm->addRow("Duration:", new QLabel(QString::number(p->getDuration()) + " min", attributesWidget));
-        attributesForm->addRow("Series:", new QLabel(QString::fromStdString(p->getSeries()), attributesWidget));
-        attributesForm->addRow("Description:", new QLabel(QString::fromStdString(p->getDescription()), attributesWidget));
-        attributesForm->addRow("Genre:", new QLabel(QString::fromStdString(p->getGenreString()), attributesWidget));
-    }
-}
+void MainWindow::clearAttributesForm() {}
+void MainWindow::populateAttributesForm(Media* ) {}
 
 void MainWindow::filterMediaByCategory(const QString& category)
 {
@@ -866,18 +332,18 @@ void MainWindow::applySearchFilter(const QString& searchText)
 bool MainWindow::mediaMatchesFilters(Media* media) const
 {
     if (!media) return false;
-    // Category filter
+    
     QString typeNeeded = categoryToType(currentCategoryFilter);
     if (!typeNeeded.isEmpty()) {
         std::string t = library->getMediaType(media);
         if (QString::fromStdString(t) != typeNeeded) return false;
     }
-    // Advanced type filter override
+    
     if (advFilters.enabled && !advFilters.type.isEmpty()) {
         std::string t = library->getMediaType(media);
         if (QString::fromStdString(t) != advFilters.type) return false;
     }
-    // Text search (title or author, case-insensitive, contains)
+    
     if (!currentSearchFilter.trimmed().isEmpty()) {
         const QString needle = currentSearchFilter.trimmed();
         QString title = QString::fromStdString(media->getTitle());
@@ -887,7 +353,7 @@ bool MainWindow::mediaMatchesFilters(Media* media) const
             return false;
         }
     }
-    // Advanced text filters
+    
     if (advFilters.enabled) {
         if (!advFilters.titleContains.trimmed().isEmpty()) {
             if (!QString::fromStdString(media->getTitle()).contains(advFilters.titleContains, Qt::CaseInsensitive)) return false;
@@ -896,12 +362,12 @@ bool MainWindow::mediaMatchesFilters(Media* media) const
             if (!QString::fromStdString(media->getAuthor()).contains(advFilters.authorContains, Qt::CaseInsensitive)) return false;
         }
         if (advFilters.onlyAvailable && !media->getIsAvailable()) return false;
-        // Date range (assuming Date has getters)
+        
         const Date& d = media->getReleaseDate();
         QDate qd(d.getYear(), d.getMonth(), d.getDay());
         if (advFilters.useDateFrom && qd < advFilters.dateFrom) return false;
         if (advFilters.useDateTo && qd > advFilters.dateTo) return false;
-        // Type-specific genres via dynamic_cast
+        
         if (auto b = dynamic_cast<Book*>(media); advFilters.bookGenre >= 0) {
             if (b && static_cast<int>(b->getGenre()) != advFilters.bookGenre) return false;
         }
@@ -932,7 +398,7 @@ QString MainWindow::categoryToType(const QString& category) const
     return QString();
 }
 
-// Existing methods (placeholders for now)
+
 void MainWindow::addMedia()
 {
     AddMediaDialog dialog(this);
@@ -955,7 +421,7 @@ void MainWindow::editMedia()
     
     AddMediaDialog dialog(selectedMedia, this);
     if (dialog.exec() == QDialog::Accepted) {
-        // Media was edited in place, just refresh the grid
+        
         refreshMediaGrid();
         statusBar()->showMessage("Media updated successfully!", 3000);
     }
@@ -978,7 +444,7 @@ void MainWindow::deleteMedia()
         selectedMedia = nullptr;
         hideMediaDetails();
         
-        // Refresh UI
+        
         refreshMediaGrid();
         statusBar()->showMessage("Media deleted.", 3000);
     }
@@ -992,7 +458,7 @@ void MainWindow::exportData()
     QString filePath = QFileDialog::getSaveFileName(this, "Export Library", defaultDir, filter, &selectedFilter);
     if (filePath.isEmpty()) return;
 
-    // Ensure extension matches chosen filter
+    
     if (selectedFilter.contains("*.json") && !filePath.endsWith(".json", Qt::CaseInsensitive)) {
         filePath += ".json";
     } else if (selectedFilter.contains("*.xml") && !filePath.endsWith(".xml", Qt::CaseInsensitive)) {
@@ -1049,7 +515,7 @@ void MainWindow::importData()
 
 void MainWindow::saveTriggered()
 {
-    // Se non c'è ancora un percorso, apri Save As
+    
     if (currentSavePath.isEmpty()) {
         QString filter = "JSON (*.json);;XML (*.xml)";
         QString defaultDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
@@ -1067,7 +533,7 @@ void MainWindow::saveTriggered()
     } else if (currentSavePath.endsWith(".xml", Qt::CaseInsensitive)) {
         ok = library->saveXml(currentSavePath.toStdString());
     } else {
-        // Estensione inattesa: forza Save As di nuovo
+        
         currentSavePath.clear();
         saveTriggered();
         return;
