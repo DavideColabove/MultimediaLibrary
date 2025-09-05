@@ -97,3 +97,4 @@ std::string Movie::getGenreString() const {
 void Movie::accept(MediaVisitor& visitor) const {
     visitor.visit(*this);
 }
+

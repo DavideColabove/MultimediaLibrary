@@ -8,6 +8,7 @@
 .qmake.stash
 Makefile.Debug
 Makefile.Release
+Makefile
 release/
 debug/
 .qtc_clangd/

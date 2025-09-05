@@ -3,6 +3,8 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QHBoxLayout>
+#include "../../Backend/Elements/MediaVisitor.h"
+#include "../Visitors/FrontendVisitors.h"
 
 static QIcon loadIconByNameDP(const QString& baseName) {
     const QString resPath = QString(":/icons/%1.svg").arg(baseName);
@@ -95,51 +97,61 @@ void DetailsPanel::clearAttributes() {
 }
 
 void DetailsPanel::populateAttributes(Media* media) {
-    if (!media) return;
-    if (auto b = dynamic_cast<Book*>(media)) {
-        attributesForm_->addRow("Type:", new QLabel("Book", attributesWidget_));
-        attributesForm_->addRow("Publisher:", new QLabel(QString::fromStdString(b->getPublisher()), attributesWidget_));
-        attributesForm_->addRow("Pages:", new QLabel(QString::number(b->getPages()), attributesWidget_));
-        attributesForm_->addRow("ISBN:", new QLabel(QString::fromStdString(b->getIsbn()), attributesWidget_));
-        attributesForm_->addRow("Language:", new QLabel(QString::fromStdString(b->getLanguageString()), attributesWidget_));
-        attributesForm_->addRow("Genre:", new QLabel(QString::fromStdString(b->getGenreString()), attributesWidget_));
-    } else if (auto m = dynamic_cast<Movie*>(media)) {
-        attributesForm_->addRow("Type:", new QLabel("Movie", attributesWidget_));
-        attributesForm_->addRow("Director:", new QLabel(QString::fromStdString(m->getDirector()), attributesWidget_));
-        attributesForm_->addRow("Duration:", new QLabel(QString::number(m->getDuration()) + " min", attributesWidget_));
-        attributesForm_->addRow("Studio:", new QLabel(QString::fromStdString(m->getStudio()), attributesWidget_));
-        attributesForm_->addRow("Rating:", new QLabel(QString::fromStdString(m->getRating()), attributesWidget_));
-        attributesForm_->addRow("Language:", new QLabel(QString::fromStdString(m->getLanguageString()), attributesWidget_));
-        attributesForm_->addRow("Country:", new QLabel(QString::fromStdString(m->getCountry()), attributesWidget_));
-        attributesForm_->addRow("Genre:", new QLabel(QString::fromStdString(m->getGenreString()), attributesWidget_));
-    } else if (auto s = dynamic_cast<Song*>(media)) {
-        attributesForm_->addRow("Type:", new QLabel("Song", attributesWidget_));
-        attributesForm_->addRow("Artist:", new QLabel(QString::fromStdString(s->getArtist()), attributesWidget_));
-        attributesForm_->addRow("Album:", new QLabel(QString::fromStdString(s->getAlbum()), attributesWidget_));
-        attributesForm_->addRow("Duration:", new QLabel(QString::number(s->getDuration()) + " s", attributesWidget_));
-        attributesForm_->addRow("Format:", new QLabel(QString::fromStdString(s->getFormat()), attributesWidget_));
-        attributesForm_->addRow("Label:", new QLabel(QString::fromStdString(s->getLabel()), attributesWidget_));
-        attributesForm_->addRow("Track:", new QLabel(QString::number(s->getTrackNumber()), attributesWidget_));
-        attributesForm_->addRow("Genre:", new QLabel(QString::fromStdString(s->getGenreString()), attributesWidget_));
-    } else if (auto mg = dynamic_cast<Magazine*>(media)) {
-        attributesForm_->addRow("Type:", new QLabel("Magazine", attributesWidget_));
-        attributesForm_->addRow("Publisher:", new QLabel(QString::fromStdString(mg->getPublisher()), attributesWidget_));
-        attributesForm_->addRow("Issue:", new QLabel(QString::number(mg->getIssueNumber()), attributesWidget_));
-        attributesForm_->addRow("ISSN:", new QLabel(QString::fromStdString(mg->getIssn()), attributesWidget_));
-        attributesForm_->addRow("Editor:", new QLabel(QString::fromStdString(mg->getEditor()), attributesWidget_));
-        attributesForm_->addRow("Pages:", new QLabel(QString::number(mg->getPages()), attributesWidget_));
-        attributesForm_->addRow("Frequency:", new QLabel(QString::fromStdString(mg->getFrequency()), attributesWidget_));
-        attributesForm_->addRow("Genre:", new QLabel(QString::fromStdString(mg->getGenreString()), attributesWidget_));
-    } else if (auto p = dynamic_cast<Podcast*>(media)) {
-        attributesForm_->addRow("Type:", new QLabel("Podcast", attributesWidget_));
-        attributesForm_->addRow("Host:", new QLabel(QString::fromStdString(p->getHost()), attributesWidget_));
-        attributesForm_->addRow("Episodes:", new QLabel(QString::number(p->getEpisodeNumber()), attributesWidget_));
-        attributesForm_->addRow("Platform:", new QLabel(QString::fromStdString(p->getPlatform()), attributesWidget_));
-        attributesForm_->addRow("Duration:", new QLabel(QString::number(p->getDuration()) + " min", attributesWidget_));
-        attributesForm_->addRow("Series:", new QLabel(QString::fromStdString(p->getSeries()), attributesWidget_));
-        attributesForm_->addRow("Description:", new QLabel(QString::fromStdString(p->getDescription()), attributesWidget_));
-        attributesForm_->addRow("Genre:", new QLabel(QString::fromStdString(p->getGenreString()), attributesWidget_));
-    }
+    if (!media || !attributesForm_) return;
+    FrontendVisitors::TypeNameVisitor tn; media->accept(tn);
+    attributesForm_->addRow("Type:", new QLabel(tn.typeName, attributesWidget_));
+    struct AttrVisitor : MediaVisitor {
+        QFormLayout* form;
+        QWidget* parent;
+        void visit(const Book& b) override {
+            add("Publisher:", b.getPublisher());
+            add("Pages:", QString::number(b.getPages()));
+            add("ISBN:", b.getIsbn());
+            add("Language:", b.getLanguageString());
+            add("Genre:", b.getGenreString());
+        }
+        void visit(const Movie& m) override {
+            add("Director:", m.getDirector());
+            add("Duration:", QString::number(m.getDuration()) + " min");
+            add("Studio:", m.getStudio());
+            add("Rating:", m.getRating());
+            add("Language:", m.getLanguageString());
+            add("Country:", m.getCountry());
+            add("Genre:", m.getGenreString());
+        }
+        void visit(const Song& s) override {
+            add("Artist:", s.getArtist());
+            add("Album:", s.getAlbum());
+            add("Duration:", QString::number(s.getDuration()) + " s");
+            add("Format:", s.getFormat());
+            add("Label:", s.getLabel());
+            add("Track:", QString::number(s.getTrackNumber()));
+            add("Genre:", s.getGenreString());
+        }
+        void visit(const Magazine& mg) override {
+            add("Publisher:", mg.getPublisher());
+            add("Issue:", QString::number(mg.getIssueNumber()));
+            add("ISSN:", mg.getIssn());
+            add("Editor:", mg.getEditor());
+            add("Pages:", QString::number(mg.getPages()));
+            add("Frequency:", mg.getFrequency());
+            add("Genre:", mg.getGenreString());
+        }
+        void visit(const Podcast& p) override {
+            add("Host:", p.getHost());
+            add("Episodes:", QString::number(p.getEpisodeNumber()));
+            add("Platform:", p.getPlatform());
+            add("Duration:", QString::number(p.getDuration()) + " min");
+            add("Series:", p.getSeries());
+            add("Description:", p.getDescription());
+            add("Genre:", p.getGenreString());
+        }
+        void add(const QString& key, const QString& value) {
+            form->addRow(key, new QLabel(value, parent));
+        }
+        void add(const QString& key, const std::string& value) { add(key, QString::fromStdString(value)); }
+    } visitor; visitor.form = attributesForm_; visitor.parent = attributesWidget_;
+    media->accept(visitor);
 }
 
 void DetailsPanel::showMedia(Media* media) {

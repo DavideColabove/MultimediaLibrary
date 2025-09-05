@@ -32,7 +32,12 @@ SOURCES += \
     src/Frontend/Windows/TopBarWidget.cpp \
     src/Frontend/Windows/FlowLayout.cpp \
     src/Frontend/Windows/MediaGridWidget.cpp \
-    src/Frontend/Windows/DetailsPanel.cpp
+    src/Frontend/Windows/DetailsPanel.cpp \
+    src/Frontend/Windows/addItemWidgets/BookFormWidget.cpp \
+    src/Frontend/Windows/addItemWidgets/MovieFormWidget.cpp \
+    src/Frontend/Windows/addItemWidgets/SongFormWidget.cpp \
+    src/Frontend/Windows/addItemWidgets/MagazineFormWidget.cpp \
+    src/Frontend/Windows/addItemWidgets/PodcastFormWidget.cpp
 
 # Backend headers
 HEADERS += \
@@ -48,7 +53,6 @@ HEADERS += \
     src/Backend/Enums/Genres.h \
     src/Backend/Enums/Languages.h \
     src/Backend/Library/Library.h \
-    src/Backend/Persistence/IPersistence.h \
     src/Backend/Persistence/JsonPersistence.h \
     src/Backend/Persistence/XmlPersistence.h \
     src/Backend/Persistence/Persistence.h \
@@ -60,7 +64,12 @@ HEADERS += \
     src/Frontend/Windows/TopBarWidget.h \
     src/Frontend/Windows/FlowLayout.h \
     src/Frontend/Windows/MediaGridWidget.h \
-    src/Frontend/Windows/DetailsPanel.h
+    src/Frontend/Windows/DetailsPanel.h \
+    src/Frontend/Windows/addItemWidgets/BookFormWidget.h \
+    src/Frontend/Windows/addItemWidgets/MovieFormWidget.h \
+    src/Frontend/Windows/addItemWidgets/SongFormWidget.h \
+    src/Frontend/Windows/addItemWidgets/MagazineFormWidget.h \
+    src/Frontend/Windows/addItemWidgets/PodcastFormWidget.h
 
 SOURCES += \
     src/Backend/Persistence/MediaFactory.cpp
@@ -70,7 +79,8 @@ INCLUDEPATH += \
     src/Backend/Elements \
     src/Backend/Enums \
     src/Backend/Library \
-    src/Frontend/Windows
+    src/Frontend/Windows \
+    src/Frontend/Windows/addItemWidgets
 
 # Compiler flags
 QMAKE_CXXFLAGS += -std=c++17 -Wall -Wextra

@@ -38,6 +38,8 @@ class Movie : public Media {
         
         
         virtual void accept(MediaVisitor& visitor) const override;
+    virtual void accept(MediaVisitorMutable& visitor) override { visitor.visit(*this); }
+
 
         
         std::string getDirector() const;

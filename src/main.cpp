@@ -1,6 +1,7 @@
 ﻿#include <QApplication>
 #include <QStyleFactory>
 #include <QIcon>
+#include <QFile>
 #include "Frontend/Windows/MainWindow.h"
 
 

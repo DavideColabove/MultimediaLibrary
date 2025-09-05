@@ -89,11 +89,7 @@ AddMediaDialog::AddMediaDialog(QWidget *parent)
     setupCommonFields();
     setupTypeSpecificFields();
     setupConnections();
-    applyDarkTheme();
-    
-    clearTypeSpecificFields();
-    
-    onMediaTypeChanged(0);
+    typeSpecificStack->setCurrentIndex(0);
     
     setWindowTitle("Add New Media");
     setMinimumSize(600, 700);
@@ -112,20 +108,19 @@ AddMediaDialog::AddMediaDialog(Media *existingMediaToEdit, QWidget *parent)
     setupCommonFields();
     setupTypeSpecificFields();
     setupConnections();
-    applyDarkTheme();
+
 
     if (existingMedia) {
-        if (dynamic_cast<Book*>(existingMedia)) {
-            onMediaTypeChanged(0);
-        } else if (dynamic_cast<Movie*>(existingMedia)) {
-            onMediaTypeChanged(1);
-        } else if (dynamic_cast<Song*>(existingMedia)) {
-            onMediaTypeChanged(2);
-        } else if (dynamic_cast<Magazine*>(existingMedia)) {
-            onMediaTypeChanged(3);
-        } else if (dynamic_cast<Podcast*>(existingMedia)) {
-            onMediaTypeChanged(4);
-        }
+        struct IndexVisitor : MediaVisitor {
+            int idx{-1};
+            void visit(const Book&) override { idx = 0; }
+            void visit(const Movie&) override { idx = 1; }
+            void visit(const Song&) override { idx = 2; }
+            void visit(const Magazine&) override { idx = 3; }
+            void visit(const Podcast&) override { idx = 4; }
+        } v;
+    existingMedia->accept(v);
+    if (v.idx >= 0) typeSpecificStack->setCurrentIndex(v.idx);
         populateFromMedia(existingMedia);
         acceptBtn->setText("Save Changes");
         setWindowTitle("Edit Media");
@@ -224,24 +219,12 @@ void AddMediaDialog::setupCommonFields()
 
 void AddMediaDialog::setupTypeSpecificFields()
 {
-    bookWidget = new QWidget(this);
-    movieWidget = new QWidget(this);
-    songWidget = new QWidget(this);
-    magazineWidget = new QWidget(this);
-    podcastWidget = new QWidget(this);
-    
-    QFormLayout *bookLayout = new QFormLayout(bookWidget);
-    QFormLayout *movieLayout = new QFormLayout(movieWidget);
-    QFormLayout *songLayout = new QFormLayout(songWidget);
-    QFormLayout *magazineLayout = new QFormLayout(magazineWidget);
-    QFormLayout *podcastLayout = new QFormLayout(podcastWidget);
-    
-    setupBookFields(bookLayout);
-    setupMovieFields(movieLayout);
-    setupSongFields(songLayout);
-    setupMagazineFields(magazineLayout);
-    setupPodcastFields(podcastLayout);
-    
+    bookForm = new BookFormWidget(this);    bookWidget = bookForm;
+    movieForm = new MovieFormWidget(this);  movieWidget = movieForm;
+    songForm = new SongFormWidget(this);    songWidget = songForm;
+    magazineForm = new MagazineFormWidget(this); magazineWidget = magazineForm;
+    podcastForm = new PodcastFormWidget(this); podcastWidget = podcastForm;
+
     typeSpecificStack->addWidget(bookWidget);
     typeSpecificStack->addWidget(movieWidget);
     typeSpecificStack->addWidget(songWidget);
@@ -251,202 +234,11 @@ void AddMediaDialog::setupTypeSpecificFields()
     typeSpecificStack->setCurrentIndex(0);
 }
 
-void AddMediaDialog::setupBookFields(QFormLayout *layout)
-{
-    publisherEdit = new QLineEdit(this);
-    publisherEdit->setMaxLength(120);
-    pagesSpinBox = new QSpinBox(this);
-    pagesSpinBox->setRange(1, 9999);
-    pagesSpinBox->setValue(300);
-    isbnEdit = new QLineEdit(this);
-    isbnEdit->setPlaceholderText("ISBN-10 or ISBN-13");
-    isbnEdit->setMaxLength(17);
-    isbnEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("^[0-9-]{10,17}$"), isbnEdit));
-    
-    languageCombo = new QComboBox(this);
-    languageCombo->setEditable(true);
-    
-    
-    auto languages = Enums::getAllLanguages();
-    for (size_t i = 0; i < languages.size(); ++i) {
-        languageCombo->addItem(QString::fromStdString(languages[i]), i);
-    }
-    
-    languageCombo->setInsertPolicy(QComboBox::NoInsert);
-    languageCombo->completer()->setFilterMode(Qt::MatchContains);
-    languageCombo->completer()->setCompletionMode(QCompleter::PopupCompletion);
-    
-    bookGenreCombo = new QComboBox(this);
-    bookGenreCombo->setEditable(true);
-    
-    
-    auto bookGenres = Enums::getAllBookGenres();
-    for (size_t i = 0; i < bookGenres.size(); ++i) {
-        bookGenreCombo->addItem(QString::fromStdString(bookGenres[i]), i);
-    }
-    
-    bookGenreCombo->setInsertPolicy(QComboBox::NoInsert);
-    bookGenreCombo->completer()->setFilterMode(Qt::MatchContains);
-    bookGenreCombo->completer()->setCompletionMode(QCompleter::PopupCompletion);
-    
-    layout->addRow("Publisher:", publisherEdit);
-    layout->addRow("Pages:", pagesSpinBox);
-    layout->addRow("ISBN:", isbnEdit);
-    layout->addRow("Language:", languageCombo);
-    layout->addRow("Genre:", bookGenreCombo);
-}
-
-void AddMediaDialog::setupMovieFields(QFormLayout *layout)
-{
-    directorEdit = new QLineEdit(this);
-    directorEdit->setMaxLength(120);
-    durationSpinBox = new QSpinBox(this);
-    durationSpinBox->setRange(1, 999);
-    durationSpinBox->setValue(120);
-    ratingEdit = new QLineEdit(this);
-    ratingEdit->setPlaceholderText("e.g., PG-13, R, G");
-    ratingEdit->setMaxLength(10);
-    ratingEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("^[A-Za-z0-9+-]{1,10}$"), ratingEdit));
-    studioEdit = new QLineEdit(this);
-    studioEdit->setPlaceholderText("e.g., Warner Bros., Disney, Universal");
-    studioEdit->setMaxLength(120);
-    
-    movieGenreCombo = new QComboBox(this);
-    movieGenreCombo->setEditable(true);
-    
-    
-    auto movieGenres = Enums::getAllMovieGenres();
-    for (size_t i = 0; i < movieGenres.size(); ++i) {
-        movieGenreCombo->addItem(QString::fromStdString(movieGenres[i]), i);
-    }
-    
-    movieGenreCombo->setInsertPolicy(QComboBox::NoInsert);
-    movieGenreCombo->completer()->setFilterMode(Qt::MatchContains);
-    movieGenreCombo->completer()->setCompletionMode(QCompleter::PopupCompletion);
-    
-    layout->addRow("Director:", directorEdit);
-    layout->addRow("Duration (minutes):", durationSpinBox);
-    layout->addRow("Rating:", ratingEdit);
-    layout->addRow("Studio:", studioEdit);
-    layout->addRow("Genre:", movieGenreCombo);
-}
-
-void AddMediaDialog::setupSongFields(QFormLayout *layout)
-{
-    artistEdit = new QLineEdit(this);
-    artistEdit->setMaxLength(120);
-    albumEdit = new QLineEdit(this);
-    albumEdit->setMaxLength(120);
-    songDurationSpinBox = new QSpinBox(this);
-    songDurationSpinBox->setRange(1, 999);
-    songDurationSpinBox->setValue(180);
-    
-    musicGenreCombo = new QComboBox(this);
-    musicGenreCombo->setEditable(true);
-    
-    
-    auto musicGenres = Enums::getAllMusicGenres();
-    for (size_t i = 0; i < musicGenres.size(); ++i) {
-        musicGenreCombo->addItem(QString::fromStdString(musicGenres[i]), i);
-    }
-    
-    musicGenreCombo->setInsertPolicy(QComboBox::NoInsert);
-    musicGenreCombo->completer()->setFilterMode(Qt::MatchContains);
-    musicGenreCombo->completer()->setCompletionMode(QCompleter::PopupCompletion);
-    
-    layout->addRow("Artist:", artistEdit);
-    layout->addRow("Album:", albumEdit);
-    layout->addRow("Duration (seconds):", songDurationSpinBox);
-    layout->addRow("Genre:", musicGenreCombo);
-}
-
-void AddMediaDialog::setupMagazineFields(QFormLayout *layout)
-{
-    magazinePublisherEdit = new QLineEdit(this);
-    magazinePublisherEdit->setMaxLength(120);
-    issueSpinBox = new QSpinBox(this);
-    issueSpinBox->setRange(1, 999);
-    issueSpinBox->setValue(1);
-    issnEdit = new QLineEdit(this);
-    issnEdit->setPlaceholderText("ISSN xxxx-xxxx");
-    issnEdit->setMaxLength(9);
-    issnEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("^[0-9]{4}-?[0-9]{4}$"), issnEdit));
-    editorEdit = new QLineEdit(this);
-    editorEdit->setMaxLength(120);
-    magazinePagesSpinBox = new QSpinBox(this);
-    magazinePagesSpinBox->setRange(1, 999);
-    magazinePagesSpinBox->setValue(50);
-    frequencyEdit = new QLineEdit(this);
-    frequencyEdit->setPlaceholderText("e.g., Monthly, Weekly, Quarterly");
-    frequencyEdit->setMaxLength(40);
-    
-    magazineGenreCombo = new QComboBox(this);
-    magazineGenreCombo->setEditable(true);
-    
-    
-    auto magazineGenres = Enums::getAllMagazineGenres();
-    for (size_t i = 0; i < magazineGenres.size(); ++i) {
-        magazineGenreCombo->addItem(QString::fromStdString(magazineGenres[i]), i);
-    }
-    
-    magazineGenreCombo->setInsertPolicy(QComboBox::NoInsert);
-    magazineGenreCombo->completer()->setFilterMode(Qt::MatchContains);
-    magazineGenreCombo->completer()->setCompletionMode(QCompleter::PopupCompletion);
-    
-    layout->addRow("Publisher:", magazinePublisherEdit);
-    layout->addRow("Issue Number:", issueSpinBox);
-    layout->addRow("ISSN:", issnEdit);
-    layout->addRow("Editor:", editorEdit);
-    layout->addRow("Pages:", magazinePagesSpinBox);
-    layout->addRow("Frequency:", frequencyEdit);
-    layout->addRow("Genre:", magazineGenreCombo);
-}
-
-void AddMediaDialog::setupPodcastFields(QFormLayout *layout)
-{
-    hostEdit = new QLineEdit(this);
-    hostEdit->setMaxLength(120);
-    episodeSpinBox = new QSpinBox(this);
-    episodeSpinBox->setRange(1, 999);
-    episodeSpinBox->setValue(1);
-    platformEdit = new QLineEdit(this);
-    platformEdit->setPlaceholderText("e.g., Spotify, Apple Podcasts, Google Podcasts");
-    platformEdit->setMaxLength(120);
-    podcastDurationSpinBox = new QSpinBox(this);
-    podcastDurationSpinBox->setRange(1, 999);
-    podcastDurationSpinBox->setValue(30);
-    seriesEdit = new QLineEdit(this);
-    seriesEdit->setMaxLength(120);
-    descriptionEdit = new QLineEdit(this);
-    descriptionEdit->setPlaceholderText("Brief description of the podcast");
-    descriptionEdit->setMaxLength(200);
-    
-    podcastGenreCombo = new QComboBox(this);
-    podcastGenreCombo->setEditable(true);
-    
-    
-    auto podcastGenres = Enums::getAllPodcastGenres();
-    for (size_t i = 0; i < podcastGenres.size(); ++i) {
-        podcastGenreCombo->addItem(QString::fromStdString(podcastGenres[i]), i);
-    }
-    
-    podcastGenreCombo->setInsertPolicy(QComboBox::NoInsert);
-    podcastGenreCombo->completer()->setFilterMode(Qt::MatchContains);
-    podcastGenreCombo->completer()->setCompletionMode(QCompleter::PopupCompletion);
-    
-    layout->addRow("Host:", hostEdit);
-    layout->addRow("Episode Number:", episodeSpinBox);
-    layout->addRow("Platform:", platformEdit);
-    layout->addRow("Duration (minutes):", podcastDurationSpinBox);
-    layout->addRow("Series:", seriesEdit);
-    layout->addRow("Description:", descriptionEdit);
-    layout->addRow("Genre:", podcastGenreCombo);
-}
-
 void AddMediaDialog::setupConnections()
 {
+
     connect(mediaTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &AddMediaDialog::onMediaTypeChanged);
+            typeSpecificStack, &QStackedWidget::setCurrentIndex);
     connect(coverDropArea, &CoverDropArea::imageDropped,
             this, &AddMediaDialog::onImageDropped);
     connect(acceptBtn, &QPushButton::clicked,
@@ -458,22 +250,6 @@ void AddMediaDialog::setupConnections()
     connect(removeImageBtn, &QPushButton::clicked,
             this, &AddMediaDialog::onRemoveImageClicked);
 }
-
-void AddMediaDialog::applyDarkTheme()
-{
-    
-}
-
-void AddMediaDialog::onMediaTypeChanged(int index)
-{
-    typeSpecificStack->setCurrentIndex(index);
-}
-
-void AddMediaDialog::clearTypeSpecificFields()
-{
-    typeSpecificStack->setCurrentIndex(0);
-}
-
 
 
 void AddMediaDialog::onImageDropped(const QString &path)
@@ -511,143 +287,115 @@ void AddMediaDialog::onAcceptClicked()
                      .setKbSize(sizeSpinBox->value())
                      .setIsAvailable(availableCheckBox->isChecked())
                      .setImagePath(coverDropArea->getImagePath().toStdString());
-
-        if (auto book = dynamic_cast<Book*>(existingMedia)) {
-            book->setGenre(static_cast<Enums::BookGenre>(bookGenreCombo->currentData().toInt()))
-                .setPublisher(publisherEdit->text().toStdString())
-                .setPages(pagesSpinBox->value())
-                .setIsbn(isbnEdit->text().toStdString())
-                .setLanguage(static_cast<Enums::Language>(languageCombo->currentData().toInt()));
-        } else if (auto movie = dynamic_cast<Movie*>(existingMedia)) {
-            movie->setGenre(static_cast<Enums::MovieGenre>(movieGenreCombo->currentData().toInt()))
-                 .setDirector(directorEdit->text().toStdString())
-                 .setDuration(durationSpinBox->value())
-                 .setStudio(studioEdit->text().toStdString())
-                 .setRating(ratingEdit->text().toStdString())
-                 .setLanguage(static_cast<Enums::Language>(languageCombo->currentData().toInt()))
-                 .setCountry("Unknown");
-        } else if (auto song = dynamic_cast<Song*>(existingMedia)) {
-            song->setGenre(static_cast<Enums::MusicGenre>(musicGenreCombo->currentData().toInt()))
-                .setArtist(artistEdit->text().toStdString())
-                .setAlbum(albumEdit->text().toStdString())
-                .setDuration(songDurationSpinBox->value());
-        } else if (auto magazine = dynamic_cast<Magazine*>(existingMedia)) {
-            magazine->setGenre(static_cast<Enums::MagazineGenre>(magazineGenreCombo->currentData().toInt()))
-                    .setPublisher(magazinePublisherEdit->text().toStdString())
-                    .setIssueNumber(issueSpinBox->value())
-                    .setIssn(issnEdit->text().toStdString())
-                    .setEditor(editorEdit->text().toStdString())
-                    .setPages(magazinePagesSpinBox->value())
-                    .setFrequency(frequencyEdit->text().toStdString());
-        } else if (auto podcast = dynamic_cast<Podcast*>(existingMedia)) {
-            podcast->setGenre(static_cast<Enums::PodcastGenre>(podcastGenreCombo->currentData().toInt()))
-                   .setHost(hostEdit->text().toStdString())
-                   .setEpisodeNumber(episodeSpinBox->value())
-                   .setPlatform(platformEdit->text().toStdString())
-                   .setDuration(podcastDurationSpinBox->value())
-                   .setSeries(seriesEdit->text().toStdString())
-                   .setDescription(descriptionEdit->text().toStdString());
-        }
+        struct ApplyEditsVisitor : MediaVisitorMutable {
+            AddMediaDialog* dlg; explicit ApplyEditsVisitor(AddMediaDialog* d) : dlg(d) {}
+            void visit(Book& b) override { if (dlg->bookForm) dlg->bookForm->applyTo(b); }
+            void visit(Movie& m) override { if (dlg->movieForm) dlg->movieForm->applyTo(m); }
+            void visit(Song& s) override { if (dlg->songForm) dlg->songForm->applyTo(s); }
+            void visit(Magazine& mg) override { if (dlg->magazineForm) dlg->magazineForm->applyTo(mg); }
+            void visit(Podcast& p) override { if (dlg->podcastForm) dlg->podcastForm->applyTo(p); }
+        } applyVisitor(this);
+    if (existingMedia) existingMedia->accept(applyVisitor);
         accept();
         return;
     }
 
     int mediaType = mediaTypeCombo->currentIndex();
     switch (mediaType) {
-        case 0: { 
+        case 0: { // Book
             auto book = std::make_unique<Book>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
-                static_cast<Enums::BookGenre>(bookGenreCombo->currentData().toInt()),
+                static_cast<Enums::BookGenre>(bookForm->selectedGenre()),
                 date,
                 0,
                 sizeSpinBox->value(),
                 availableCheckBox->isChecked(),
                 coverDropArea->getImagePath().toStdString(),
-                publisherEdit->text().toStdString(),
-                pagesSpinBox->value(),
-                isbnEdit->text().toStdString(),
-                static_cast<Enums::Language>(languageCombo->currentData().toInt())
+                bookForm->publisher().toStdString(),
+                bookForm->pages(),
+                bookForm->isbn().toStdString(),
+                static_cast<Enums::Language>(bookForm->selectedLanguage())
             );
             createdMedia = std::move(book);
             break;
         }
-        case 1: { 
+        case 1: { // Movie
             auto movie = std::make_unique<Movie>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
-                static_cast<Enums::MovieGenre>(movieGenreCombo->currentData().toInt()),
+                static_cast<Enums::MovieGenre>(movieForm->selectedGenre()),
                 date,
                 0,
                 sizeSpinBox->value(),
                 availableCheckBox->isChecked(),
                 coverDropArea->getImagePath().toStdString(),
-                directorEdit->text().toStdString(),
-                durationSpinBox->value(),
-                studioEdit->text().toStdString(),
-                ratingEdit->text().toStdString(),
-                static_cast<Enums::Language>(languageCombo->currentData().toInt()),
-                "Unknown"
+                movieForm->director().toStdString(),
+                movieForm->duration(),
+                movieForm->studio().toStdString(),
+                movieForm->rating().toStdString(),
+                static_cast<Enums::Language>(movieForm->selectedLanguage()),
+                std::string("Unknown")
             );
             createdMedia = std::move(movie);
             break;
         }
-        case 2: { 
+        case 2: { // Song
             auto song = std::make_unique<Song>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
-                static_cast<Enums::MusicGenre>(musicGenreCombo->currentData().toInt()),
+                static_cast<Enums::MusicGenre>(songForm->selectedGenre()),
                 date,
                 0,
                 sizeSpinBox->value(),
                 availableCheckBox->isChecked(),
                 coverDropArea->getImagePath().toStdString(),
-                artistEdit->text().toStdString(),
-                albumEdit->text().toStdString(),
-                songDurationSpinBox->value(),
-                "MP3",
-                "Unknown",
+                songForm->artist().toStdString(),
+                songForm->album().toStdString(),
+                songForm->duration(),
+                std::string("MP3"),
+                std::string("Unknown"),
                 1
             );
             createdMedia = std::move(song);
             break;
         }
-        case 3: { 
+        case 3: { // Magazine
             auto magazine = std::make_unique<Magazine>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
-                static_cast<Enums::MagazineGenre>(magazineGenreCombo->currentData().toInt()),
+                static_cast<Enums::MagazineGenre>(magazineForm->selectedGenre()),
                 date,
                 0,
                 sizeSpinBox->value(),
                 availableCheckBox->isChecked(),
                 coverDropArea->getImagePath().toStdString(),
-                magazinePublisherEdit->text().toStdString(),
-                issueSpinBox->value(),
-                issnEdit->text().toStdString(),
-                editorEdit->text().toStdString(),
-                magazinePagesSpinBox->value(),
-                frequencyEdit->text().toStdString()
+                magazineForm->publisher().toStdString(),
+                magazineForm->issue(),
+                magazineForm->issn().toStdString(),
+                magazineForm->editor().toStdString(),
+                magazineForm->pages(),
+                magazineForm->frequency().toStdString()
             );
             createdMedia = std::move(magazine);
             break;
         }
-        case 4: { 
+        case 4: { // Podcast
             auto podcast = std::make_unique<Podcast>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
-                static_cast<Enums::PodcastGenre>(podcastGenreCombo->currentData().toInt()),
+                static_cast<Enums::PodcastGenre>(podcastForm->selectedGenre()),
                 date,
                 0,
                 sizeSpinBox->value(),
                 availableCheckBox->isChecked(),
                 coverDropArea->getImagePath().toStdString(),
-                hostEdit->text().toStdString(),
-                episodeSpinBox->value(),
-                platformEdit->text().toStdString(),
-                podcastDurationSpinBox->value(),
-                seriesEdit->text().toStdString(),
-                descriptionEdit->text().toStdString()
+                podcastForm->host().toStdString(),
+                podcastForm->episode(),
+                podcastForm->platform().toStdString(),
+                podcastForm->duration(),
+                podcastForm->series().toStdString(),
+                podcastForm->description().toStdString()
             );
             createdMedia = std::move(podcast);
             break;
@@ -676,41 +424,13 @@ bool AddMediaDialog::validateInput()
     
     
     int mediaType = mediaTypeCombo->currentIndex();
+    QString err;
     switch (mediaType) {
-        case 0: 
-            if (publisherEdit->text().trimmed().isEmpty()) {
-                showValidationError("Publisher is required for books.");
-                return false;
-            }
-            break;
-        case 1: 
-            if (directorEdit->text().trimmed().isEmpty()) {
-                showValidationError("Director is required for movies.");
-                return false;
-            }
-            if (studioEdit->text().trimmed().isEmpty()) {
-                showValidationError("Studio is required for movies.");
-                return false;
-            }
-            break;
-        case 2: 
-            if (artistEdit->text().trimmed().isEmpty()) {
-                showValidationError("Artist is required for songs.");
-                return false;
-            }
-            break;
-        case 3: 
-            if (magazinePublisherEdit->text().trimmed().isEmpty()) {
-                showValidationError("Publisher is required for magazines.");
-                return false;
-            }
-            break;
-        case 4: 
-            if (hostEdit->text().trimmed().isEmpty()) {
-                showValidationError("Host is required for podcasts.");
-                return false;
-            }
-            break;
+        case 0: if (bookForm && !bookForm->validate(err)) { showValidationError(err); return false; } break;
+        case 1: if (movieForm && !movieForm->validate(err)) { showValidationError(err); return false; } break;
+        case 2: if (songForm && !songForm->validate(err)) { showValidationError(err); return false; } break;
+        case 3: if (magazineForm && !magazineForm->validate(err)) { showValidationError(err); return false; } break;
+        case 4: if (podcastForm && !podcastForm->validate(err)) { showValidationError(err); return false; } break;
     }
     
     return true;
@@ -719,14 +439,6 @@ bool AddMediaDialog::validateInput()
 void AddMediaDialog::showValidationError(const QString& message)
 {
     QMessageBox::warning(this, "Validation Error", message);
-}
-
-int AddMediaDialog::findIndexByData(QComboBox *combo, int value) const
-{
-    for (int i = 0; i < combo->count(); ++i) {
-        if (combo->itemData(i).toInt() == value) return i;
-    }
-    return -1;
 }
 
 void AddMediaDialog::populateFromMedia(Media *media)
@@ -742,53 +454,31 @@ void AddMediaDialog::populateFromMedia(Media *media)
     coverDropArea->setImagePath(QString::fromStdString(media->getImagePath()));
 
     
-    if (auto book = dynamic_cast<Book*>(media)) {
-        mediaTypeCombo->setCurrentIndex(0);
-        publisherEdit->setText(QString::fromStdString(book->getPublisher()));
-        pagesSpinBox->setValue(static_cast<int>(book->getPages()));
-        isbnEdit->setText(QString::fromStdString(book->getIsbn()));
-        int langIdx = findIndexByData(languageCombo, static_cast<int>(book->getLanguage()));
-        if (langIdx >= 0) languageCombo->setCurrentIndex(langIdx);
-        int genreIdx = findIndexByData(bookGenreCombo, static_cast<int>(book->getGenre()));
-        if (genreIdx >= 0) bookGenreCombo->setCurrentIndex(genreIdx);
-    } else if (auto movie = dynamic_cast<Movie*>(media)) {
-        mediaTypeCombo->setCurrentIndex(1);
-        directorEdit->setText(QString::fromStdString(movie->getDirector()));
-        durationSpinBox->setValue(static_cast<int>(movie->getDuration()));
-        studioEdit->setText(QString::fromStdString(movie->getStudio()));
-        ratingEdit->setText(QString::fromStdString(movie->getRating()));
-        int langIdx = findIndexByData(languageCombo, static_cast<int>(movie->getLanguage()));
-        if (langIdx >= 0) languageCombo->setCurrentIndex(langIdx);
-        int genreIdx = findIndexByData(movieGenreCombo, static_cast<int>(movie->getGenre()));
-        if (genreIdx >= 0) movieGenreCombo->setCurrentIndex(genreIdx);
-    } else if (auto song = dynamic_cast<Song*>(media)) {
-        mediaTypeCombo->setCurrentIndex(2);
-        artistEdit->setText(QString::fromStdString(song->getArtist()));
-        albumEdit->setText(QString::fromStdString(song->getAlbum()));
-        songDurationSpinBox->setValue(static_cast<int>(song->getDuration()));
-        int genreIdx = findIndexByData(musicGenreCombo, static_cast<int>(song->getGenre()));
-        if (genreIdx >= 0) musicGenreCombo->setCurrentIndex(genreIdx);
-    } else if (auto magazine = dynamic_cast<Magazine*>(media)) {
-        mediaTypeCombo->setCurrentIndex(3);
-        magazinePublisherEdit->setText(QString::fromStdString(magazine->getPublisher()));
-        issueSpinBox->setValue(static_cast<int>(magazine->getIssueNumber()));
-        issnEdit->setText(QString::fromStdString(magazine->getIssn()));
-        editorEdit->setText(QString::fromStdString(magazine->getEditor()));
-        magazinePagesSpinBox->setValue(static_cast<int>(magazine->getPages()));
-        frequencyEdit->setText(QString::fromStdString(magazine->getFrequency()));
-        int genreIdx = findIndexByData(magazineGenreCombo, static_cast<int>(magazine->getGenre()));
-        if (genreIdx >= 0) magazineGenreCombo->setCurrentIndex(genreIdx);
-    } else if (auto podcast = dynamic_cast<Podcast*>(media)) {
-        mediaTypeCombo->setCurrentIndex(4);
-        hostEdit->setText(QString::fromStdString(podcast->getHost()));
-        episodeSpinBox->setValue(static_cast<int>(podcast->getEpisodeNumber()));
-        platformEdit->setText(QString::fromStdString(podcast->getPlatform()));
-        podcastDurationSpinBox->setValue(static_cast<int>(podcast->getDuration()));
-        seriesEdit->setText(QString::fromStdString(podcast->getSeries()));
-        descriptionEdit->setText(QString::fromStdString(podcast->getDescription()));
-        int genreIdx = findIndexByData(podcastGenreCombo, static_cast<int>(podcast->getGenre()));
-        if (genreIdx >= 0) podcastGenreCombo->setCurrentIndex(genreIdx);
-    }
+    struct PopulateVisitor : MediaVisitor {
+        AddMediaDialog* dlg;
+        explicit PopulateVisitor(AddMediaDialog* d) : dlg(d) {}
+        void visit(const Book& b) override {
+            dlg->mediaTypeCombo->setCurrentIndex(0);
+            dlg->bookForm->populateFrom(b);
+        }
+        void visit(const Movie& m) override {
+            dlg->mediaTypeCombo->setCurrentIndex(1);
+            dlg->movieForm->populateFrom(m);
+        }
+        void visit(const Song& s) override {
+            dlg->mediaTypeCombo->setCurrentIndex(2);
+            dlg->songForm->populateFrom(s);
+        }
+        void visit(const Magazine& mg) override {
+            dlg->mediaTypeCombo->setCurrentIndex(3);
+            dlg->magazineForm->populateFrom(mg);
+        }
+        void visit(const Podcast& p) override {
+            dlg->mediaTypeCombo->setCurrentIndex(4);
+            dlg->podcastForm->populateFrom(p);
+        }
+    } pop(this);
+    media->accept(pop);
 }
 
 std::unique_ptr<Media> AddMediaDialog::getCreatedMedia()

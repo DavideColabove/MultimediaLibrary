@@ -78,3 +78,4 @@ std::string Book::getGenreString() const {
 void Book::accept(MediaVisitor& visitor) const {
     visitor.visit(*this);
 }
+

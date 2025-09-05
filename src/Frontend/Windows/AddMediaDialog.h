@@ -20,6 +20,11 @@
 #include <QScrollArea>
 #include <QFrame>
 #include <QStackedWidget>
+#include "addItemWidgets/BookFormWidget.h"
+#include "addItemWidgets/MovieFormWidget.h"
+#include "addItemWidgets/SongFormWidget.h"
+#include "addItemWidgets/MagazineFormWidget.h"
+#include "addItemWidgets/PodcastFormWidget.h"
 
 #include "../../Backend/Elements/Media.h"
 #include "../../Backend/Elements/Book.h"
@@ -85,9 +90,7 @@ public:
     std::unique_ptr<Media> getCreatedMedia();
 
 private slots:
-    
-    void onMediaTypeChanged(int index);
-    
+
     
     void onAcceptClicked();
     
@@ -105,21 +108,12 @@ private:
     void setupCommonFields();
     void setupTypeSpecificFields();
     void setupConnections();
-    void applyDarkTheme();
-    
-    
-    void clearTypeSpecificFields();
-    void setupBookFields(QFormLayout *layout);
-    void setupMovieFields(QFormLayout *layout);
-    void setupSongFields(QFormLayout *layout);
-    void setupMagazineFields(QFormLayout *layout);
-    void setupPodcastFields(QFormLayout *layout);
+
     
     
     bool validateInput();
     void showValidationError(const QString& message);
     void populateFromMedia(Media *media);
-    int findIndexByData(QComboBox *combo, int value) const;
 
     
     QVBoxLayout *mainLayout;        
@@ -152,46 +146,13 @@ private:
     QWidget *songWidget;            
     QWidget *magazineWidget;        
     QWidget *podcastWidget;         
+    BookFormWidget* bookForm{};
+    MovieFormWidget* movieForm{};
+    SongFormWidget* songForm{};
+    MagazineFormWidget* magazineForm{};
+    PodcastFormWidget* podcastForm{};
     
-    
-    QLineEdit *publisherEdit;       
-    QSpinBox *pagesSpinBox;         
-    QLineEdit *isbnEdit;            
-    QComboBox *languageCombo;       
-    QComboBox *bookGenreCombo;      
-    
-    
-    QLineEdit *directorEdit;        
-    QSpinBox *durationSpinBox;      
-    QLineEdit *ratingEdit;          
-    QLineEdit *studioEdit;          
-    QComboBox *movieGenreCombo;     
-    
-    
-    QLineEdit *artistEdit;          
-    QLineEdit *albumEdit;           
-    QSpinBox *songDurationSpinBox;  
-    QComboBox *musicGenreCombo;     
-    
-    
-    QLineEdit *magazinePublisherEdit; 
-    QSpinBox *issueSpinBox;         
-    QLineEdit *issnEdit;            
-    QLineEdit *editorEdit;          
-    QSpinBox *magazinePagesSpinBox; 
-    QLineEdit *frequencyEdit;       
-    QComboBox *magazineGenreCombo;  
-    
-    
-    QLineEdit *hostEdit;            
-    QSpinBox *episodeSpinBox;       
-    QLineEdit *platformEdit;        
-    QSpinBox *podcastDurationSpinBox; 
-    QLineEdit *seriesEdit;          
-    QLineEdit *descriptionEdit;     
-    QComboBox *podcastGenreCombo;   
-    
-    
+
     QHBoxLayout *buttonLayout;      
     QPushButton *acceptBtn;         
     QPushButton *cancelBtn;         

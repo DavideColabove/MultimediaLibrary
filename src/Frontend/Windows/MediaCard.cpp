@@ -8,11 +8,8 @@
 #include <QFile>
 #include <QScreen>
 #include <QSvgRenderer>
-#include "../../Backend/Elements/Book.h"
-#include "../../Backend/Elements/Movie.h"
-#include "../../Backend/Elements/Song.h"
-#include "../../Backend/Elements/Magazine.h"
-#include "../../Backend/Elements/Podcast.h"
+#include "../../Backend/Elements/MediaVisitor.h"
+#include "../Visitors/FrontendVisitors.h"
 
 MediaCard::MediaCard(Media* media, QWidget* parent)
     : QFrame(parent), media(media), isHovered(false)
@@ -35,7 +32,17 @@ MediaCard::MediaCard(Media* media, QWidget* parent)
     typeBadgeLabel = new QLabel(this);
     typeBadgeLabel->setObjectName("typeBadge");
     typeBadgeLabel->setAlignment(Qt::AlignCenter);
-    typeBadgeLabel->setText(computeType());
+    struct CardInfoVisitor : MediaVisitor {
+        QString typeLabel;
+        QString iconKey;
+        void visit(const Book&) override { typeLabel = "Book"; iconKey = "book"; }
+        void visit(const Movie&) override { typeLabel = "Movie"; iconKey = "movie"; }
+        void visit(const Song&) override { typeLabel = "Song"; iconKey = "music"; }
+        void visit(const Magazine&) override { typeLabel = "Magazine"; iconKey = "magazine"; }
+        void visit(const Podcast&) override { typeLabel = "Podcast"; iconKey = "podcast"; }
+    } infoVisitor;
+    if (media) media->accept(infoVisitor);
+    typeBadgeLabel->setText(infoVisitor.typeLabel);
     layout->addWidget(typeBadgeLabel, 0, Qt::AlignLeft);
 
     titleLabel = new QLabel(QString::fromStdString(media->getTitle()), this);
@@ -103,13 +110,7 @@ void MediaCard::updateCover()
         coverLabel->setPixmap(rounded);
         coverLabel->setText("");
     } else {
-        
-        QString iconName;
-        if (dynamic_cast<Book*>(media)) iconName = "book";
-        else if (dynamic_cast<Movie*>(media)) iconName = "movie";
-        else if (dynamic_cast<Song*>(media)) iconName = "music";
-        else if (dynamic_cast<Magazine*>(media)) iconName = "magazine";
-        else if (dynamic_cast<Podcast*>(media)) iconName = "podcast";
+    FrontendVisitors::IconKeyVisitor v; if (media) media->accept(v); QString iconName = v.iconKey;
 
         auto findIconPath = [&](const QString& base)->QString{
             const QString res = QString(":/icons/%1.svg").arg(base);
@@ -175,13 +176,6 @@ void MediaCard::updateCover()
     }
 }
 
-QString MediaCard::computeType() const
-{
-    
-    if (dynamic_cast<Book*>(media)) return "Book";
-    if (dynamic_cast<Movie*>(media)) return "Movie";
-    if (dynamic_cast<Song*>(media)) return "Song";
-    if (dynamic_cast<Magazine*>(media)) return "Magazine";
-    if (dynamic_cast<Podcast*>(media)) return "Podcast";
-    return "";
+QString MediaCard::computeType() const {
+    FrontendVisitors::TypeNameVisitor v; if (media) media->accept(v); return v.typeName;
 }

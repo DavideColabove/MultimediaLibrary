@@ -17,7 +17,6 @@
 #include <QLabel>
 #include <QScrollArea>
 #include <QFrame>
-#include <QStackedWidget>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QGroupBox>
@@ -72,7 +71,7 @@ private slots:
     void saveTriggered();
     void clearAdvancedFilters();
     void onSortChanged(int index);
-    void onScrollBarRangeChanged();
+    
 
 private:
     
@@ -83,7 +82,6 @@ private:
     void setupCentralArea();
     void setupRightPanel();
     void setupConnections();
-    void applyDarkTheme();
     
     
     bool mediaMatchesFilters(Media* media) const;
@@ -106,8 +104,7 @@ private:
     DetailsPanel* detailsPanel;  
     
     
-    QStackedWidget *stackedWidget; 
-    QWidget *gridPage;           
+    
     
     
     QAction *addAction;          
@@ -138,15 +135,12 @@ private:
     
     
     void refreshMediaGrid();           
-    void clearMediaGrid();             
-    void addMediaCard(Media* media, int row, int col); 
+    
     void showMediaDetails(Media* media);               
     void hideMediaDetails();           
-    void clearAttributesForm();        
-    void populateAttributesForm(Media* media); 
+    
     void filterMediaByCategory(const QString& category); 
-    void applySearchFilter(const QString& searchText);   
-    int computeColumnsForWidth(int availableWidth) const; 
+    
 };
 
 #endif 

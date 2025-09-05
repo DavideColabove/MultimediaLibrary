@@ -92,3 +92,4 @@ std::string Magazine::getGenreString() const {
 void Magazine::accept(MediaVisitor& visitor) const {
     visitor.visit(*this);
 }
+

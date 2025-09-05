@@ -36,7 +36,9 @@ class Podcast : public Media {
         virtual bool isValid() const override;
         
         
-        virtual void accept(MediaVisitor& visitor) const override;
+    virtual void accept(MediaVisitor& visitor) const override;
+    virtual void accept(MediaVisitorMutable& visitor) override { visitor.visit(*this); }
+
 
         
         std::string getHost() const;
@@ -53,9 +55,9 @@ class Podcast : public Media {
         Podcast& setDescription(const std::string& desc);
         
         
-        Enums::PodcastGenre getGenre() const;
-        Podcast& setGenre(Enums::PodcastGenre genre);
-        std::string getGenreString() const;
+    Enums::PodcastGenre getGenre() const;
+    Podcast& setGenre(Enums::PodcastGenre genre);
+    std::string getGenreString() const;
 };
 
 #endif 

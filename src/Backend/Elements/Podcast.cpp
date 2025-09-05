@@ -93,3 +93,4 @@ std::string Podcast::getGenreString() const {
 void Podcast::accept(MediaVisitor& visitor) const {
     visitor.visit(*this);
 }
+

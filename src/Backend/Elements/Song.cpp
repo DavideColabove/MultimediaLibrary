@@ -92,3 +92,4 @@ std::string Song::getGenreString() const {
 void Song::accept(MediaVisitor& visitor) const {
     visitor.visit(*this);
 }
+

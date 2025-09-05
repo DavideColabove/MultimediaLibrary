@@ -30,6 +30,17 @@ public:
     virtual void visit(const Podcast& podcast) = 0;
 };
 
+// Mutable visitor to allow operations that modify media objects
+class MediaVisitorMutable {
+public:
+    virtual ~MediaVisitorMutable() = default;
+    virtual void visit(Book& book) = 0;
+    virtual void visit(Movie& movie) = 0;
+    virtual void visit(Song& song) = 0;
+    virtual void visit(Magazine& magazine) = 0;
+    virtual void visit(Podcast& podcast) = 0;
+};
+
 #endif 
 
 

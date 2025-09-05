@@ -14,7 +14,6 @@ class Movie;
 class Song;
 class Magazine;
 class Podcast;
-class IPersistence;
 
 
 class Library

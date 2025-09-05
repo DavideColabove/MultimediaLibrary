@@ -6,7 +6,6 @@
 #include <QPainter>
 #include <QScrollArea>
 #include <QFrame>
-#include <QStackedWidget>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QGroupBox>
@@ -16,30 +15,6 @@
 #include <QScrollBar>
 #include <QTimer>
 #include <QCollator>
-namespace {
-static QIcon loadIconByName(const QString& baseName) {
-    
-    const QString resPath = QString(":/icons/%1.svg").arg(baseName);
-    if (QFile::exists(resPath)) return QIcon(resPath);
-    
-    const QStringList tryPaths = {
-        QString("icons/%1.svg").arg(baseName),
-        QString("../icons/%1.svg").arg(baseName),
-        QString("../../icons/%1.svg").arg(baseName),
-        QString("../../../icons/%1.svg").arg(baseName)
-    };
-    for (const QString& p : tryPaths) {
-        if (QFile::exists(p)) return QIcon(p);
-    }
-    return QIcon();
-}
-
-static void setIconAndSize(QPushButton* btn, const QString& iconBase, const QSize& size) {
-    if (!btn) return;
-    btn->setIcon(loadIconByName(iconBase));
-    btn->setIconSize(size);
-}
-}
 #include <QResizeEvent>
 #include <QStandardPaths>
 #include <QGridLayout>
@@ -54,6 +29,8 @@ static void setIconAndSize(QPushButton* btn, const QString& iconBase, const QSiz
 #include <QDir>
 #include <QFormLayout>
 #include <QPixmap>
+#include "../../Backend/Elements/MediaVisitor.h"
+#include "../Visitors/FrontendVisitors.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), selectedMedia(nullptr)
@@ -71,7 +48,6 @@ MainWindow::MainWindow(QWidget *parent)
     setupCentralArea();
     setupRightPanel();
     setupConnections();
-    applyDarkTheme();
     
     
     setWindowTitle("Multimedia Library");
@@ -218,22 +194,9 @@ void MainWindow::refreshMediaGrid()
     statusBar()->showMessage(QString("Total media: %1").arg(allMedia.size()));
 }
 
-int MainWindow::computeColumnsForWidth(int availableWidth) const
-{
-    const int itemWidth = 240;
-    const int spacing = 24; 
-    
-    
-    int cols = std::max(1, (availableWidth + spacing) / (itemWidth + spacing));
-    return cols;
-}
+ 
 
-void MainWindow::applyDarkTheme()
-{
-    
-}
-
-
+ 
 
 void MainWindow::onMediaCardClicked(Media* media)
 {
@@ -272,11 +235,7 @@ void MainWindow::clearAdvancedFilters()
     statusBar()->showMessage("Filtri avanzati rimossi", 2500);
 }
 
-void MainWindow::onScrollBarRangeChanged()
-{
-    
-    QTimer::singleShot(100, this, &MainWindow::refreshMediaGrid);
-}
+ 
 
 void MainWindow::onSortChanged(int index)
 {
@@ -298,8 +257,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     QTimer::singleShot(100, this, &MainWindow::refreshMediaGrid);
 }
 
-void MainWindow::clearMediaGrid() {}
-void MainWindow::addMediaCard(Media* , int , int ) {}
+ 
 
 void MainWindow::showMediaDetails(Media* media)
 {
@@ -314,8 +272,7 @@ void MainWindow::hideMediaDetails()
     selectedMedia = nullptr;
 }
 
-void MainWindow::clearAttributesForm() {}
-void MainWindow::populateAttributesForm(Media* ) {}
+ 
 
 void MainWindow::filterMediaByCategory(const QString& category)
 {
@@ -323,11 +280,7 @@ void MainWindow::filterMediaByCategory(const QString& category)
     refreshMediaGrid();
 }
 
-void MainWindow::applySearchFilter(const QString& searchText)
-{
-    currentSearchFilter = searchText;
-    refreshMediaGrid();
-}
+ 
 
 bool MainWindow::mediaMatchesFilters(Media* media) const
 {
@@ -335,13 +288,13 @@ bool MainWindow::mediaMatchesFilters(Media* media) const
     
     QString typeNeeded = categoryToType(currentCategoryFilter);
     if (!typeNeeded.isEmpty()) {
-        std::string t = library->getMediaType(media);
-        if (QString::fromStdString(t) != typeNeeded) return false;
+        FrontendVisitors::TypeNameVisitor v; media->accept(v);
+        if (v.typeName != typeNeeded) return false;
     }
     
     if (advFilters.enabled && !advFilters.type.isEmpty()) {
-        std::string t = library->getMediaType(media);
-        if (QString::fromStdString(t) != advFilters.type) return false;
+        FrontendVisitors::TypeNameVisitor v; media->accept(v);
+        if (v.typeName != advFilters.type) return false;
     }
     
     if (!currentSearchFilter.trimmed().isEmpty()) {
@@ -368,21 +321,15 @@ bool MainWindow::mediaMatchesFilters(Media* media) const
         if (advFilters.useDateFrom && qd < advFilters.dateFrom) return false;
         if (advFilters.useDateTo && qd > advFilters.dateTo) return false;
         
-        if (auto b = dynamic_cast<Book*>(media); advFilters.bookGenre >= 0) {
-            if (b && static_cast<int>(b->getGenre()) != advFilters.bookGenre) return false;
-        }
-        if (auto m = dynamic_cast<Movie*>(media); advFilters.movieGenre >= 0) {
-            if (m && static_cast<int>(m->getGenre()) != advFilters.movieGenre) return false;
-        }
-        if (auto s = dynamic_cast<Song*>(media); advFilters.musicGenre >= 0) {
-            if (s && static_cast<int>(s->getGenre()) != advFilters.musicGenre) return false;
-        }
-        if (auto mg = dynamic_cast<Magazine*>(media); advFilters.magazineGenre >= 0) {
-            if (mg && static_cast<int>(mg->getGenre()) != advFilters.magazineGenre) return false;
-        }
-        if (auto p = dynamic_cast<Podcast*>(media); advFilters.podcastGenre >= 0) {
-            if (p && static_cast<int>(p->getGenre()) != advFilters.podcastGenre) return false;
-        }
+        FrontendVisitors::GenreCheckVisitor v(
+            advFilters.bookGenre,
+            advFilters.movieGenre,
+            advFilters.musicGenre,
+            advFilters.magazineGenre,
+            advFilters.podcastGenre
+        );
+    media->accept(v);
+    if (!v.ok) return false;
     }
     return true;
 }

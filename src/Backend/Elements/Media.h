@@ -35,7 +35,9 @@ class Media{
         virtual bool isValid() const = 0;
         
         
-        virtual void accept(MediaVisitor& visitor) const = 0;
+    virtual void accept(MediaVisitor& visitor) const = 0;
+    virtual void accept(MediaVisitorMutable& visitor) = 0;
+
 
         
         Media& setTitle(const std::string& t);
