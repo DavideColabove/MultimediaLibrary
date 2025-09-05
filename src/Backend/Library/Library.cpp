@@ -92,13 +92,20 @@ std::vector<Media*> Library::searchByAuthor(const std::string& author) const
 std::vector<Media*> Library::filterByType(const std::string& type) const
 {
     std::vector<Media*> result;
-    
+    struct TypeNameVisitor : public MediaVisitor {
+        std::string typeName;
+        void visit(const Book&) override { typeName = "Book"; }
+        void visit(const Movie&) override { typeName = "Movie"; }
+        void visit(const Song&) override { typeName = "Song"; }
+        void visit(const Magazine&) override { typeName = "Magazine"; }
+        void visit(const Podcast&) override { typeName = "Podcast"; }
+    };
     for (const auto& media : mediaCollection) {
-        if (getMediaType(media.get()) == type) {
+        TypeNameVisitor v; media->accept(v);
+        if (v.typeName == type) {
             result.push_back(media.get());
         }
     }
-    
     return result;
 }
 
@@ -151,21 +158,36 @@ size_t Library::getAvailableCount() const
 
 size_t Library::getCountByType(const std::string& type) const
 {
+    struct TypeNameVisitor : public MediaVisitor {
+        std::string typeName;
+        void visit(const Book&) override { typeName = "Book"; }
+        void visit(const Movie&) override { typeName = "Movie"; }
+        void visit(const Song&) override { typeName = "Song"; }
+        void visit(const Magazine&) override { typeName = "Magazine"; }
+        void visit(const Podcast&) override { typeName = "Podcast"; }
+    };
     return std::count_if(mediaCollection.begin(), mediaCollection.end(),
-        [this, &type](const std::unique_ptr<Media>& media) {
-            return getMediaType(media.get()) == type;
+        [&type](const std::unique_ptr<Media>& media) {
+            TypeNameVisitor v; media->accept(v);
+            return v.typeName == type;
         });
 }
 
 std::map<std::string, size_t> Library::getMediaTypeStats() const
 {
     std::map<std::string, size_t> stats;
-    
+    struct TypeNameVisitor : public MediaVisitor {
+        std::string typeName;
+        void visit(const Book&) override { typeName = "Book"; }
+        void visit(const Movie&) override { typeName = "Movie"; }
+        void visit(const Song&) override { typeName = "Song"; }
+        void visit(const Magazine&) override { typeName = "Magazine"; }
+        void visit(const Podcast&) override { typeName = "Podcast"; }
+    };
     for (const auto& media : mediaCollection) {
-        std::string type = getMediaType(media.get());
-        stats[type]++;
+        TypeNameVisitor v; media->accept(v);
+        stats[v.typeName]++;
     }
-    
     return stats;
 }
 
@@ -186,24 +208,7 @@ bool Library::isEmpty() const
 }
 
 
-class TypeNameVisitor : public MediaVisitor {
-public:
-    std::string typeName;
-    void visit(const Book&) override { typeName = "Book"; }
-    void visit(const Movie&) override { typeName = "Movie"; }
-    void visit(const Song&) override { typeName = "Song"; }
-    void visit(const Magazine&) override { typeName = "Magazine"; }
-    void visit(const Podcast&) override { typeName = "Podcast"; }
-};
-
-
-std::string Library::getMediaType(const Media* media) const
-{
-    if (!media) return "Unknown";
-    TypeNameVisitor v;
-    media->accept(v);
-    return v.typeName.empty() ? std::string("Unknown") : v.typeName;
-}
+// removed getMediaType helper; use local visitor where needed
 
 void Library::generateNextId()
 {

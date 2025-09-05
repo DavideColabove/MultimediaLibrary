@@ -9,7 +9,6 @@
 #include "../Elements/Podcast.h"
 #include "../Enums/Genres.h"
 #include "../Enums/Languages.h"
-
 #include <fstream>
 #include <sstream>
 #include <QFile>

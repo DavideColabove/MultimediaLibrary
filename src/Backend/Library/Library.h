@@ -83,7 +83,6 @@ public:
     bool isEmpty() const;
     
     
-    std::string getMediaType(const Media* media) const;
 
 private:
     std::vector<std::unique_ptr<Media>> mediaCollection;  
