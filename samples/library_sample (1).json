@@ -25,7 +25,7 @@
       "releaseDate": "2008-08-01",
       "size": 1536,
       "available": true,
-      "imagePath": "src/Frontend/Resources/assets/Book_Clean_Code.jpg",
+      "imagePath": "../src/Frontend/Resources/assets/Book_Clean_Code.jpg",
       "book": {
         "publisher": "Prentice Hall",
         "pages": 464,
@@ -42,7 +42,7 @@
       "releaseDate": "1999-03-31",
       "size": 4096,
       "available": true,
-      "imagePath": "src/Frontend/Resources/assets/Movie_Matrix.jpg",
+      "imagePath": "../src/Frontend/Resources/assets/Movie_Matrix.jpg",
       "movie": {
         "director": "Lana Wachowski",
         "duration": 136,
@@ -61,7 +61,7 @@
       "releaseDate": "2010-07-16",
       "size": 5120,
       "available": false,
-      "imagePath": "src/Frontend/Resources/assets/Movie_Inception.jpg",
+      "imagePath": "../src/Frontend/Resources/assets/Movie_Inception.jpg",
       "movie": {
         "director": "Christopher Nolan",
         "duration": 148,
@@ -80,7 +80,7 @@
       "releaseDate": "1975-10-31",
       "size": 1024,
       "available": true,
-      "imagePath": "src/Frontend/Resources/assets/Song_Bohemian_Rhapsody.jpg",
+      "imagePath": "../src/Frontend/Resources/assets/Song_Bohemian_Rhapsody.jpg",
       "song": {
         "artist": "Queen",
         "album": "A Night at the Opera",
@@ -99,7 +99,7 @@
       "releaseDate": "1971-10-11",
       "size": 896,
       "available": true,
-      "imagePath": "src/Frontend/Resources/assets/Song_Imagine.jpg",
+      "imagePath": "../src/Frontend/Resources/assets/Song_Imagine.jpg",
       "song": {
         "artist": "John Lennon",
         "album": "Imagine",
@@ -118,7 +118,7 @@
       "releaseDate": "2024-01-01",
       "size": 512,
       "available": true,
-      "imagePath": "src/Frontend/Resources/assets/Magazine_National_Geographic.jpg",
+      "imagePath": "../src/Frontend/Resources/assets/Magazine_National_Geographic.jpg",
       "magazine": {
         "publisher": "National Geographic Society",
         "issue": 1,
@@ -137,7 +137,7 @@
       "releaseDate": "2024-02-01",
       "size": 460,
       "available": false,
-      "imagePath": "src/Frontend/Resources/assets/Magazine_Wired.jpg",
+      "imagePath": "../src/Frontend/Resources/assets/Magazine_Wired.jpg",
       "magazine": {
         "publisher": "Condé Nast",
         "issue": 342,
@@ -156,7 +156,7 @@
       "releaseDate": "2014-10-03",
       "size": 256,
       "available": true,
-      "imagePath": "src/Frontend/Resources/assets/Podcast_Serial.jpg",
+      "imagePath": "../src/Frontend/Resources/assets/Podcast_Serial.jpg",
       "podcast": {
         "host": "Sarah Koenig",
         "episodes": 1,
