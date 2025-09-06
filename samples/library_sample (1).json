@@ -8,7 +8,7 @@
       "releaseDate": "1980-01-01",
       "size": 2048,
       "available": true,
-      "imagePath": "",
+      "imagePath": "src/Frontend/Resources/assets/Book_Il_Nome_della_Rosa.jpg",
       "book": {
         "publisher": "Bompiani",
         "pages": 512,
@@ -25,7 +25,7 @@
       "releaseDate": "2008-08-01",
       "size": 1536,
       "available": true,
-      "imagePath": "",
+      "imagePath": "src/Frontend/Resources/assets/Book_Clean_Code.jpg",
       "book": {
         "publisher": "Prentice Hall",
         "pages": 464,
@@ -42,7 +42,7 @@
       "releaseDate": "1999-03-31",
       "size": 4096,
       "available": true,
-      "imagePath": "",
+      "imagePath": "src/Frontend/Resources/assets/Movie_Matrix.jpg",
       "movie": {
         "director": "Lana Wachowski",
         "duration": 136,
@@ -61,7 +61,7 @@
       "releaseDate": "2010-07-16",
       "size": 5120,
       "available": false,
-      "imagePath": "",
+      "imagePath": "src/Frontend/Resources/assets/Movie_Inception.jpg",
       "movie": {
         "director": "Christopher Nolan",
         "duration": 148,
@@ -80,7 +80,7 @@
       "releaseDate": "1975-10-31",
       "size": 1024,
       "available": true,
-      "imagePath": "",
+      "imagePath": "src/Frontend/Resources/assets/Song_Bohemian_Rhapsody.jpg",
       "song": {
         "artist": "Queen",
         "album": "A Night at the Opera",
@@ -99,7 +99,7 @@
       "releaseDate": "1971-10-11",
       "size": 896,
       "available": true,
-      "imagePath": "",
+      "imagePath": "src/Frontend/Resources/assets/Song_Imagine.jpg",
       "song": {
         "artist": "John Lennon",
         "album": "Imagine",
@@ -118,7 +118,7 @@
       "releaseDate": "2024-01-01",
       "size": 512,
       "available": true,
-      "imagePath": "",
+      "imagePath": "src/Frontend/Resources/assets/Magazine_National_Geographic.jpg",
       "magazine": {
         "publisher": "National Geographic Society",
         "issue": 1,
@@ -137,7 +137,7 @@
       "releaseDate": "2024-02-01",
       "size": 460,
       "available": false,
-      "imagePath": "",
+      "imagePath": "src/Frontend/Resources/assets/Magazine_Wired.jpg",
       "magazine": {
         "publisher": "Condé Nast",
         "issue": 342,
@@ -156,7 +156,7 @@
       "releaseDate": "2014-10-03",
       "size": 256,
       "available": true,
-      "imagePath": "",
+      "imagePath": "src/Frontend/Resources/assets/Podcast_Serial.jpg",
       "podcast": {
         "host": "Sarah Koenig",
         "episodes": 1,
@@ -175,129 +175,15 @@
       "releaseDate": "2017-02-01",
       "size": 300,
       "available": true,
-      "imagePath": "",
+      "imagePath": "/home/student/Desktop/MultimediaLibrary/src/Frontend/Resources/assets/Podcast_The_Daily.jpg",
       "podcast": {
         "host": "Michael Barbaro",
-        "episodes": 1500,
+        "episodes": 999,
         "platform": "Apple Podcasts",
         "duration": 25,
         "series": "The Daily",
         "description": "Top news stories with analysis",
         "genre": 2
-      }
-    }
-  ]
-}
-{
-  "media": [
-    {
-      "type": "Book",
-      "id": 1,
-      "title": "Il Nome della Rosa",
-      "author": "Umberto Eco",
-      "releaseDate": "1900-01-01",
-      "size": 2048,
-      "available": true,
-      "imagePath": "",
-      "book": {
-        "publisher": "",
-        "pages": 0,
-        "isbn": "",
-        "language": 0,
-        "genre": 0
-      }
-    },
-    {
-      "type": "Movie",
-      "id": 2,
-      "title": "The Matrix",
-      "author": "Wachowski Sisters",
-      "releaseDate": "1900-01-01",
-      "size": 4096,
-      "available": true,
-      "imagePath": "",
-      "movie": {
-        "director": "",
-        "duration": 0,
-        "studio": "",
-        "rating": "",
-        "language": 1,
-        "country": "",
-        "genre": 3
-      }
-    },
-    {
-      "type": "Song",
-      "id": 3,
-      "title": "Bohemian Rhapsody",
-      "author": "Queen",
-      "releaseDate": "1900-01-01",
-      "size": 1024,
-      "available": true,
-      "imagePath": "",
-      "song": {
-        "artist": "",
-        "album": "",
-        "duration": 0,
-        "format": "",
-        "label": "",
-        "track": 0,
-        "genre": 1
-      }
-    },
-    {
-      "type": "Magazine",
-      "id": 4,
-      "title": "National Geographic",
-      "author": "Various Authors",
-      "releaseDate": "1900-01-01",
-      "size": 512,
-      "available": true,
-      "imagePath": "",
-      "magazine": {
-        "publisher": "",
-        "issue": 0,
-        "issn": "",
-        "editor": "",
-        "pages": 0,
-        "frequency": "",
-        "genre": 0
-      }
-    },
-    {
-      "type": "Podcast",
-      "id": 5,
-      "title": "Serial",
-      "author": "Sarah Koenig",
-      "releaseDate": "1900-01-01",
-      "size": 256,
-      "available": true,
-      "imagePath": "",
-      "podcast": {
-        "host": "",
-        "episodes": 0,
-        "platform": "",
-        "duration": 0,
-        "series": "",
-        "description": "",
-        "genre": 7
-      }
-    },
-    {
-      "type": "Book",
-      "id": 6,
-      "title": "fhfc",
-      "author": "zxczxc",
-      "releaseDate": "2025-08-11",
-      "size": 1024,
-      "available": true,
-      "imagePath": "C:/Users/user/Downloads/ChatGPT Image 9 ago 2025, 10_20_35.png",
-      "book": {
-        "publisher": "zczxc",
-        "pages": 298,
-        "isbn": "23123",
-        "language": 1,
-        "genre": 0
       }
     }
   ]

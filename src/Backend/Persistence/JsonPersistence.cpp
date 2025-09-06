@@ -10,6 +10,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 // Custom JSON parser without external dependencies
 namespace MinimalJson {
@@ -47,7 +48,23 @@ bool JsonPersistence::save(const Library& library, const std::string& filePath) 
         out << "      \"releaseDate\": \"" << MinimalJson::escape(m->getReleaseDate().toString()) << "\",\n";
         out << "      \"size\": " << m->getKbSize() << ",\n";
         out << "      \"available\": " << (m->getIsAvailable() ? "true" : "false") << ",\n";
-        out << "      \"imagePath\": \"" << MinimalJson::escape(m->getImagePath()) << "\"";
+        // Store imagePath relative to the JSON file directory when possible
+        std::string storedImagePath = m->getImagePath();
+        try {
+            namespace fs = std::filesystem;
+            fs::path baseDir = fs::path(filePath).parent_path();
+            fs::path imgPath = fs::path(storedImagePath);
+            if (imgPath.is_absolute()) {
+                fs::path rel = fs::relative(imgPath, baseDir);
+                storedImagePath = rel.generic_string();
+            } else {
+                // Normalize slashes for portability
+                storedImagePath = imgPath.generic_string();
+            }
+        } catch (...) {
+            // Fallback: keep original path
+        }
+        out << "      \"imagePath\": \"" << MinimalJson::escape(storedImagePath) << "\"";
 
         if (auto b = dynamic_cast<const Book*>(m)) {
             out << ",\n      \"book\": {\n";
@@ -161,6 +178,24 @@ bool JsonPersistence::load(Library& library, const std::string& filePath) const 
         std::string title = getStr("title");
         std::string author = getStr("author");
         std::string imagePath = getStr("imagePath");
+        // Resolve relative imagePath against the JSON file directory
+        try {
+            namespace fs = std::filesystem;
+            fs::path imgPath = fs::path(imagePath);
+            if (!imgPath.is_absolute()) {
+                fs::path baseDir = fs::path(filePath).parent_path();
+                fs::path candidate = fs::weakly_canonical(baseDir / imgPath);
+                if (fs::exists(candidate)) {
+                    imagePath = candidate.generic_string();
+                } // else keep as-is; UI may try fallbacks
+            } else {
+                if (!std::filesystem::exists(imgPath)) {
+                    // Leave as-is if not found; UI will handle missing covers gracefully
+                }
+            }
+        } catch (...) {
+            // Ignore resolution errors and keep as-is
+        }
         unsigned id = static_cast<unsigned>(getInt("id"));
         unsigned sizeKb = static_cast<unsigned>(getInt("size"));
         bool available = getBool("available");

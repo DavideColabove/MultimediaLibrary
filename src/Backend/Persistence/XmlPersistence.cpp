@@ -10,6 +10,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 static std::string xmlEscape(const std::string& s) {
     std::string out; out.reserve(s.size()+8);
@@ -39,7 +40,22 @@ bool XmlPersistence::save(const Library& library, const std::string& filePath) c
         out << "    <releaseDate>" << xmlEscape(m->getReleaseDate().toString()) << "</releaseDate>\n";
         out << "    <size>" << m->getKbSize() << "</size>\n";
         out << "    <available>" << (m->getIsAvailable() ? "true" : "false") << "</available>\n";
-        out << "    <imagePath>" << xmlEscape(m->getImagePath()) << "</imagePath>\n";
+        // Store imagePath relative to the XML file directory when possible
+        std::string storedImagePath = m->getImagePath();
+        try {
+            namespace fs = std::filesystem;
+            fs::path baseDir = fs::path(filePath).parent_path();
+            fs::path imgPath = fs::path(storedImagePath);
+            if (imgPath.is_absolute()) {
+                fs::path rel = fs::relative(imgPath, baseDir);
+                storedImagePath = rel.generic_string();
+            } else {
+                storedImagePath = imgPath.generic_string();
+            }
+        } catch (...) {
+            // keep original path on failure
+        }
+        out << "    <imagePath>" << xmlEscape(storedImagePath) << "</imagePath>\n";
 
         if (auto b = dynamic_cast<const Book*>(m)) {
             out << "    <book publisher=\"" << xmlEscape(b->getPublisher()) << "\" pages=\"" << b->getPages() << "\" isbn=\"" << xmlEscape(b->getIsbn()) << "\" language=\"" << static_cast<int>(b->getLanguage()) << "\" genre=\"" << static_cast<int>(b->getGenre()) << "\"/>\n";
@@ -100,6 +116,18 @@ bool XmlPersistence::load(Library& library, const std::string& filePath) const {
             std::string sizeStr = getTag("size");
             std::string availStr = getTag("available");
             std::string imagePath = getTag("imagePath");
+            // Resolve relative imagePath against the XML file directory
+            try {
+                namespace fs = std::filesystem;
+                fs::path imgPath = fs::path(imagePath);
+                if (!imgPath.is_absolute()) {
+                    fs::path baseDir = fs::path(filePath).parent_path();
+                    fs::path candidate = fs::weakly_canonical(baseDir / imgPath);
+                    if (fs::exists(candidate)) imagePath = candidate.generic_string();
+                }
+            } catch (...) {
+                // ignore
+            }
 
             unsigned sizeKb = sizeStr.empty()?0u:static_cast<unsigned>(std::stoi(sizeStr));
             bool available = availStr.find("true") != std::string::npos;

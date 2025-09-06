@@ -33,7 +33,7 @@
     <releaseDate>2010-07-16</releaseDate>
     <size>5120</size>
     <available>false</available>
-    <imagePath>src/Frontend/Resources/assets/Movie_Inception.jpg</imagePath>
+    <imagePath>src/Frontend/Resources/assets/Movie_Inception.jpg/<imagePath>
     <movie director="Christopher Nolan" duration="148" studio="Legendary Pictures" rating="PG-13" language="1" country="USA" genre="5"/>
   </media>
   <media type="Song" id="5">
