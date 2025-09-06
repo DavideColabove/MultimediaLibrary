@@ -7,7 +7,7 @@ static void fillGenres(QComboBox* combo, const std::vector<std::string>& names)
     combo->clear();
     combo->addItem("Any", -1);
     for (size_t i = 0; i < names.size(); ++i) {
-        combo->addItem(QString::fromStdString(names[i]), i);
+        combo->addItem(QString::fromStdString(names[i]), static_cast<int>(i));
     }
 }
 
