@@ -36,6 +36,7 @@ public:
     
     
     std::vector<Media*> getAllMedia() const;
+    std::vector<const Media*> getAllMediaConst() const;
     
     
     std::vector<Media*> searchByTitle(const std::string& title) const;
@@ -48,6 +49,9 @@ public:
     
     
     std::vector<Media*> filterByAvailability(bool available) const;
+
+    // Helper utilities for persistence/serialization
+    std::string getMediaType(const Media* media) const;
 
     
     bool saveJson(const std::string& filePath) const;

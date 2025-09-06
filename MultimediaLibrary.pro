@@ -23,7 +23,6 @@ SOURCES += \
     src/Backend/Library/Library.cpp \
     src/Backend/Persistence/JsonPersistence.cpp \
     src/Backend/Persistence/XmlPersistence.cpp \
-    src/Backend/Persistence/Persistence.cpp \
     src/Frontend/Windows/MainWindow.cpp \
     src/Frontend/Windows/MediaCard.cpp \
     src/Frontend/Windows/AddMediaDialog.cpp \
@@ -49,13 +48,12 @@ HEADERS += \
     src/Backend/Elements/Song.h \
     src/Backend/Elements/Magazine.h \
     src/Backend/Elements/Podcast.h \
-    src/Backend/Persistence/MediaFactory.h \
+    src/Backend/Persistence/IPersistence.h \
     src/Backend/Enums/Genres.h \
     src/Backend/Enums/Languages.h \
     src/Backend/Library/Library.h \
     src/Backend/Persistence/JsonPersistence.h \
     src/Backend/Persistence/XmlPersistence.h \
-    src/Backend/Persistence/Persistence.h \
     src/Frontend/Windows/MainWindow.h \
     src/Frontend/Windows/MediaCard.h \
     src/Frontend/Windows/AddMediaDialog.h \
@@ -71,8 +69,7 @@ HEADERS += \
     src/Frontend/Windows/addItemWidgets/MagazineFormWidget.h \
     src/Frontend/Windows/addItemWidgets/PodcastFormWidget.h
 
-SOURCES += \
-    src/Backend/Persistence/MediaFactory.cpp
+# Removed obsolete MediaFactory and Persistence sources
 
 # Include paths
 INCLUDEPATH += \

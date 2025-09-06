@@ -1,6 +1,7 @@
 ﻿#include "Library.h"
-#include "../Persistence/Persistence.h"
 #include "../Elements/Media.h"
+#include "../Persistence/JsonPersistence.h"
+#include "../Persistence/XmlPersistence.h"
 #include "../Elements/Book.h"
 #include "../Elements/Movie.h"
 #include "../Elements/Song.h"
@@ -58,6 +59,16 @@ std::vector<Media*> Library::getAllMedia() const
         result.push_back(media.get());
     }
     
+    return result;
+}
+
+std::vector<const Media*> Library::getAllMediaConst() const
+{
+    std::vector<const Media*> result;
+    result.reserve(mediaCollection.size());
+    for (const auto& media : mediaCollection) {
+        result.push_back(media.get());
+    }
     return result;
 }
 
@@ -125,22 +136,22 @@ std::vector<Media*> Library::filterByAvailability(bool available) const
 
 bool Library::saveJson(const std::string& filePath) const
 {
-    return Persistence::saveJson(*this, filePath);
+    JsonPersistence p; return p.save(*this, filePath);
 }
 
 bool Library::loadJson(const std::string& filePath)
 {
-    return Persistence::loadJson(*this, filePath);
+    JsonPersistence p; return p.load(*this, filePath);
 }
 
 bool Library::saveXml(const std::string& filePath) const
 {
-    return Persistence::saveXml(*this, filePath);
+    XmlPersistence p; return p.save(*this, filePath);
 }
 
 bool Library::loadXml(const std::string& filePath)
 {
-    return Persistence::loadXml(*this, filePath);
+    XmlPersistence p; return p.load(*this, filePath);
 }
 
 size_t Library::getTotalCount() const
@@ -209,6 +220,20 @@ bool Library::isEmpty() const
 
 
 // removed getMediaType helper; use local visitor where needed
+
+std::string Library::getMediaType(const Media* m) const
+{
+    struct TypeNameVisitor : public MediaVisitor {
+        std::string typeName;
+        void visit(const Book&) override { typeName = "Book"; }
+        void visit(const Movie&) override { typeName = "Movie"; }
+        void visit(const Song&) override { typeName = "Song"; }
+        void visit(const Magazine&) override { typeName = "Magazine"; }
+        void visit(const Podcast&) override { typeName = "Podcast"; }
+    } v;
+    if (m) m->accept(v);
+    return v.typeName;
+}
 
 void Library::generateNextId()
 {
