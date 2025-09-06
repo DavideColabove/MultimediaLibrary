@@ -8,7 +8,7 @@
       "releaseDate": "1980-01-01",
       "size": 2048,
       "available": true,
-      "imagePath": "src/Frontend/Resources/assets/Book_Il_Nome_della_Rosa.jpg",
+      "imagePath": "../src/Frontend/Resources/assets/Book_Il_Nome_della_Rosa.jpg",
       "book": {
         "publisher": "Bompiani",
         "pages": 512,
@@ -175,7 +175,7 @@
       "releaseDate": "2017-02-01",
       "size": 300,
       "available": true,
-      "imagePath": "/home/student/Desktop/MultimediaLibrary/src/Frontend/Resources/assets/Podcast_The_Daily.jpg",
+      "imagePath": "../src/Frontend/Resources/assets/Podcast_The_Daily.jpg",
       "podcast": {
         "host": "Michael Barbaro",
         "episodes": 999,

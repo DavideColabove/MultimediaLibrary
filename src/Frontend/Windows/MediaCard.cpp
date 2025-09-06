@@ -8,6 +8,9 @@
 #include <QFile>
 #include <QScreen>
 #include <QSvgRenderer>
+#include <QDir>
+#include <QFileInfo>
+#include <QCoreApplication>
 #include "../../Backend/Elements/MediaVisitor.h"
 #include "../Visitors/FrontendVisitors.h"
 
@@ -91,7 +94,25 @@ void MediaCard::leaveEvent(QEvent* event)
 
 void MediaCard::updateCover()
 {
-    QPixmap pix(QString::fromStdString(media->getImagePath()));
+    auto loadPixmapWithFallbacks = [&](const QString& rawPath)->QPixmap{
+        QPixmap p(rawPath);
+        if (!p.isNull()) return p;
+        // Try project-root relative paths and common folders
+        const QStringList tries = {
+            rawPath,
+            QCoreApplication::applicationDirPath() + "/" + rawPath,
+            QDir::currentPath() + "/" + rawPath,
+            QString("%1/%2").arg(QDir::currentPath(), QString("src/Frontend/Resources/assets/%1").arg(QFileInfo(rawPath).fileName())),
+            QString("src/Frontend/Resources/assets/%1").arg(QFileInfo(rawPath).fileName()),
+        };
+        for (const QString& t : tries) {
+            QPixmap candidate(t);
+            if (!candidate.isNull()) return candidate;
+        }
+        return QPixmap();
+    };
+
+    QPixmap pix = loadPixmapWithFallbacks(QString::fromStdString(media->getImagePath()));
     if (!pix.isNull()) {
         const QSize target = coverLabel->size();
         QPixmap scaled = pix.scaled(target, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);

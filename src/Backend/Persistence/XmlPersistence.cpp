@@ -40,7 +40,6 @@ bool XmlPersistence::save(const Library& library, const std::string& filePath) c
         out << "    <releaseDate>" << xmlEscape(m->getReleaseDate().toString()) << "</releaseDate>\n";
         out << "    <size>" << m->getKbSize() << "</size>\n";
         out << "    <available>" << (m->getIsAvailable() ? "true" : "false") << "</available>\n";
-        // Store imagePath relative to the XML file directory when possible
         std::string storedImagePath = m->getImagePath();
         try {
             namespace fs = std::filesystem;
@@ -53,7 +52,6 @@ bool XmlPersistence::save(const Library& library, const std::string& filePath) c
                 storedImagePath = imgPath.generic_string();
             }
         } catch (...) {
-            // keep original path on failure
         }
         out << "    <imagePath>" << xmlEscape(storedImagePath) << "</imagePath>\n";
 

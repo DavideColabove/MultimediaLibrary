@@ -3,6 +3,9 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QHBoxLayout>
+#include <QDir>
+#include <QFileInfo>
+#include <QCoreApplication>
 #include "../../Backend/Elements/MediaVisitor.h"
 #include "../Visitors/FrontendVisitors.h"
 
@@ -160,7 +163,21 @@ void DetailsPanel::showMedia(Media* media) {
     authorLabel_->setText("Author: " + QString::fromStdString(media->getAuthor()));
     yearLabel_->setText("Year: " + QString::fromStdString(media->getReleaseDate().toString()));
 
-    QPixmap pix(QString::fromStdString(media->getImagePath()));
+    auto loadPixmapWithFallbacks = [&](const QString& rawPath)->QPixmap{
+        QPixmap p(rawPath);
+        if (!p.isNull()) return p;
+        const QStringList tries = {
+            rawPath,
+            QCoreApplication::applicationDirPath() + "/" + rawPath,
+            QDir::currentPath() + "/" + rawPath,
+            QString("%1/%2").arg(QDir::currentPath(), QString("src/Frontend/Resources/assets/%1").arg(QFileInfo(rawPath).fileName())),
+            QString("src/Frontend/Resources/assets/%1").arg(QFileInfo(rawPath).fileName()),
+        };
+        for (const QString& t : tries) { QPixmap candidate(t); if (!candidate.isNull()) return candidate; }
+        return QPixmap();
+    };
+
+    QPixmap pix = loadPixmapWithFallbacks(QString::fromStdString(media->getImagePath()));
     if (!pix.isNull()) {
         coverImage_->setPixmap(pix.scaled(coverImage_->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
         coverImage_->setText("");

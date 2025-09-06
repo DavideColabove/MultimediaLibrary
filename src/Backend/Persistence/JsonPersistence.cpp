@@ -48,7 +48,6 @@ bool JsonPersistence::save(const Library& library, const std::string& filePath) 
         out << "      \"releaseDate\": \"" << MinimalJson::escape(m->getReleaseDate().toString()) << "\",\n";
         out << "      \"size\": " << m->getKbSize() << ",\n";
         out << "      \"available\": " << (m->getIsAvailable() ? "true" : "false") << ",\n";
-        // Store imagePath relative to the JSON file directory when possible
         std::string storedImagePath = m->getImagePath();
         try {
             namespace fs = std::filesystem;
@@ -58,11 +57,9 @@ bool JsonPersistence::save(const Library& library, const std::string& filePath) 
                 fs::path rel = fs::relative(imgPath, baseDir);
                 storedImagePath = rel.generic_string();
             } else {
-                // Normalize slashes for portability
                 storedImagePath = imgPath.generic_string();
             }
         } catch (...) {
-            // Fallback: keep original path
         }
         out << "      \"imagePath\": \"" << MinimalJson::escape(storedImagePath) << "\"";
 
