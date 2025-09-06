@@ -6,7 +6,7 @@
     <releaseDate>1980-01-01</releaseDate>
     <size>2048</size>
     <available>true</available>
-    <imagePath></imagePath>
+    <imagePath>src/Frontend/Resources/assets/Book_Il_Nome_della_Rosa.jpg</imagePath>
     <book publisher="Bompiani" pages="512" isbn="9788845251234" language="0" genre="8"/>
   </media>
   <media type="Book" id="2">
@@ -15,7 +15,7 @@
     <releaseDate>2008-08-01</releaseDate>
     <size>1536</size>
     <available>true</available>
-    <imagePath></imagePath>
+    <imagePath>src/Frontend/Resources/assets/Book_Clean_Code.jpg</imagePath>
     <book publisher="Prentice Hall" pages="464" isbn="9780132350884" language="1" genre="10"/>
   </media>
   <media type="Movie" id="3">
@@ -24,7 +24,7 @@
     <releaseDate>1999-03-31</releaseDate>
     <size>4096</size>
     <available>true</available>
-    <imagePath></imagePath>
+    <imagePath>src/Frontend/Resources/assets/Movie_Matrix.jpg</imagePath>
     <movie director="Lana Wachowski" duration="136" studio="Warner Bros." rating="R" language="1" country="USA" genre="6"/>
   </media>
   <media type="Movie" id="4">
@@ -33,7 +33,7 @@
     <releaseDate>2010-07-16</releaseDate>
     <size>5120</size>
     <available>false</available>
-    <imagePath></imagePath>
+    <imagePath>src/Frontend/Resources/assets/Movie_Inception.jpg</imagePath>
     <movie director="Christopher Nolan" duration="148" studio="Legendary Pictures" rating="PG-13" language="1" country="USA" genre="5"/>
   </media>
   <media type="Song" id="5">
@@ -42,7 +42,7 @@
     <releaseDate>1975-10-31</releaseDate>
     <size>1024</size>
     <available>true</available>
-    <imagePath></imagePath>
+    <imagePath>src/Frontend/Resources/assets/Song_Bohemian_Rhapsody.jpg</imagePath>
     <song artist="Queen" album="A Night at the Opera" duration="355" format="MP3" label="EMI" track="1" genre="0"/>
   </media>
   <media type="Song" id="6">
@@ -51,7 +51,7 @@
     <releaseDate>1971-10-11</releaseDate>
     <size>896</size>
     <available>true</available>
-    <imagePath></imagePath>
+    <imagePath>src/Frontend/Resources/assets/Song_Imagine.jpg</imagePath>
     <song artist="John Lennon" album="Imagine" duration="183" format="FLAC" label="Apple" track="1" genre="1"/>
   </media>
   <media type="Magazine" id="7">
@@ -60,7 +60,7 @@
     <releaseDate>2024-01-01</releaseDate>
     <size>512</size>
     <available>true</available>
-    <imagePath></imagePath>
+    <imagePath>src/Frontend/Resources/assets/Magazine_National_Geographic.jpg</imagePath>
     <magazine publisher="National Geographic Society" issue="1" issn="0027-9358" editor="Susan Goldberg" pages="80" frequency="Monthly" genre="4"/>
   </media>
   <media type="Magazine" id="8">
@@ -69,7 +69,7 @@
     <releaseDate>2024-02-01</releaseDate>
     <size>460</size>
     <available>false</available>
-    <imagePath></imagePath>
+    <imagePath>src/Frontend/Resources/assets/Magazine_Wired.jpg</imagePath>
     <magazine publisher="Condé Nast" issue="342" issn="1059-1028" editor="Gideon Lichfield" pages="96" frequency="Monthly" genre="3"/>
   </media>
   <media type="Podcast" id="9">
@@ -78,7 +78,7 @@
     <releaseDate>2014-10-03</releaseDate>
     <size>256</size>
     <available>true</available>
-    <imagePath></imagePath>
+    <imagePath>src/Frontend/Resources/assets/Podcast_Serial.jpg</imagePath>
     <podcast host="Sarah Koenig" episodes="1" platform="Spotify" duration="45" series="Serial" description="A true crime podcast" genre="10"/>
   </media>
   <media type="Podcast" id="10">
@@ -87,56 +87,8 @@
     <releaseDate>2017-02-01</releaseDate>
     <size>300</size>
     <available>true</available>
-    <imagePath></imagePath>
+    <imagePath>src/Frontend/Resources/assets/Podcast_The_Daily.jpg</imagePath>
     <podcast host="Michael Barbaro" episodes="1500" platform="Apple Podcasts" duration="25" series="The Daily" description="Top news stories with analysis" genre="2"/>
-  </media>
-</library>
-<?xml version="1.0" encoding="UTF-8"?>
-<library>
-  <media type="Book" id="1">
-    <title>Il Nome della Rosa</title>
-    <author>Umberto Eco</author>
-    <releaseDate>1980-01-01</releaseDate>
-    <size>2048</size>
-    <available>true</available>
-    <imagePath></imagePath>
-    <book publisher="Bompiani" pages="512" isbn="978-88-452-1234-5" language="0" genre="8"/>
-  </media>
-  <media type="Movie" id="2">
-    <title>The Matrix</title>
-    <author>Wachowski Sisters</author>
-    <releaseDate>1999-03-31</releaseDate>
-    <size>4096</size>
-    <available>true</available>
-    <imagePath></imagePath>
-    <movie director="Lana Wachowski" duration="136" studio="Warner Bros." rating="R" language="1" country="USA" genre="6"/>
-  </media>
-  <media type="Song" id="3">
-    <title>Bohemian Rhapsody</title>
-    <author>Queen</author>
-    <releaseDate>1975-10-31</releaseDate>
-    <size>1024</size>
-    <available>true</available>
-    <imagePath></imagePath>
-    <song artist="Queen" album="A Night at the Opera" duration="355" format="MP3" label="EMI" track="1" genre="0"/>
-  </media>
-  <media type="Magazine" id="4">
-    <title>National Geographic</title>
-    <author>Various Authors</author>
-    <releaseDate>2024-01-01</releaseDate>
-    <size>512</size>
-    <available>true</available>
-    <imagePath></imagePath>
-    <magazine publisher="National Geographic Society" issue="1" issn="0027-9358" editor="Susan Goldberg" pages="80" frequency="Monthly" genre="4"/>
-  </media>
-  <media type="Podcast" id="5">
-    <title>Serial</title>
-    <author>Sarah Koenig</author>
-    <releaseDate>2014-10-03</releaseDate>
-    <size>256</size>
-    <available>true</available>
-    <imagePath></imagePath>
-    <podcast host="Sarah Koenig" episodes="1" platform="Spotify" duration="45" series="Serial" description="A true crime podcast" genre="9"/>
   </media>
 </library>
 
