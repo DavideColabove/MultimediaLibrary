@@ -55,17 +55,55 @@ bool XmlPersistence::save(const Library& library, const std::string& filePath) c
         }
         out << "    <imagePath>" << xmlEscape(storedImagePath) << "</imagePath>\n";
 
-        if (auto b = dynamic_cast<const Book*>(m)) {
-            out << "    <book publisher=\"" << xmlEscape(b->getPublisher()) << "\" pages=\"" << b->getPages() << "\" isbn=\"" << xmlEscape(b->getIsbn()) << "\" language=\"" << static_cast<int>(b->getLanguage()) << "\" genre=\"" << static_cast<int>(b->getGenre()) << "\"/>\n";
-        } else if (auto mv = dynamic_cast<const Movie*>(m)) {
-            out << "    <movie director=\"" << xmlEscape(mv->getDirector()) << "\" duration=\"" << mv->getDuration() << "\" studio=\"" << xmlEscape(mv->getStudio()) << "\" rating=\"" << xmlEscape(mv->getRating()) << "\" language=\"" << static_cast<int>(mv->getLanguage()) << "\" country=\"" << xmlEscape(mv->getCountry()) << "\" genre=\"" << static_cast<int>(mv->getGenre()) << "\"/>\n";
-        } else if (auto s = dynamic_cast<const Song*>(m)) {
-            out << "    <song artist=\"" << xmlEscape(s->getArtist()) << "\" album=\"" << xmlEscape(s->getAlbum()) << "\" duration=\"" << s->getDuration() << "\" format=\"" << xmlEscape(s->getFormat()) << "\" label=\"" << xmlEscape(s->getLabel()) << "\" track=\"" << s->getTrackNumber() << "\" genre=\"" << static_cast<int>(s->getGenre()) << "\"/>\n";
-        } else if (auto mg = dynamic_cast<const Magazine*>(m)) {
-            out << "    <magazine publisher=\"" << xmlEscape(mg->getPublisher()) << "\" issue=\"" << mg->getIssueNumber() << "\" issn=\"" << xmlEscape(mg->getIssn()) << "\" editor=\"" << xmlEscape(mg->getEditor()) << "\" pages=\"" << mg->getPages() << "\" frequency=\"" << xmlEscape(mg->getFrequency()) << "\" genre=\"" << static_cast<int>(mg->getGenre()) << "\"/>\n";
-        } else if (auto pc = dynamic_cast<const Podcast*>(m)) {
-            out << "    <podcast host=\"" << xmlEscape(pc->getHost()) << "\" episodes=\"" << pc->getEpisodeNumber() << "\" platform=\"" << xmlEscape(pc->getPlatform()) << "\" duration=\"" << pc->getDuration() << "\" series=\"" << xmlEscape(pc->getSeries()) << "\" description=\"" << xmlEscape(pc->getDescription()) << "\" genre=\"" << static_cast<int>(pc->getGenre()) << "\"/>\n";
-        }
+        struct XmlDetailsVisitor : MediaVisitor {
+            std::ostream& out;
+            XmlDetailsVisitor(std::ostream& o) : out(o) {}
+            void visit(const Book& b) override {
+                out << "    <book publisher=\"" << xmlEscape(b.getPublisher())
+                    << "\" pages=\"" << b.getPages()
+                    << "\" isbn=\"" << xmlEscape(b.getIsbn())
+                    << "\" language=\"" << static_cast<int>(b.getLanguage())
+                    << "\" genre=\"" << static_cast<int>(b.getGenre()) << "\"/>\n";
+            }
+            void visit(const Movie& mv) override {
+                out << "    <movie director=\"" << xmlEscape(mv.getDirector())
+                    << "\" duration=\"" << mv.getDuration()
+                    << "\" studio=\"" << xmlEscape(mv.getStudio())
+                    << "\" rating=\"" << xmlEscape(mv.getRating())
+                    << "\" language=\"" << static_cast<int>(mv.getLanguage())
+                    << "\" country=\"" << xmlEscape(mv.getCountry())
+                    << "\" genre=\"" << static_cast<int>(mv.getGenre()) << "\"/>\n";
+            }
+            void visit(const Song& s) override {
+                out << "    <song artist=\"" << xmlEscape(s.getArtist())
+                    << "\" album=\"" << xmlEscape(s.getAlbum())
+                    << "\" duration=\"" << s.getDuration()
+                    << "\" format=\"" << xmlEscape(s.getFormat())
+                    << "\" label=\"" << xmlEscape(s.getLabel())
+                    << "\" track=\"" << s.getTrackNumber()
+                    << "\" genre=\"" << static_cast<int>(s.getGenre()) << "\"/>\n";
+            }
+            void visit(const Magazine& mg) override {
+                out << "    <magazine publisher=\"" << xmlEscape(mg.getPublisher())
+                    << "\" issue=\"" << mg.getIssueNumber()
+                    << "\" issn=\"" << xmlEscape(mg.getIssn())
+                    << "\" editor=\"" << xmlEscape(mg.getEditor())
+                    << "\" pages=\"" << mg.getPages()
+                    << "\" frequency=\"" << xmlEscape(mg.getFrequency())
+                    << "\" genre=\"" << static_cast<int>(mg.getGenre()) << "\"/>\n";
+            }
+            void visit(const Podcast& pc) override {
+                out << "    <podcast host=\"" << xmlEscape(pc.getHost())
+                    << "\" episodes=\"" << pc.getEpisodeNumber()
+                    << "\" platform=\"" << xmlEscape(pc.getPlatform())
+                    << "\" duration=\"" << pc.getDuration()
+                    << "\" series=\"" << xmlEscape(pc.getSeries())
+                    << "\" description=\"" << xmlEscape(pc.getDescription())
+                    << "\" genre=\"" << static_cast<int>(pc.getGenre()) << "\"/>\n";
+            }
+        } detailsVisitor(out);
+
+        m->accept(detailsVisitor);
         out << "  </media>\n";
     }
     out << "</library>\n";

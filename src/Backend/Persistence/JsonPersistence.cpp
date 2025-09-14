@@ -63,55 +63,65 @@ bool JsonPersistence::save(const Library& library, const std::string& filePath) 
         }
         out << "      \"imagePath\": \"" << MinimalJson::escape(storedImagePath) << "\"";
 
-        if (auto b = dynamic_cast<const Book*>(m)) {
-            out << ",\n      \"book\": {\n";
-            out << "        \"publisher\": \"" << MinimalJson::escape(b->getPublisher()) << "\",\n";
-            out << "        \"pages\": " << b->getPages() << ",\n";
-            out << "        \"isbn\": \"" << MinimalJson::escape(b->getIsbn()) << "\",\n";
-            out << "        \"language\": " << static_cast<int>(b->getLanguage()) << ",\n";
-            out << "        \"genre\": " << static_cast<int>(b->getGenre()) << "\n";
-            out << "      }";
-        } else if (auto mv = dynamic_cast<const Movie*>(m)) {
-            out << ",\n      \"movie\": {\n";
-            out << "        \"director\": \"" << MinimalJson::escape(mv->getDirector()) << "\",\n";
-            out << "        \"duration\": " << mv->getDuration() << ",\n";
-            out << "        \"studio\": \"" << MinimalJson::escape(mv->getStudio()) << "\",\n";
-            out << "        \"rating\": \"" << MinimalJson::escape(mv->getRating()) << "\",\n";
-            out << "        \"language\": " << static_cast<int>(mv->getLanguage()) << ",\n";
-            out << "        \"country\": \"" << MinimalJson::escape(mv->getCountry()) << "\",\n";
-            out << "        \"genre\": " << static_cast<int>(mv->getGenre()) << "\n";
-            out << "      }";
-        } else if (auto s = dynamic_cast<const Song*>(m)) {
-            out << ",\n      \"song\": {\n";
-            out << "        \"artist\": \"" << MinimalJson::escape(s->getArtist()) << "\",\n";
-            out << "        \"album\": \"" << MinimalJson::escape(s->getAlbum()) << "\",\n";
-            out << "        \"duration\": " << s->getDuration() << ",\n";
-            out << "        \"format\": \"" << MinimalJson::escape(s->getFormat()) << "\",\n";
-            out << "        \"label\": \"" << MinimalJson::escape(s->getLabel()) << "\",\n";
-            out << "        \"track\": " << s->getTrackNumber() << ",\n";
-            out << "        \"genre\": " << static_cast<int>(s->getGenre()) << "\n";
-            out << "      }";
-        } else if (auto mg = dynamic_cast<const Magazine*>(m)) {
-            out << ",\n      \"magazine\": {\n";
-            out << "        \"publisher\": \"" << MinimalJson::escape(mg->getPublisher()) << "\",\n";
-            out << "        \"issue\": " << mg->getIssueNumber() << ",\n";
-            out << "        \"issn\": \"" << MinimalJson::escape(mg->getIssn()) << "\",\n";
-            out << "        \"editor\": \"" << MinimalJson::escape(mg->getEditor()) << "\",\n";
-            out << "        \"pages\": " << mg->getPages() << ",\n";
-            out << "        \"frequency\": \"" << MinimalJson::escape(mg->getFrequency()) << "\",\n";
-            out << "        \"genre\": " << static_cast<int>(mg->getGenre()) << "\n";
-            out << "      }";
-        } else if (auto pc = dynamic_cast<const Podcast*>(m)) {
-            out << ",\n      \"podcast\": {\n";
-            out << "        \"host\": \"" << MinimalJson::escape(pc->getHost()) << "\",\n";
-            out << "        \"episodes\": " << pc->getEpisodeNumber() << ",\n";
-            out << "        \"platform\": \"" << MinimalJson::escape(pc->getPlatform()) << "\",\n";
-            out << "        \"duration\": " << pc->getDuration() << ",\n";
-            out << "        \"series\": \"" << MinimalJson::escape(pc->getSeries()) << "\",\n";
-            out << "        \"description\": \"" << MinimalJson::escape(pc->getDescription()) << "\",\n";
-            out << "        \"genre\": " << static_cast<int>(pc->getGenre()) << "\n";
-            out << "      }";
-        }
+        struct JsonDetailsVisitor : MediaVisitor {
+            std::ostream& out;
+            JsonDetailsVisitor(std::ostream& o) : out(o) {}
+            void visit(const Book& b) override {
+                out << ",\n      \"book\": {\n";
+                out << "        \"publisher\": \"" << MinimalJson::escape(b.getPublisher()) << "\",\n";
+                out << "        \"pages\": " << b.getPages() << ",\n";
+                out << "        \"isbn\": \"" << MinimalJson::escape(b.getIsbn()) << "\",\n";
+                out << "        \"language\": " << static_cast<int>(b.getLanguage()) << ",\n";
+                out << "        \"genre\": " << static_cast<int>(b.getGenre()) << "\n";
+                out << "      }";
+            }
+            void visit(const Movie& mv) override {
+                out << ",\n      \"movie\": {\n";
+                out << "        \"director\": \"" << MinimalJson::escape(mv.getDirector()) << "\",\n";
+                out << "        \"duration\": " << mv.getDuration() << ",\n";
+                out << "        \"studio\": \"" << MinimalJson::escape(mv.getStudio()) << "\",\n";
+                out << "        \"rating\": \"" << MinimalJson::escape(mv.getRating()) << "\",\n";
+                out << "        \"language\": " << static_cast<int>(mv.getLanguage()) << ",\n";
+                out << "        \"country\": \"" << MinimalJson::escape(mv.getCountry()) << "\",\n";
+                out << "        \"genre\": " << static_cast<int>(mv.getGenre()) << "\n";
+                out << "      }";
+            }
+            void visit(const Song& s) override {
+                out << ",\n      \"song\": {\n";
+                out << "        \"artist\": \"" << MinimalJson::escape(s.getArtist()) << "\",\n";
+                out << "        \"album\": \"" << MinimalJson::escape(s.getAlbum()) << "\",\n";
+                out << "        \"duration\": " << s.getDuration() << ",\n";
+                out << "        \"format\": \"" << MinimalJson::escape(s.getFormat()) << "\",\n";
+                out << "        \"label\": \"" << MinimalJson::escape(s.getLabel()) << "\",\n";
+                out << "        \"track\": " << s.getTrackNumber() << ",\n";
+                out << "        \"genre\": " << static_cast<int>(s.getGenre()) << "\n";
+                out << "      }";
+            }
+            void visit(const Magazine& mg) override {
+                out << ",\n      \"magazine\": {\n";
+                out << "        \"publisher\": \"" << MinimalJson::escape(mg.getPublisher()) << "\",\n";
+                out << "        \"issue\": " << mg.getIssueNumber() << ",\n";
+                out << "        \"issn\": \"" << MinimalJson::escape(mg.getIssn()) << "\",\n";
+                out << "        \"editor\": \"" << MinimalJson::escape(mg.getEditor()) << "\",\n";
+                out << "        \"pages\": " << mg.getPages() << ",\n";
+                out << "        \"frequency\": \"" << MinimalJson::escape(mg.getFrequency()) << "\",\n";
+                out << "        \"genre\": " << static_cast<int>(mg.getGenre()) << "\n";
+                out << "      }";
+            }
+            void visit(const Podcast& pc) override {
+                out << ",\n      \"podcast\": {\n";
+                out << "        \"host\": \"" << MinimalJson::escape(pc.getHost()) << "\",\n";
+                out << "        \"episodes\": " << pc.getEpisodeNumber() << ",\n";
+                out << "        \"platform\": \"" << MinimalJson::escape(pc.getPlatform()) << "\",\n";
+                out << "        \"duration\": " << pc.getDuration() << ",\n";
+                out << "        \"series\": \"" << MinimalJson::escape(pc.getSeries()) << "\",\n";
+                out << "        \"description\": \"" << MinimalJson::escape(pc.getDescription()) << "\",\n";
+                out << "        \"genre\": " << static_cast<int>(pc.getGenre()) << "\n";
+                out << "      }";
+            }
+        } detailsVisitor(out);
+
+        m->accept(detailsVisitor);
 
         out << "\n    }" << (i + 1 < items.size() ? "," : "") << "\n";
     }
