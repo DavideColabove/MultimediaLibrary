@@ -12,17 +12,14 @@
 #include "../../Backend/Enums/Genres.h"
 #include "../../Backend/Enums/Languages.h"
 
-CoverDropArea::CoverDropArea(QWidget *parent)
-    : QFrame(parent), hasImage(false)
-{
+CoverDropArea::CoverDropArea(QWidget *parent): QFrame(parent), hasImage(false){
     setAcceptDrops(true);
     setMinimumSize(200, 150);
     setMaximumSize(300, 200);
     setFrameStyle(QFrame::Box);
 }
 
-void CoverDropArea::setImagePath(const QString &path)
-{
+void CoverDropArea::setImagePath(const QString &path){
     imagePath = path;
     if (!path.isEmpty()) {
         coverPixmap.load(path);
@@ -34,18 +31,14 @@ void CoverDropArea::setImagePath(const QString &path)
     update();
 }
 
-void CoverDropArea::dragEnterEvent(QDragEnterEvent *event)
-{
+void CoverDropArea::dragEnterEvent(QDragEnterEvent *event){
     if (event->mimeData()->hasUrls() || event->mimeData()->hasImage()) {
         event->acceptProposedAction();
-    
     }
 }
 
-void CoverDropArea::dropEvent(QDropEvent *event)
-{
+void CoverDropArea::dropEvent(QDropEvent *event){
     setStyleSheet("QFrame { border: 2px dashed #555; border-radius: 8px; background-color: #3c3c3c; padding: 10px; }");
-    
     if (event->mimeData()->hasUrls()) {
         QList<QUrl> urls = event->mimeData()->urls();
         if (!urls.isEmpty()) {
@@ -62,8 +55,7 @@ void CoverDropArea::dropEvent(QDropEvent *event)
     }
 }
 
-void CoverDropArea::paintEvent(QPaintEvent *event)
-{
+void CoverDropArea::paintEvent(QPaintEvent *event){
     QFrame::paintEvent(event);
     QPainter painter(this);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
@@ -82,9 +74,7 @@ void CoverDropArea::paintEvent(QPaintEvent *event)
 
 
 
-AddMediaDialog::AddMediaDialog(QWidget *parent)
-    : QDialog(parent)
-{
+AddMediaDialog::AddMediaDialog(QWidget *parent): QDialog(parent){
     setupUI();
     setupCommonFields();
     setupTypeSpecificFields();
@@ -97,18 +87,13 @@ AddMediaDialog::AddMediaDialog(QWidget *parent)
     setModal(true);
 }
 
-AddMediaDialog::~AddMediaDialog()
-{
-}
+AddMediaDialog::~AddMediaDialog(){}
 
-AddMediaDialog::AddMediaDialog(Media *existingMediaToEdit, QWidget *parent)
-    : QDialog(parent), isEditMode(true), existingMedia(existingMediaToEdit)
-{
+AddMediaDialog::AddMediaDialog(Media *existingMediaToEdit, QWidget *parent): QDialog(parent), isEditMode(true), existingMedia(existingMediaToEdit){
     setupUI();
     setupCommonFields();
     setupTypeSpecificFields();
     setupConnections();
-
 
     if (existingMedia) {
         struct IndexVisitor : MediaVisitor {
@@ -132,8 +117,7 @@ AddMediaDialog::AddMediaDialog(Media *existingMediaToEdit, QWidget *parent)
     setModal(true);
 }
 
-void AddMediaDialog::setupUI()
-{
+void AddMediaDialog::setupUI(){
     mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(20);
     mainLayout->setContentsMargins(20, 20, 20, 20);
@@ -177,8 +161,7 @@ void AddMediaDialog::setupUI()
     mainLayout->addLayout(buttonLayout);
 }
 
-void AddMediaDialog::setupCommonFields()
-{
+void AddMediaDialog::setupCommonFields(){
     titleEdit = new QLineEdit(this);
     commonLayout->addRow("Title:", titleEdit);
     
@@ -217,8 +200,7 @@ void AddMediaDialog::setupCommonFields()
     commonLayout->addRow("Cover Image:", coverRow);
 }
 
-void AddMediaDialog::setupTypeSpecificFields()
-{
+void AddMediaDialog::setupTypeSpecificFields(){
     bookForm = new BookFormWidget(this);    bookWidget = bookForm;
     movieForm = new MovieFormWidget(this);  movieWidget = movieForm;
     songForm = new SongFormWidget(this);    songWidget = songForm;
@@ -234,9 +216,7 @@ void AddMediaDialog::setupTypeSpecificFields()
     typeSpecificStack->setCurrentIndex(0);
 }
 
-void AddMediaDialog::setupConnections()
-{
-
+void AddMediaDialog::setupConnections(){
     connect(mediaTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             typeSpecificStack, &QStackedWidget::setCurrentIndex);
     connect(coverDropArea, &CoverDropArea::imageDropped,
@@ -252,13 +232,11 @@ void AddMediaDialog::setupConnections()
 }
 
 
-void AddMediaDialog::onImageDropped(const QString &path)
-{
+void AddMediaDialog::onImageDropped(const QString &path){
     coverDropArea->setImagePath(path);
 }
 
-void AddMediaDialog::onChooseImageClicked()
-{
+void AddMediaDialog::onChooseImageClicked(){
     const QString path = QFileDialog::getOpenFileName(this, "Choose Cover Image", QString(),
         "Images (*.png *.jpg *.jpeg *.bmp *.gif)");
     if (!path.isEmpty()) {
@@ -266,20 +244,16 @@ void AddMediaDialog::onChooseImageClicked()
     }
 }
 
-void AddMediaDialog::onRemoveImageClicked()
-{
+void AddMediaDialog::onRemoveImageClicked(){
     coverDropArea->setImagePath(QString());
 }
 
-void AddMediaDialog::onAcceptClicked()
-{
+void AddMediaDialog::onAcceptClicked(){
     if (!validateInput()) {
         return;
     }
-    
     QDate releaseQDate = releaseDateEdit->date();
     Date date(releaseQDate.year(), releaseQDate.month(), releaseQDate.day());
-
     if (isEditMode && existingMedia) {
         existingMedia->setTitle(titleEdit->text().toStdString())
                      .setAuthor(authorEdit->text().toStdString())
@@ -299,10 +273,9 @@ void AddMediaDialog::onAcceptClicked()
         accept();
         return;
     }
-
     int mediaType = mediaTypeCombo->currentIndex();
     switch (mediaType) {
-        case 0: { // Book
+        case 0: {
             auto book = std::make_unique<Book>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
@@ -320,7 +293,7 @@ void AddMediaDialog::onAcceptClicked()
             createdMedia = std::move(book);
             break;
         }
-        case 1: { // Movie
+        case 1: {
             auto movie = std::make_unique<Movie>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
@@ -340,7 +313,7 @@ void AddMediaDialog::onAcceptClicked()
             createdMedia = std::move(movie);
             break;
         }
-        case 2: { // Song
+        case 2: {
             auto song = std::make_unique<Song>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
@@ -360,7 +333,7 @@ void AddMediaDialog::onAcceptClicked()
             createdMedia = std::move(song);
             break;
         }
-        case 3: { // Magazine
+        case 3: {
             auto magazine = std::make_unique<Magazine>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
@@ -380,7 +353,7 @@ void AddMediaDialog::onAcceptClicked()
             createdMedia = std::move(magazine);
             break;
         }
-        case 4: { // Podcast
+        case 4: {
             auto podcast = std::make_unique<Podcast>(
                 titleEdit->text().toStdString(),
                 authorEdit->text().toStdString(),
@@ -404,25 +377,20 @@ void AddMediaDialog::onAcceptClicked()
     accept();
 }
 
-void AddMediaDialog::onCancelClicked()
-{
+void AddMediaDialog::onCancelClicked(){
     reject();
 }
 
 
-bool AddMediaDialog::validateInput()
-{
+bool AddMediaDialog::validateInput(){
     if (titleEdit->text().trimmed().isEmpty()) {
         showValidationError("Title is required.");
         return false;
     }
-    
     if (authorEdit->text().trimmed().isEmpty()) {
         showValidationError("Author is required.");
         return false;
     }
-    
-    
     int mediaType = mediaTypeCombo->currentIndex();
     QString err;
     switch (mediaType) {
@@ -432,19 +400,15 @@ bool AddMediaDialog::validateInput()
         case 3: if (magazineForm && !magazineForm->validate(err)) { showValidationError(err); return false; } break;
         case 4: if (podcastForm && !podcastForm->validate(err)) { showValidationError(err); return false; } break;
     }
-    
     return true;
 }
 
-void AddMediaDialog::showValidationError(const QString& message)
-{
+void AddMediaDialog::showValidationError(const QString& message){
     QMessageBox::warning(this, "Validation Error", message);
 }
 
-void AddMediaDialog::populateFromMedia(Media *media)
-{
+void AddMediaDialog::populateFromMedia(Media *media){
     if (!media) return;
-    
     titleEdit->setText(QString::fromStdString(media->getTitle()));
     authorEdit->setText(QString::fromStdString(media->getAuthor()));
     const Date &d = media->getReleaseDate();
@@ -452,8 +416,6 @@ void AddMediaDialog::populateFromMedia(Media *media)
     sizeSpinBox->setValue(static_cast<int>(media->getKbSize()));
     availableCheckBox->setChecked(media->getIsAvailable());
     coverDropArea->setImagePath(QString::fromStdString(media->getImagePath()));
-
-    
     struct PopulateVisitor : MediaVisitor {
         AddMediaDialog* dlg;
         explicit PopulateVisitor(AddMediaDialog* d) : dlg(d) {}
@@ -481,7 +443,6 @@ void AddMediaDialog::populateFromMedia(Media *media)
     media->accept(pop);
 }
 
-std::unique_ptr<Media> AddMediaDialog::getCreatedMedia()
-{
+std::unique_ptr<Media> AddMediaDialog::getCreatedMedia(){
     return std::move(createdMedia);
 }

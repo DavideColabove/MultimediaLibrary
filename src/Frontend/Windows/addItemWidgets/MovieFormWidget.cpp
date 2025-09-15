@@ -11,21 +11,18 @@ MovieFormWidget::MovieFormWidget(QWidget* parent): QWidget(parent) {
     rating_ = new QLineEdit(this); rating_->setPlaceholderText("e.g., PG-13, R, G"); rating_->setMaxLength(10);
     rating_->setValidator(new QRegularExpressionValidator(QRegularExpression("^[A-Za-z0-9+-]{1,10}$"), rating_));
     studio_ = new QLineEdit(this); studio_->setPlaceholderText("e.g., Warner Bros., Disney, Universal"); studio_->setMaxLength(120);
-
     languageCombo_ = new QComboBox(this); languageCombo_->setEditable(true);
     auto languages = Enums::getAllLanguages();
     for (size_t i = 0; i < languages.size(); ++i) languageCombo_->addItem(QString::fromStdString(languages[i]), static_cast<int>(i));
     languageCombo_->setInsertPolicy(QComboBox::NoInsert);
     languageCombo_->completer()->setFilterMode(Qt::MatchContains);
     languageCombo_->completer()->setCompletionMode(QCompleter::PopupCompletion);
-
     genreCombo_ = new QComboBox(this); genreCombo_->setEditable(true);
     auto movieGenres = Enums::getAllMovieGenres();
     for (size_t i = 0; i < movieGenres.size(); ++i) genreCombo_->addItem(QString::fromStdString(movieGenres[i]), static_cast<int>(i));
     genreCombo_->setInsertPolicy(QComboBox::NoInsert);
     genreCombo_->completer()->setFilterMode(Qt::MatchContains);
     genreCombo_->completer()->setCompletionMode(QCompleter::PopupCompletion);
-
     form_->addRow("Director:", director_);
     form_->addRow("Duration (minutes):", duration_);
     form_->addRow("Rating:", rating_);

@@ -18,8 +18,7 @@ Magazine::Magazine() : Media(), publisher(""), issueNumber(0), issn(""), editor(
 Magazine::~Magazine() {}
 
 bool Magazine::isValid() const {
-    return !getTitle().empty() && !publisher.empty() && issueNumber > 0 && 
-           !issn.empty() && !editor.empty() && pages > 0 && !frequency.empty();
+    return !getTitle().empty() && !publisher.empty() && issueNumber > 0 && !issn.empty() && !editor.empty() && pages > 0 && !frequency.empty();
 }
 
 std::string Magazine::getPublisher() const {

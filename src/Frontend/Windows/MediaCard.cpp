@@ -14,24 +14,19 @@
 #include "../../Backend/Elements/MediaVisitor.h"
 #include "../Visitors/FrontendVisitors.h"
 
-MediaCard::MediaCard(Media* media, QWidget* parent)
-    : QFrame(parent), media(media), isHovered(false)
-{
+MediaCard::MediaCard(Media* media, QWidget* parent): QFrame(parent), media(media), isHovered(false){
     setMinimumSize(200, 260);
     setMaximumWidth(260);
     setObjectName("mediaCard");
-    
     layout = new QVBoxLayout(this);
     layout->setSpacing(10);
     layout->setContentsMargins(10, 10, 10, 10);
-    
     coverLabel = new QLabel(this);
     coverLabel->setObjectName("coverBox");
     coverLabel->setFixedSize(180, 180);
     coverLabel->setAlignment(Qt::AlignCenter);
     coverLabel->setText("Cover\nImage");
     layout->addWidget(coverLabel, 0, Qt::AlignHCenter);
-    
     typeBadgeLabel = new QLabel(this);
     typeBadgeLabel->setObjectName("typeBadge");
     typeBadgeLabel->setAlignment(Qt::AlignCenter);
@@ -47,57 +42,46 @@ MediaCard::MediaCard(Media* media, QWidget* parent)
     if (media) media->accept(infoVisitor);
     typeBadgeLabel->setText(infoVisitor.typeLabel);
     layout->addWidget(typeBadgeLabel, 0, Qt::AlignLeft);
-
     titleLabel = new QLabel(QString::fromStdString(media->getTitle()), this);
     titleLabel->setObjectName("mediaTitle");
     titleLabel->setAlignment(Qt::AlignCenter);
     titleLabel->setWordWrap(true);
     layout->addWidget(titleLabel);
-    
     yearLabel = new QLabel(QString::fromStdString(media->getReleaseDate().toString()), this);
     yearLabel->setObjectName("mediaYear");
     yearLabel->setAlignment(Qt::AlignCenter);
     layout->addWidget(yearLabel);
-    
-    
-    
     setCursor(Qt::PointingHandCursor);
     updateCover();
 }
 
-void MediaCard::mousePressEvent(QMouseEvent* event)
-{
+void MediaCard::mousePressEvent(QMouseEvent* event){
     if (event->button() == Qt::LeftButton) {
         emit clicked(media);
     }
     QFrame::mousePressEvent(event);
 }
 
-void MediaCard::paintEvent(QPaintEvent* event)
-{
+void MediaCard::paintEvent(QPaintEvent* event){
     QFrame::paintEvent(event);
 }
 
-void MediaCard::enterEvent(QEnterEvent* event)
-{
+void MediaCard::enterEvent(QEnterEvent* event){
     isHovered = true;
     update();
     QFrame::enterEvent(event);
 }
 
-void MediaCard::leaveEvent(QEvent* event)
-{
+void MediaCard::leaveEvent(QEvent* event){
     isHovered = false;
     update();
     QFrame::leaveEvent(event);
 }
 
-void MediaCard::updateCover()
-{
+void MediaCard::updateCover(){
     auto loadPixmapWithFallbacks = [&](const QString& rawPath)->QPixmap{
         QPixmap p(rawPath);
         if (!p.isNull()) return p;
-        // Try project-root relative paths and common folders
         const QStringList tries = {
             rawPath,
             QCoreApplication::applicationDirPath() + "/" + rawPath,
@@ -111,7 +95,6 @@ void MediaCard::updateCover()
         }
         return QPixmap();
     };
-
     QPixmap pix = loadPixmapWithFallbacks(QString::fromStdString(media->getImagePath()));
     if (!pix.isNull()) {
         const QSize target = coverLabel->size();
@@ -132,7 +115,6 @@ void MediaCard::updateCover()
         coverLabel->setText("");
     } else {
     FrontendVisitors::IconKeyVisitor v; if (media) media->accept(v); QString iconName = v.iconKey;
-
         auto findIconPath = [&](const QString& base)->QString{
             const QString res = QString(":/icons/%1.svg").arg(base);
             if (QFile::exists(res)) return res;
@@ -144,14 +126,11 @@ void MediaCard::updateCover()
             for (const QString& p : tries) if (QFile::exists(p)) return p;
             return QString();
         };
-
         const QString iconPath = findIconPath(iconName);
         if (!iconPath.isEmpty()) {
             const QSize target = coverLabel->size();
             const qreal ratio = 0.6;
             const qreal dpr = QGuiApplication::primaryScreen() ? QGuiApplication::primaryScreen()->devicePixelRatio() : 1.0;
-
-            
             QPixmap iconPixmap;
             if (iconPath.endsWith(".svg", Qt::CaseInsensitive)) {
                 const QSizeF logicalSize(target.width()*ratio, target.height()*ratio);
@@ -167,12 +146,9 @@ void MediaCard::updateCover()
                 tmp.setDevicePixelRatio(dpr);
                 iconPixmap = tmp;
             } else {
-                
                 QPixmap raw(iconPath);
                 iconPixmap = raw.scaled(target.width()*ratio, target.height()*ratio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
-
-            
             QPixmap canvas(QSize(target.width()*dpr, target.height()*dpr));
             canvas.fill(Qt::transparent);
             QPainter painter(&canvas);
@@ -181,12 +157,10 @@ void MediaCard::updateCover()
             path.addRoundedRect(QRectF(0, 0, canvas.width(), canvas.height()), 8*dpr, 8*dpr);
             painter.setClipPath(path);
             painter.fillRect(QRectF(0,0,canvas.width(),canvas.height()), QColor(68,68,68));
-
             const int x = int((canvas.width()/dpr - iconPixmap.width()/iconPixmap.devicePixelRatio())/2 * dpr);
             const int y = int((canvas.height()/dpr - iconPixmap.height()/iconPixmap.devicePixelRatio())/2 * dpr);
             painter.drawPixmap(x, y, iconPixmap);
             painter.end();
-
             canvas.setDevicePixelRatio(dpr);
             coverLabel->setPixmap(canvas);
             coverLabel->setText("");

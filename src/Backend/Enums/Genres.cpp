@@ -2,7 +2,6 @@
 #include <map>
 
 namespace Enums {
-    
     std::string musicGenreToString(MusicGenre genre) {
         static const std::map<MusicGenre, std::string> genreMap = {
             {MusicGenre::ROCK, "Rock"},
@@ -24,13 +23,11 @@ namespace Enums {
             {MusicGenre::DISCO, "Disco"},
             {MusicGenre::GOSPEL, "Gospel"},
             {MusicGenre::LATIN, "Latin"},
-            {MusicGenre::WORLD_MUSIC, "World Music"}
-        };
+            {MusicGenre::WORLD_MUSIC, "World Music"} };
         auto it = genreMap.find(genre);
         return (it != genreMap.end()) ? it->second : "Unknown";
     }
 
-    
     MusicGenre stringToMusicGenre(const std::string& genre) {
         static const std::map<std::string, MusicGenre> genreMap = {
             {"Rock", MusicGenre::ROCK},
@@ -52,8 +49,7 @@ namespace Enums {
             {"Disco", MusicGenre::DISCO},
             {"Gospel", MusicGenre::GOSPEL},
             {"Latin", MusicGenre::LATIN},
-            {"World Music", MusicGenre::WORLD_MUSIC}
-        };
+            {"World Music", MusicGenre::WORLD_MUSIC} };
         auto it = genreMap.find(genre);
         return (it != genreMap.end()) ? it->second : MusicGenre::ROCK;
     }
@@ -84,8 +80,7 @@ namespace Enums {
             {BookGenre::DRAMA, "Drama"},
             {BookGenre::CHILDREN, "Children"},
             {BookGenre::YOUNG_ADULT, "Young Adult"},
-            {BookGenre::ACADEMIC, "Academic"}
-        };
+            {BookGenre::ACADEMIC, "Academic"} };
         auto it = genreMap.find(genre);
         return (it != genreMap.end()) ? it->second : "Unknown";
     }
@@ -116,8 +111,7 @@ namespace Enums {
             {"Drama", BookGenre::DRAMA},
             {"Children", BookGenre::CHILDREN},
             {"Young Adult", BookGenre::YOUNG_ADULT},
-            {"Academic", BookGenre::ACADEMIC}
-        };
+            {"Academic", BookGenre::ACADEMIC}};
         auto it = genreMap.find(genre);
         return (it != genreMap.end()) ? it->second : BookGenre::FICTION;
     }
@@ -146,8 +140,7 @@ namespace Enums {
             {MovieGenre::BIOGRAPHY, "Biography"},
             {MovieGenre::FILM_NOIR, "Film Noir"},
             {MovieGenre::EXPERIMENTAL, "Experimental"},
-            {MovieGenre::SHORT_FILM, "Short Film"}
-        };
+            {MovieGenre::SHORT_FILM, "Short Film"} };
         auto it = genreMap.find(genre);
         return (it != genreMap.end()) ? it->second : "Unknown";
     }
@@ -176,8 +169,7 @@ namespace Enums {
             {"Biography", MovieGenre::BIOGRAPHY},
             {"Film Noir", MovieGenre::FILM_NOIR},
             {"Experimental", MovieGenre::EXPERIMENTAL},
-            {"Short Film", MovieGenre::SHORT_FILM}
-        };
+            {"Short Film", MovieGenre::SHORT_FILM} };
         auto it = genreMap.find(genre);
         return (it != genreMap.end()) ? it->second : MovieGenre::DRAMA;
     }
@@ -207,8 +199,7 @@ namespace Enums {
             {MagazineGenre::TRADE, "Trade"},
             {MagazineGenre::HOBBIES, "Hobbies"},
             {MagazineGenre::CRAFTS, "Crafts"},
-            {MagazineGenre::PHOTOGRAPHY, "Photography"}
-        };
+            {MagazineGenre::PHOTOGRAPHY, "Photography"} };
         auto it = genreMap.find(genre);
         return (it != genreMap.end()) ? it->second : "Unknown";
     }
@@ -238,8 +229,7 @@ namespace Enums {
             {"Trade", MagazineGenre::TRADE},
             {"Hobbies", MagazineGenre::HOBBIES},
             {"Crafts", MagazineGenre::CRAFTS},
-            {"Photography", MagazineGenre::PHOTOGRAPHY}
-        };
+            {"Photography", MagazineGenre::PHOTOGRAPHY} };
         auto it = genreMap.find(genre);
         return (it != genreMap.end()) ? it->second : MagazineGenre::NEWS;
     }
@@ -270,8 +260,7 @@ namespace Enums {
             {PodcastGenre::FOOD, "Food"},
             {PodcastGenre::TRAVEL, "Travel"},
             {PodcastGenre::PARENTING, "Parenting"},
-            {PodcastGenre::GAMING, "Gaming"}
-        };
+            {PodcastGenre::GAMING, "Gaming"} };
         auto it = genreMap.find(genre);
         return (it != genreMap.end()) ? it->second : "Unknown";
     }
@@ -302,13 +291,11 @@ namespace Enums {
             {"Food", PodcastGenre::FOOD},
             {"Travel", PodcastGenre::TRAVEL},
             {"Parenting", PodcastGenre::PARENTING},
-            {"Gaming", PodcastGenre::GAMING}
-        };
+            {"Gaming", PodcastGenre::GAMING} };
         auto it = genreMap.find(genre);
         return (it != genreMap.end()) ? it->second : PodcastGenre::EDUCATION;
     }
 
-    
     std::vector<std::string> getAllBookGenres() {
         return {"Fiction", "Non-Fiction", "Mystery", "Thriller", "Romance", 
                 "Science Fiction", "Fantasy", "Horror", "Historical Fiction", 

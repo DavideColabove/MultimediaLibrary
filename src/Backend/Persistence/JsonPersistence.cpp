@@ -12,9 +12,7 @@
 #include <sstream>
 #include <filesystem>
 
-// Custom JSON parser without external dependencies
 namespace MinimalJson {
-    // Escape special chars for JSON strings
     static std::string escape(const std::string& s) {
         std::string out; out.reserve(s.size()+8);
         for (char c : s) {
@@ -34,7 +32,6 @@ namespace MinimalJson {
 bool JsonPersistence::save(const Library& library, const std::string& filePath) const {
     std::ofstream out(filePath);
     if (!out.is_open()) return false;
-
     out << "{\n  \"media\": [\n";
     const auto items = library.getAllMediaConst();
     for (size_t i = 0; i < items.size(); ++i) {
@@ -129,14 +126,12 @@ bool JsonPersistence::save(const Library& library, const std::string& filePath) 
     return true;
 }
 
-// Simple JSON loader - expects our specific format
 bool JsonPersistence::load(Library& library, const std::string& filePath) const {
     std::ifstream in(filePath);
     if (!in.is_open()) return false;
     library.clear();
 
     std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
-    // Find objects starting with "type" field
     size_t pos = 0;
     while ((pos = content.find("\"type\"", pos)) != std::string::npos) {
         size_t start = content.rfind('{', pos);
@@ -144,7 +139,6 @@ bool JsonPersistence::load(Library& library, const std::string& filePath) const 
         if (start == std::string::npos || end == std::string::npos) break;
         std::string obj = content.substr(start, end - start + 1);
 
-        // Extract string values from JSON
         auto getStr = [&](const char* key) -> std::string {
             std::string k = std::string("\"") + key + "\"";
             size_t p = obj.find(k);
@@ -156,7 +150,6 @@ bool JsonPersistence::load(Library& library, const std::string& filePath) const 
             return obj.substr(q1 + 1, q2 - q1 - 1);
         };
         
-        // Extract integer values from JSON
         auto getInt = [&](const char* key, int def = 0) -> int {
             std::string k = std::string("\"") + key + "\"";
             size_t p = obj.find(k);
@@ -164,13 +157,11 @@ bool JsonPersistence::load(Library& library, const std::string& filePath) const 
             size_t colon = obj.find(':', p);
             size_t comma = obj.find_first_of(",}\n", colon + 1);
             std::string num = obj.substr(colon + 1, comma - (colon + 1));
-            // Remove whitespace
             num.erase(0, num.find_first_not_of(" \t\n\r"));
             num.erase(num.find_last_not_of(" \t\n\r") + 1);
             try { return std::stoi(num); } catch (...) { return def; }
         };
         
-        // Extract boolean values from JSON
         auto getBool = [&](const char* key, bool def = false) -> bool {
             std::string k = std::string("\"") + key + "\"";
             size_t p = obj.find(k);
@@ -185,7 +176,6 @@ bool JsonPersistence::load(Library& library, const std::string& filePath) const 
         std::string title = getStr("title");
         std::string author = getStr("author");
         std::string imagePath = getStr("imagePath");
-        // Resolve relative imagePath against the JSON file directory
         try {
             namespace fs = std::filesystem;
             fs::path imgPath = fs::path(imagePath);
@@ -194,24 +184,20 @@ bool JsonPersistence::load(Library& library, const std::string& filePath) const 
                 fs::path candidate = fs::weakly_canonical(baseDir / imgPath);
                 if (fs::exists(candidate)) {
                     imagePath = candidate.generic_string();
-                } // else keep as-is; UI may try fallbacks
+                } 
             } else {
-                if (!std::filesystem::exists(imgPath)) {
-                    // Leave as-is if not found; UI will handle missing covers gracefully
-                }
-            }
-        } catch (...) {
-            // Ignore resolution errors and keep as-is
-        }
+                if (!std::filesystem::exists(imgPath)) { 
+                    // caso cover NON trovata: UI mostra placeholder di default
+                    }
+        } catch (...) {}
         unsigned id = static_cast<unsigned>(getInt("id"));
         unsigned sizeKb = static_cast<unsigned>(getInt("size"));
         bool available = getBool("available");
         
         Date releaseDate; 
         std::string dateStr = getStr("releaseDate");
-        Date::parseIso(dateStr, releaseDate); // if fails, keeps default
+        Date::parseIso(dateStr, releaseDate); 
 
-        // Extract nested objects like "book": {...}
         auto findSection = [&](const char* key) -> std::string {
             std::string k = std::string("\"") + key + "\"";
             size_t p = obj.find(k);
@@ -225,7 +211,6 @@ bool JsonPersistence::load(Library& library, const std::string& filePath) const 
             return {};
         };
         
-        // Extract strings from nested objects
         auto getStrIn = [&](const std::string& sec, const char* key)->std::string{
             std::string k = std::string("\"") + key + "\"";
             size_t p = sec.find(k);
@@ -237,7 +222,6 @@ bool JsonPersistence::load(Library& library, const std::string& filePath) const 
             return sec.substr(q1+1, q2-q1-1);
         };
         
-        // Extract integers from nested objects
         auto getIntIn = [&](const std::string& sec, const char* key, int def=0)->int{
             std::string k = std::string("\"") + key + "\"";
             size_t p = sec.find(k); if (p==std::string::npos) return def;

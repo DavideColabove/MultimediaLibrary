@@ -32,15 +32,12 @@
 #include "../../Backend/Elements/MediaVisitor.h"
 #include "../Visitors/FrontendVisitors.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), selectedMedia(nullptr)
-{
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), selectedMedia(nullptr){
     library = std::make_unique<Library>();
     currentCategoryFilter = "All";
     currentSearchFilter.clear();
     currentSavePath.clear();
     currentSortMode = SortMode::TitleAsc;
-    
     setupUI();
     setupMenuBar();
     setupStatusBar();
@@ -48,54 +45,38 @@ MainWindow::MainWindow(QWidget *parent)
     setupCentralArea();
     setupRightPanel();
     setupConnections();
-    
-    
     setWindowTitle("Multimedia Library");
     setMinimumSize(1200, 800);
     resize(1400, 900);
 }
 
-MainWindow::~MainWindow()
-{
-}
+MainWindow::~MainWindow(){}
 
-void MainWindow::setupUI()
-{
+void MainWindow::setupUI(){
     centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
-    
     mainLayout = new QHBoxLayout(centralWidget);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 }
 
-void MainWindow::setupLeftSidebar()
-{
+void MainWindow::setupLeftSidebar(){
     leftSidebar = new LeftSidebarWidget(this);
     connect(leftSidebar, &LeftSidebarWidget::categoryChanged, this, &MainWindow::filterMediaByCategory);
     mainLayout->addWidget(leftSidebar);
 }
 
-void MainWindow::setupCentralArea()
-{
+void MainWindow::setupCentralArea(){
     centralArea = new QWidget(this);
     centralArea->setObjectName("centralArea");
-    
     centralLayout = new QVBoxLayout(centralArea);
     centralLayout->setSpacing(0);
     centralLayout->setContentsMargins(0, 0, 0, 0);
-    
-    
     topBar = new TopBarWidget(centralArea);
     centralLayout->addWidget(topBar);
-    
-    
     mediaGrid = new MediaGridWidget(centralArea);
     centralLayout->addWidget(mediaGrid);
-    
     mainLayout->addWidget(centralArea, 1);
-    
-    
     connect(topBar, &TopBarWidget::searchTextChanged, this, &MainWindow::onSearchTextChanged);
     connect(topBar, &TopBarWidget::advancedSearchRequested, this, &MainWindow::onAdvancedSearchClicked);
     connect(topBar, &TopBarWidget::clearFiltersRequested, this, &MainWindow::clearAdvancedFilters);
@@ -107,8 +88,7 @@ void MainWindow::setupCentralArea()
     connect(mediaGrid, &MediaGridWidget::mediaClicked, this, &MainWindow::onMediaCardClicked);
 }
 
-void MainWindow::setupRightPanel()
-{
+void MainWindow::setupRightPanel(){
     detailsPanel = new DetailsPanel(this);
     connect(detailsPanel, &DetailsPanel::backRequested, this, &MainWindow::onBackToGridClicked);
     connect(detailsPanel, &DetailsPanel::editRequested, this, &MainWindow::editMedia);
@@ -116,46 +96,35 @@ void MainWindow::setupRightPanel()
     mainLayout->addWidget(detailsPanel);
 }
 
-void MainWindow::setupMenuBar()
-{
+void MainWindow::setupMenuBar(){
     QMenuBar *menuBar = this->menuBar();
-    
-    
     QMenu *fileMenu = menuBar->addMenu("&File");
     importAction = fileMenu->addAction("&Import...");
     exportAction = fileMenu->addAction("&Export...");
     saveAction = fileMenu->addAction("&Save");
     fileMenu->addSeparator();
     fileMenu->addAction("E&xit", this, &QWidget::close);
-    
-    
     QMenu *editMenu = menuBar->addMenu("&Edit");
     addAction = editMenu->addAction("&Add Media...");
     editAction = editMenu->addAction("&Edit Media...");
     deleteAction = editMenu->addAction("&Delete Media");
-    
     addAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_N));
     editAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_E));
     deleteAction->setShortcut(QKeySequence(Qt::Key_Delete));
     importAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
     exportAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_E));
     saveAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_S));
-    
-    
     QMenu *helpMenu = menuBar->addMenu("&Help");
     shortcutsAction = helpMenu->addAction("Keyboard &Shortcuts");
     aboutAction = helpMenu->addAction("&About");
 }
 
-void MainWindow::setupStatusBar()
-{
+void MainWindow::setupStatusBar(){
     QStatusBar *statusBar = this->statusBar();
     statusBar->showMessage("Ready");
 }
 
-void MainWindow::setupConnections()
-{
-    
+void MainWindow::setupConnections(){
     connect(addAction, &QAction::triggered, this, &MainWindow::addMedia);
     connect(editAction, &QAction::triggered, this, &MainWindow::editMedia);
     connect(deleteAction, &QAction::triggered, this, &MainWindow::deleteMedia);
@@ -164,19 +133,14 @@ void MainWindow::setupConnections()
     connect(saveAction, &QAction::triggered, this, &MainWindow::saveTriggered);
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     connect(shortcutsAction, &QAction::triggered, this, &MainWindow::showShortcuts);
-    
-    
     QShortcut* focusSearch = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_F), this);
     connect(focusSearch, &QShortcut::activated, [this]() {
         if (topBar && topBar->searchField()) { topBar->searchField()->setFocus(); topBar->searchField()->selectAll(); }
     });
 }
 
-
-void MainWindow::refreshMediaGrid()
-{
+void MainWindow::refreshMediaGrid(){
     auto allMedia = library->getAllMedia();
-    
     QCollator coll; coll.setCaseSensitivity(Qt::CaseInsensitive); coll.setNumericMode(true);
     std::sort(allMedia.begin(), allMedia.end(), [&](Media* a, Media* b){
         if (currentSortMode == SortMode::TitleAsc)
@@ -186,7 +150,6 @@ void MainWindow::refreshMediaGrid()
         const Date& da = a->getReleaseDate(); const Date& db = b->getReleaseDate();
         if (currentSortMode == SortMode::DateAsc) return da < db; else return da > db;
     });
-    
     std::vector<Media*> filtered;
     filtered.reserve(allMedia.size());
     for (auto* m : allMedia) if (mediaMatchesFilters(m)) filtered.push_back(m);
@@ -194,32 +157,22 @@ void MainWindow::refreshMediaGrid()
     statusBar()->showMessage(QString("Total media: %1").arg(allMedia.size()));
 }
 
- 
-
- 
-
-void MainWindow::onMediaCardClicked(Media* media)
-{
+void MainWindow::onMediaCardClicked(Media* media){
     selectedMedia = media;
     showMediaDetails(media);
 }
 
-void MainWindow::onBackToGridClicked()
-{
+void MainWindow::onBackToGridClicked(){
     hideMediaDetails();
-    
-    
     QTimer::singleShot(100, this, &MainWindow::refreshMediaGrid);
 }
 
-void MainWindow::onSearchTextChanged(const QString& text)
-{
+void MainWindow::onSearchTextChanged(const QString& text){
     currentSearchFilter = text;
     refreshMediaGrid();
 }
 
-void MainWindow::onAdvancedSearchClicked()
-{
+void MainWindow::onAdvancedSearchClicked(){
     SearchDialog dlg(advFilters, this);
     if (dlg.exec() == QDialog::Accepted) {
         advFilters = dlg.criteria();
@@ -227,18 +180,14 @@ void MainWindow::onAdvancedSearchClicked()
     }
 }
 
-void MainWindow::clearAdvancedFilters()
-{
+void MainWindow::clearAdvancedFilters(){
     advFilters = AdvancedFilters{}; 
     currentSearchFilter.clear();
     refreshMediaGrid();
     statusBar()->showMessage("Filtri avanzati rimossi", 2500);
 }
 
- 
-
-void MainWindow::onSortChanged(int index)
-{
+void MainWindow::onSortChanged(int index){
     switch (index) {
         case 0: currentSortMode = SortMode::TitleAsc; break;
         case 1: currentSortMode = SortMode::TitleDesc; break;
@@ -249,54 +198,38 @@ void MainWindow::onSortChanged(int index)
     refreshMediaGrid();
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
+void MainWindow::resizeEvent(QResizeEvent *event){
     QMainWindow::resizeEvent(event);
-    
-    
     QTimer::singleShot(100, this, &MainWindow::refreshMediaGrid);
 }
 
- 
-
-void MainWindow::showMediaDetails(Media* media)
-{
+void MainWindow::showMediaDetails(Media* media){
     if (!media) return;
     detailsPanel->show();
     detailsPanel->showMedia(media);
 }
 
-void MainWindow::hideMediaDetails()
-{
+void MainWindow::hideMediaDetails(){
     detailsPanel->hide();
     selectedMedia = nullptr;
 }
 
- 
-
-void MainWindow::filterMediaByCategory(const QString& category)
-{
+void MainWindow::filterMediaByCategory(const QString& category){
     currentCategoryFilter = category;
     refreshMediaGrid();
 }
 
- 
-
-bool MainWindow::mediaMatchesFilters(Media* media) const
-{
+bool MainWindow::mediaMatchesFilters(Media* media) const{
     if (!media) return false;
-    
     QString typeNeeded = categoryToType(currentCategoryFilter);
     if (!typeNeeded.isEmpty()) {
         FrontendVisitors::TypeNameVisitor v; media->accept(v);
         if (v.typeName != typeNeeded) return false;
     }
-    
     if (advFilters.enabled && !advFilters.type.isEmpty()) {
         FrontendVisitors::TypeNameVisitor v; media->accept(v);
         if (v.typeName != advFilters.type) return false;
     }
-    
     if (!currentSearchFilter.trimmed().isEmpty()) {
         const QString needle = currentSearchFilter.trimmed();
         QString title = QString::fromStdString(media->getTitle());
@@ -306,7 +239,6 @@ bool MainWindow::mediaMatchesFilters(Media* media) const
             return false;
         }
     }
-    
     if (advFilters.enabled) {
         if (!advFilters.titleContains.trimmed().isEmpty()) {
             if (!QString::fromStdString(media->getTitle()).contains(advFilters.titleContains, Qt::CaseInsensitive)) return false;
@@ -315,12 +247,10 @@ bool MainWindow::mediaMatchesFilters(Media* media) const
             if (!QString::fromStdString(media->getAuthor()).contains(advFilters.authorContains, Qt::CaseInsensitive)) return false;
         }
         if (advFilters.onlyAvailable && !media->getIsAvailable()) return false;
-        
         const Date& d = media->getReleaseDate();
         QDate qd(d.getYear(), d.getMonth(), d.getDay());
         if (advFilters.useDateFrom && qd < advFilters.dateFrom) return false;
         if (advFilters.useDateTo && qd > advFilters.dateTo) return false;
-        
         FrontendVisitors::GenreCheckVisitor v(
             advFilters.bookGenre,
             advFilters.movieGenre,
@@ -334,8 +264,7 @@ bool MainWindow::mediaMatchesFilters(Media* media) const
     return true;
 }
 
-QString MainWindow::categoryToType(const QString& category) const
-{
+QString MainWindow::categoryToType(const QString& category) const{
     if (category == "All" || category.isEmpty()) return QString();
     if (category == "Books") return "Book";
     if (category == "Movies") return "Movie";
@@ -345,9 +274,7 @@ QString MainWindow::categoryToType(const QString& category) const
     return QString();
 }
 
-
-void MainWindow::addMedia()
-{
+void MainWindow::addMedia(){
     AddMediaDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
         auto newMedia = dialog.getCreatedMedia();
@@ -359,59 +286,47 @@ void MainWindow::addMedia()
     }
 }
 
-void MainWindow::editMedia()
-{
+void MainWindow::editMedia(){
     if (!selectedMedia) {
         QMessageBox::information(this, "Edit", "Please select a media item first.");
         return;
     }
-    
     AddMediaDialog dialog(selectedMedia, this);
     if (dialog.exec() == QDialog::Accepted) {
-        
         refreshMediaGrid();
         statusBar()->showMessage("Media updated successfully!", 3000);
     }
 }
 
-void MainWindow::deleteMedia()
-{
+void MainWindow::deleteMedia(){
     if (!selectedMedia) {
         QMessageBox::information(this, "Delete", "Please select a media item first.");
         return;
     }
-    
     QMessageBox::StandardButton reply = QMessageBox::question(this, "Delete Media", 
         QString("Are you sure you want to delete '%1'?").arg(QString::fromStdString(selectedMedia->getTitle())),
         QMessageBox::Yes | QMessageBox::No);
-    
     if (reply == QMessageBox::Yes) {
         int mediaId = static_cast<int>(selectedMedia->getID());
         library->removeMedia(mediaId);
         selectedMedia = nullptr;
         hideMediaDetails();
-        
-        
         refreshMediaGrid();
         statusBar()->showMessage("Media deleted.", 3000);
     }
 }
 
-void MainWindow::exportData()
-{
+void MainWindow::exportData(){
     QString filter = "JSON (*.json);;XML (*.xml)";
     QString defaultDir = QDir::homePath();
     QString selectedFilter;
     QString filePath = QFileDialog::getSaveFileName(this, "Export Library", defaultDir, filter, &selectedFilter);
     if (filePath.isEmpty()) return;
-
-    
     if (selectedFilter.contains("*.json") && !filePath.endsWith(".json", Qt::CaseInsensitive)) {
         filePath += ".json";
     } else if (selectedFilter.contains("*.xml") && !filePath.endsWith(".xml", Qt::CaseInsensitive)) {
         filePath += ".xml";
     }
-
     bool ok = false;
     if (filePath.endsWith(".json", Qt::CaseInsensitive)) {
         ok = library->saveJson(filePath.toStdString());
@@ -421,7 +336,6 @@ void MainWindow::exportData()
         QMessageBox::warning(this, "Export", "Formato non supportato. Usa .json o .xml");
         return;
     }
-
     if (ok) {
         statusBar()->showMessage("Export completato: " + filePath, 4000);
         QMessageBox::information(this, "Export", "Esportazione completata con successo.");
@@ -430,8 +344,7 @@ void MainWindow::exportData()
     }
 }
 
-void MainWindow::importData()
-{
+void MainWindow::importData(){
     QString filter = "JSON (*.json);;XML (*.xml)";
     QString defaultDir = QDir::homePath();
     QString filePath = QFileDialog::getOpenFileName(this, "Import Library", defaultDir, filter);
@@ -448,7 +361,6 @@ void MainWindow::importData()
         QMessageBox::warning(this, "Import", "Formato non supportato. Seleziona un file .json o .xml");
         return;
     }
-
     if (ok) {
         selectedMedia = nullptr;
         hideMediaDetails();
@@ -460,9 +372,7 @@ void MainWindow::importData()
     }
 }
 
-void MainWindow::saveTriggered()
-{
-    
+void MainWindow::saveTriggered(){
     if (currentSavePath.isEmpty()) {
         QString filter = "JSON (*.json);;XML (*.xml)";
         QString defaultDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
@@ -473,36 +383,24 @@ void MainWindow::saveTriggered()
         if (selectedFilter.contains("*.xml") && !path.endsWith(".xml", Qt::CaseInsensitive)) path += ".xml";
         currentSavePath = path;
     }
-
     bool ok = false;
     if (currentSavePath.endsWith(".json", Qt::CaseInsensitive)) {
         ok = library->saveJson(currentSavePath.toStdString());
     } else if (currentSavePath.endsWith(".xml", Qt::CaseInsensitive)) {
         ok = library->saveXml(currentSavePath.toStdString());
     } else {
-        
         currentSavePath.clear();
         saveTriggered();
         return;
     }
-    statusBar()->showMessage(ok ? "Salvato in " + currentSavePath : "Errore salvataggio", 3000);
+    statusBar()->showMessage(ok ? "Saved in " + currentSavePath : "Save Error", 3000);
 }
 
-void MainWindow::about()
-{
-    QMessageBox::about(this, "About Multimedia Library",
-                      "Multimedia Library v1.0.0\n\n"
-                      "A comprehensive media management application.\n\n"
-                      "Features:\n"
-                      "- Book management\n"
-                      "- Movie management\n"
-                      "- Music management\n"
-                      "- Magazine management\n"
-                      "- Podcast management");
+void MainWindow::about(){
+    QMessageBox::about(this, "About Multimedia Library", "Multimedia Library v1.0.0\n\n", "credits: Oussama Mahdi, Davide Colabove\n\n");
 } 
 
-void MainWindow::showShortcuts()
-{
+void MainWindow::showShortcuts(){
     QMessageBox::information(this, "Keyboard Shortcuts",
         "Ctrl+N: Add Media\n"
         "Ctrl+E: Edit Media\n"

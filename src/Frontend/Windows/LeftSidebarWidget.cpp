@@ -20,12 +20,10 @@ void LeftSidebarWidget::setupUi() {
     layout_ = new QVBoxLayout(this);
     layout_->setSpacing(10);
     layout_->setContentsMargins(20,20,20,20);
-
     title_ = new QLabel("Media", this);
     title_->setObjectName("sidebarTitle");
     title_->setAlignment(Qt::AlignCenter);
     layout_->addWidget(title_);
-
     list_ = new QListWidget(this);
     list_->setObjectName("categoryList");
     list_->addItems({"All","Books","Movies","Songs","Magazines","Podcasts"});

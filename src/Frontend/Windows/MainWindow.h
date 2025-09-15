@@ -21,7 +21,6 @@
 #include <QCheckBox>
 #include <QGroupBox>
 #include <QFormLayout>
-
 #include "../../Backend/Elements/Media.h"
 #include "../../Backend/Elements/Book.h"
 #include "../../Backend/Elements/Movie.h"
@@ -37,110 +36,72 @@
 #include "AddMediaDialog.h"
 #include "SearchDialog.h"
 
-
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow{
     Q_OBJECT
 
-public:
-    
-    MainWindow(QWidget *parent = nullptr);
-    
-    
-    ~MainWindow();
-
-protected:
-    
-    void resizeEvent(QResizeEvent *event) override;
-
-private slots:
-    
-    void addMedia();
-    void editMedia();
-    void deleteMedia();
-    void exportData();
-    void importData();
-    void about();
-    void showShortcuts();
-    
-    
-    void onMediaCardClicked(Media* media);
-    void onBackToGridClicked();
-    void onSearchTextChanged(const QString& text);
-    void onAdvancedSearchClicked();
-    void saveTriggered();
-    void clearAdvancedFilters();
-    void onSortChanged(int index);
-    
-
-private:
-    
-    void setupUI();
-    void setupMenuBar();
-    void setupStatusBar();
-    void setupLeftSidebar();
-    void setupCentralArea();
-    void setupRightPanel();
-    void setupConnections();
-    
-    
-    bool mediaMatchesFilters(Media* media) const;
-    QString categoryToType(const QString& category) const;
-    
-    
-    QWidget *centralWidget;      
-    QHBoxLayout *mainLayout;     
-    
-    
-    LeftSidebarWidget* leftSidebar; 
-    
-    
-    QWidget *centralArea;        
-    QVBoxLayout *centralLayout;  
-    TopBarWidget* topBar;        
-    MediaGridWidget* mediaGrid;  
-    
-    
-    DetailsPanel* detailsPanel;  
-    
-    
-    
-    
-    
-    QAction *addAction;          
-    QAction *editAction;         
-    QAction *deleteAction;       
-    QAction *exportAction;       
-    QAction *importAction;       
-    QAction *shortcutsAction;    
-    QAction *saveAction;         
-    QAction *aboutAction;        
-    
-    
-    std::unique_ptr<Library> library;  
-    Media* selectedMedia;              
-    QString currentCategoryFilter;     
-    QString currentSearchFilter;       
-    AdvancedFilters advFilters;        
-    QString currentSavePath;           
-    
-    
-    enum class SortMode { 
-        TitleAsc,   
-        TitleDesc,  
-        DateAsc,    
-        DateDesc    
-    };
-    SortMode currentSortMode;          
-    
-    
-    void refreshMediaGrid();           
-    
-    void showMediaDetails(Media* media);               
-    void hideMediaDetails();           
-    
-    void filterMediaByCategory(const QString& category); 
-    
+    public:
+        MainWindow(QWidget *parent = nullptr);
+        ~MainWindow();
+    protected:
+        void resizeEvent(QResizeEvent *event) override;
+    private slots:
+        void addMedia();
+        void editMedia();
+        void deleteMedia();
+        void exportData();
+        void importData();
+        void about();
+        void showShortcuts();
+        void onMediaCardClicked(Media* media);
+        void onBackToGridClicked();
+        void onSearchTextChanged(const QString& text);
+        void onAdvancedSearchClicked();
+        void saveTriggered();
+        void clearAdvancedFilters();
+        void onSortChanged(int index);
+    private:
+        void setupUI();
+        void setupMenuBar();
+        void setupStatusBar();
+        void setupLeftSidebar();
+        void setupCentralArea();
+        void setupRightPanel();
+        void setupConnections();
+        bool mediaMatchesFilters(Media* media) const;
+        QString categoryToType(const QString& category) const;
+        QWidget *centralWidget;      
+        QHBoxLayout *mainLayout;     
+        LeftSidebarWidget* leftSidebar;  
+        QWidget *centralArea;        
+        QVBoxLayout *centralLayout;  
+        TopBarWidget* topBar;        
+        MediaGridWidget* mediaGrid;  
+        DetailsPanel* detailsPanel;  
+        QAction *addAction;          
+        QAction *editAction;         
+        QAction *deleteAction;       
+        QAction *exportAction;       
+        QAction *importAction;       
+        QAction *shortcutsAction;    
+        QAction *saveAction;         
+        QAction *aboutAction;        
+        std::unique_ptr<Library> library;  
+        Media* selectedMedia;              
+        QString currentCategoryFilter;     
+        QString currentSearchFilter;       
+        AdvancedFilters advFilters;        
+        QString currentSavePath;           
+        enum class SortMode { 
+            TitleAsc,   
+            TitleDesc,  
+            DateAsc,    
+            DateDesc    
+        };
+        SortMode currentSortMode;          
+        void refreshMediaGrid();           
+        void showMediaDetails(Media* media);               
+        void hideMediaDetails();           
+        void filterMediaByCategory(const QString& category); 
 };
 
 #endif 

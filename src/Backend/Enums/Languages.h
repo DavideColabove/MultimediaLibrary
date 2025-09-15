@@ -6,9 +6,7 @@
 
 
 namespace Enums {
-    
     enum class Language {
-        
         ITALIAN,        
         ENGLISH,        
         SPANISH,        
@@ -40,8 +38,6 @@ namespace Enums {
         INDONESIAN,     
         MALAY,          
         FILIPINO,       
-        
-        
         LATIN,          
         ANCIENT_GREEK,  
         SANSKRIT,       
@@ -80,17 +76,10 @@ namespace Enums {
         OLD_LATIN,      
         OLD_ANCIENT_GREEK, 
         OLD_SANSKRIT,   
-        
         OTHER           
     };
-
-    
     std::string languageToString(Language language);
-
-    
     Language stringToLanguage(const std::string& language);
-
-    
     std::vector<std::string> getAllLanguages();
 }
 

@@ -10,14 +10,12 @@ PodcastFormWidget::PodcastFormWidget(QWidget* parent): QWidget(parent) {
     duration_ = new QSpinBox(this); duration_->setRange(1, 999); duration_->setValue(30);
     series_ = new QLineEdit(this); series_->setMaxLength(120);
     description_ = new QLineEdit(this); description_->setPlaceholderText("Brief description of the podcast"); description_->setMaxLength(200);
-
     genreCombo_ = new QComboBox(this); genreCombo_->setEditable(true);
     auto podcastGenres = Enums::getAllPodcastGenres();
     for (size_t i = 0; i < podcastGenres.size(); ++i) genreCombo_->addItem(QString::fromStdString(podcastGenres[i]), static_cast<int>(i));
     genreCombo_->setInsertPolicy(QComboBox::NoInsert);
     genreCombo_->completer()->setFilterMode(Qt::MatchContains);
     genreCombo_->completer()->setCompletionMode(QCompleter::PopupCompletion);
-
     form_->addRow("Host:", host_);
     form_->addRow("Episode Number:", episode_);
     form_->addRow("Platform:", platform_);

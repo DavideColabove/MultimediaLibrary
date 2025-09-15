@@ -7,7 +7,6 @@
 #include <map>
 #include <functional>
 
-
 class Media;
 class Book;
 class Movie;
@@ -15,85 +14,35 @@ class Song;
 class Magazine;
 class Podcast;
 
-
-class Library
-{
-public:
-    
-    Library();
-    
-    
-    ~Library() = default;
-
-    
-    void addMedia(std::unique_ptr<Media> media);
-    
-    
-    void removeMedia(int id);
-    
-    
-    Media* findMediaById(int id);
-    
-    
-    std::vector<Media*> getAllMedia() const;
-    std::vector<const Media*> getAllMediaConst() const;
-    
-    
-    std::vector<Media*> searchByTitle(const std::string& title) const;
-    
-    
-    std::vector<Media*> searchByAuthor(const std::string& author) const;
-    
-    
-    std::vector<Media*> filterByType(const std::string& type) const;
-    
-    
-    std::vector<Media*> filterByAvailability(bool available) const;
-
-    // Helper utilities for persistence/serialization
-    std::string getMediaType(const Media* media) const;
-
-    
-    bool saveJson(const std::string& filePath) const;
-    
-    
-    bool loadJson(const std::string& filePath);
-    
-    
-    bool saveXml(const std::string& filePath) const;
-    
-    
-    bool loadXml(const std::string& filePath);
-    
-    
-    size_t getTotalCount() const;
-    
-    
-    size_t getAvailableCount() const;
-    
-    
-    size_t getCountByType(const std::string& type) const;
-    
-    
-    std::map<std::string, size_t> getMediaTypeStats() const;
-    
-    
-    int getNextId();
-    
-    
-    void clear();
-    
-    
-    bool isEmpty() const;
-    
-    
-
-private:
-    std::vector<std::unique_ptr<Media>> mediaCollection;  
-    unsigned int nextId;                                   
-    
-    
-    void generateNextId();
+class Library{
+    public:
+        Library();
+        ~Library() = default;
+        void addMedia(std::unique_ptr<Media> media);
+        void removeMedia(int id);
+        Media* findMediaById(int id);
+        std::vector<Media*> getAllMedia() const;
+        std::vector<const Media*> getAllMediaConst() const;
+        std::vector<Media*> searchByTitle(const std::string& title) const;
+        std::vector<Media*> searchByAuthor(const std::string& author) const;
+        std::vector<Media*> filterByType(const std::string& type) const;
+        std::vector<Media*> filterByAvailability(bool available) const;
+        std::string getMediaType(const Media* media) const;
+        bool saveJson(const std::string& filePath) const;
+        bool loadJson(const std::string& filePath);
+        bool saveXml(const std::string& filePath) const;
+        bool loadXml(const std::string& filePath);
+        size_t getTotalCount() const;
+        size_t getAvailableCount() const;
+        size_t getCountByType(const std::string& type) const;
+        std::map<std::string, size_t> getMediaTypeStats() const;
+        int getNextId();
+        void clear();
+        bool isEmpty() const;
+    private:
+        std::vector<std::unique_ptr<Media>> mediaCollection;  
+        unsigned int nextId;                                   
+        void generateNextId();
 };
 
 #endif 

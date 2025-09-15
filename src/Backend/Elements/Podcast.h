@@ -5,7 +5,6 @@
 #include <string>
 #include "../Enums/Genres.h"
 
-
 class Podcast : public Media {
     private:
         std::string host;           
@@ -15,32 +14,17 @@ class Podcast : public Media {
         std::string series;         
         std::string description;    
         Enums::PodcastGenre genre;  
-        
     public:
-        
         Podcast(std::string title, std::string author, Enums::PodcastGenre genre, Date releaseDate, 
                unsigned int id, unsigned int kbSize, bool isAvailable, std::string imagePath,
                std::string host, unsigned int episodeNumber, std::string platform, unsigned int duration,
                std::string series, std::string description);
-        
-        
         Podcast(const Podcast& podcast);
-        
-        
         Podcast();
-        
-        
         virtual ~Podcast();
-
-        
-        virtual bool isValid() const override;
-        
-        
-    virtual void accept(MediaVisitor& visitor) const override;
-    virtual void accept(MediaVisitorMutable& visitor) override { visitor.visit(*this); }
-
-
-        
+        virtual bool isValid() const override;  
+        virtual void accept(MediaVisitor& visitor) const override;
+        virtual void accept(MediaVisitorMutable& visitor) override { visitor.visit(*this); }
         std::string getHost() const;
         Podcast& setHost(const std::string& h);
         unsigned int getEpisodeNumber() const;
@@ -52,12 +36,10 @@ class Podcast : public Media {
         std::string getSeries() const;
         Podcast& setSeries(const std::string& ser);
         std::string getDescription() const;
-        Podcast& setDescription(const std::string& desc);
-        
-        
-    Enums::PodcastGenre getGenre() const;
-    Podcast& setGenre(Enums::PodcastGenre genre);
-    std::string getGenreString() const;
+        Podcast& setDescription(const std::string& desc);   
+        Enums::PodcastGenre getGenre() const;
+        Podcast& setGenre(Enums::PodcastGenre genre);
+        std::string getGenreString() const;
 };
 
 #endif 

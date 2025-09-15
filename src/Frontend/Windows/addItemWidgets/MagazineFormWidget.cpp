@@ -13,14 +13,12 @@ MagazineFormWidget::MagazineFormWidget(QWidget* parent): QWidget(parent) {
     editor_ = new QLineEdit(this); editor_->setMaxLength(120);
     pages_ = new QSpinBox(this); pages_->setRange(1, 999); pages_->setValue(50);
     frequency_ = new QLineEdit(this); frequency_->setPlaceholderText("e.g., Monthly, Weekly, Quarterly"); frequency_->setMaxLength(40);
-
     genreCombo_ = new QComboBox(this); genreCombo_->setEditable(true);
     auto magazineGenres = Enums::getAllMagazineGenres();
     for (size_t i = 0; i < magazineGenres.size(); ++i) genreCombo_->addItem(QString::fromStdString(magazineGenres[i]), static_cast<int>(i));
     genreCombo_->setInsertPolicy(QComboBox::NoInsert);
     genreCombo_->completer()->setFilterMode(Qt::MatchContains);
     genreCombo_->completer()->setCompletionMode(QCompleter::PopupCompletion);
-
     form_->addRow("Publisher:", publisher_);
     form_->addRow("Issue Number:", issue_);
     form_->addRow("ISSN:", issn_);

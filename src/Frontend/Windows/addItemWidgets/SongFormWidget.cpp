@@ -7,14 +7,12 @@ SongFormWidget::SongFormWidget(QWidget* parent): QWidget(parent) {
     artist_ = new QLineEdit(this); artist_->setMaxLength(120);
     album_ = new QLineEdit(this); album_->setMaxLength(120);
     duration_ = new QSpinBox(this); duration_->setRange(1, 999); duration_->setValue(180);
-
     genreCombo_ = new QComboBox(this); genreCombo_->setEditable(true);
     auto musicGenres = Enums::getAllMusicGenres();
     for (size_t i = 0; i < musicGenres.size(); ++i) genreCombo_->addItem(QString::fromStdString(musicGenres[i]), static_cast<int>(i));
     genreCombo_->setInsertPolicy(QComboBox::NoInsert);
     genreCombo_->completer()->setFilterMode(Qt::MatchContains);
     genreCombo_->completer()->setCompletionMode(QCompleter::PopupCompletion);
-
     form_->addRow("Artist:", artist_);
     form_->addRow("Album:", album_);
     form_->addRow("Duration (seconds):", duration_);

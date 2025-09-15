@@ -2,7 +2,6 @@
 #include <map>
 
 namespace Enums {
-    
     std::string languageToString(Language language) {
         static const std::map<Language, std::string> languageMap = {
             {Language::ITALIAN, "Italian"},
@@ -74,8 +73,7 @@ namespace Enums {
             {Language::OLD_LATIN, "Old Latin"},
             {Language::OLD_ANCIENT_GREEK, "Old Ancient Greek"},
             {Language::OLD_SANSKRIT, "Old Sanskrit"},
-            {Language::OTHER, "Other"}
-        };
+            {Language::OTHER, "Other"}  };
         auto it = languageMap.find(language);
         return (it != languageMap.end()) ? it->second : "Unknown";
     }
@@ -151,13 +149,11 @@ namespace Enums {
             {"Old Latin", Language::OLD_LATIN},
             {"Old Ancient Greek", Language::OLD_ANCIENT_GREEK},
             {"Old Sanskrit", Language::OLD_SANSKRIT},
-            {"Other", Language::OTHER}
-        };
+            {"Other", Language::OTHER} };
         auto it = languageMap.find(language);
         return (it != languageMap.end()) ? it->second : Language::ENGLISH;
     }
 
-    
     std::vector<std::string> getAllLanguages() {
         return {"Italian", "English", "Spanish", "French", "German", "Portuguese", "Russian", 
                 "Chinese", "Japanese", "Korean", "Arabic", "Hindi", "Dutch", "Swedish", 

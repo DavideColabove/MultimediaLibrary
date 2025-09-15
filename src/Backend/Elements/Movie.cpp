@@ -10,17 +10,14 @@ Movie::Movie(std::string title, std::string author, Enums::MovieGenre genre, Dat
     : Media(title, author, releaseDate, id, kbSize, isAvailable, imagePath),
       director(director), duration(duration), studio(studio), rating(rating), language(language), country(country), genre(genre) {}
 
-Movie::Movie(const Movie& movie) 
-    : Media(movie), director(movie.director), duration(movie.duration), studio(movie.studio), 
-      rating(movie.rating), language(movie.language), country(movie.country), genre(movie.genre) {}
+Movie::Movie(const Movie& movie): Media(movie), director(movie.director), duration(movie.duration), studio(movie.studio), rating(movie.rating), language(movie.language), country(movie.country), genre(movie.genre) {}
 
 Movie::Movie() : Media(), director(""), duration(0), studio(""), rating(""), language(Enums::Language::ENGLISH), country(""), genre(Enums::MovieGenre::DRAMA) {}
 
 Movie::~Movie() {}
 
 bool Movie::isValid() const {
-    return !getTitle().empty() && !director.empty() && !studio.empty() && 
-           duration > 0 && !rating.empty() && !country.empty();
+    return !getTitle().empty() && !director.empty() && !studio.empty() && duration > 0 && !rating.empty() && !country.empty();
 }
 
 std::string Movie::getDirector() const {

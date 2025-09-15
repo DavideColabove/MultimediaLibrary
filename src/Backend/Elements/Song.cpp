@@ -9,17 +9,14 @@ Song::Song(std::string title, std::string author, Enums::MusicGenre genre, Date 
     : Media(title, author, releaseDate, id, kbSize, isAvailable, imagePath),
       artist(artist), album(album), duration(duration), format(format), label(label), trackNumber(trackNumber), genre(genre) {}
 
-Song::Song(const Song& song) 
-    : Media(song), artist(song.artist), album(song.album), duration(song.duration), 
-      format(song.format), label(song.label), trackNumber(song.trackNumber), genre(song.genre) {}
+Song::Song(const Song& song) : Media(song), artist(song.artist), album(song.album), duration(song.duration), format(song.format), label(song.label), trackNumber(song.trackNumber), genre(song.genre) {}
 
 Song::Song() : Media(), artist(""), album(""), duration(0), format(""), label(""), trackNumber(0), genre(Enums::MusicGenre::POP) {}
 
 Song::~Song() {}
 
 bool Song::isValid() const {
-    return !getTitle().empty() && !artist.empty() && !album.empty() && 
-           duration > 0 && !format.empty() && !label.empty() && trackNumber > 0;
+    return !getTitle().empty() && !artist.empty() && !album.empty() && duration > 0 && !format.empty() && !label.empty() && trackNumber > 0;
 }
 
 std::string Song::getArtist() const {

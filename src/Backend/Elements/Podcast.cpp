@@ -19,8 +19,7 @@ Podcast::Podcast() : Media(), host(""), episodeNumber(0), platform(""), duration
 Podcast::~Podcast() {}
 
 bool Podcast::isValid() const {
-    return !getTitle().empty() && !host.empty() && episodeNumber > 0 && 
-           !platform.empty() && duration > 0 && !series.empty() && !description.empty();
+    return !getTitle().empty() && !host.empty() && episodeNumber > 0 && !platform.empty() && duration > 0 && !series.empty() && !description.empty();
 }
 
 std::string Podcast::getHost() const {

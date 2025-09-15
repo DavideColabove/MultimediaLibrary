@@ -6,7 +6,6 @@
 #include "../Enums/Genres.h"
 #include "../Enums/Languages.h"
 
-
 class Book : public Media {
     private:
         std::string publisher;      
@@ -14,31 +13,16 @@ class Book : public Media {
         std::string isbn;          
         Enums::Language language;   
         Enums::BookGenre genre;     
-        
     public:
-        
         Book(std::string title, std::string author, Enums::BookGenre genre, Date releaseDate, 
              unsigned int id, unsigned int kbSize, bool isAvailable, std::string imagePath,
              std::string publisher, unsigned int pages, std::string isbn, Enums::Language language);
-        
-        
         Book(const Book& book);
-        
-        
         Book();
-        
-        
         virtual ~Book();
-
-        
         virtual bool isValid() const override;
-        
-        
         virtual void accept(MediaVisitor& visitor) const override;
-    virtual void accept(MediaVisitorMutable& visitor) override { visitor.visit(*this); }
-
-
-        
+        virtual void accept(MediaVisitorMutable& visitor) override { visitor.visit(*this); }
         std::string getPublisher() const;
         Book& setPublisher(const std::string& pub);
         unsigned int getPages() const;
@@ -48,8 +32,6 @@ class Book : public Media {
         Enums::Language getLanguage() const;
         Book& setLanguage(Enums::Language lang);
         std::string getLanguageString() const;
-        
-        
         Enums::BookGenre getGenre() const;
         Book& setGenre(Enums::BookGenre genre);
         std::string getGenreString() const;

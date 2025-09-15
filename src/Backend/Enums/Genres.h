@@ -6,7 +6,6 @@
 
 
 namespace Enums {
-    
     enum class MusicGenre {
         ROCK,           
         POP,            
@@ -30,7 +29,6 @@ namespace Enums {
         WORLD_MUSIC     
     };
 
-    
     enum class BookGenre {
         FICTION,            
         NON_FICTION,        
@@ -59,7 +57,6 @@ namespace Enums {
         ACADEMIC            
     };
 
-    
     enum class MovieGenre {
         ACTION,         
         ADVENTURE,      
@@ -86,7 +83,6 @@ namespace Enums {
         SHORT_FILM      
     };
 
-    
     enum class MagazineGenre {
         NEWS,           
         POLITICS,       
@@ -114,7 +110,6 @@ namespace Enums {
         PHOTOGRAPHY     
     };
 
-    
     enum class PodcastGenre {
         NEWS,           
         POLITICS,       
@@ -143,21 +138,18 @@ namespace Enums {
         GAMING          
     };
 
-    
     std::string musicGenreToString(MusicGenre genre);
     std::string bookGenreToString(BookGenre genre);
     std::string movieGenreToString(MovieGenre genre);
     std::string magazineGenreToString(MagazineGenre genre);
     std::string podcastGenreToString(PodcastGenre genre);
 
-    
     MusicGenre stringToMusicGenre(const std::string& genre);
     BookGenre stringToBookGenre(const std::string& genre);
     MovieGenre stringToMovieGenre(const std::string& genre);
     MagazineGenre stringToMagazineGenre(const std::string& genre);
     PodcastGenre stringToPodcastGenre(const std::string& genre);
 
-    
     std::vector<std::string> getAllBookGenres();
     std::vector<std::string> getAllMovieGenres();
     std::vector<std::string> getAllMusicGenres();

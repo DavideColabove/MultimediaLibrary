@@ -25,44 +25,36 @@ void DetailsPanel::setupUi() {
     layout_ = new QVBoxLayout(this);
     layout_->setSpacing(20);
     layout_->setContentsMargins(20,20,20,20);
-
     QWidget* detailsWidget = new QWidget(this);
     QVBoxLayout* detailsLayout = new QVBoxLayout(detailsWidget);
     detailsLayout->setSpacing(15);
-
     backBtn_ = new QPushButton("Back to Grid", detailsWidget);
     backBtn_->setObjectName("backBtn");
     backBtn_->setIcon(loadIconByNameDP("back"));
     backBtn_->setIconSize(QSize(20,20));
     QObject::connect(backBtn_, &QPushButton::clicked, this, &DetailsPanel::backRequested);
     detailsLayout->addWidget(backBtn_);
-
     coverImage_ = new QLabel(detailsWidget);
     coverImage_->setObjectName("coverImage");
     coverImage_->setFixedSize(260, 300);
     coverImage_->setAlignment(Qt::AlignCenter);
     detailsLayout->addWidget(coverImage_, 0, Qt::AlignCenter);
-
     titleLabel_ = new QLabel(detailsWidget);
     titleLabel_->setObjectName("titleLabel");
     titleLabel_->setAlignment(Qt::AlignCenter);
     detailsLayout->addWidget(titleLabel_);
-
     authorLabel_ = new QLabel(detailsWidget); detailsLayout->addWidget(authorLabel_);
     yearLabel_ = new QLabel(detailsWidget); detailsLayout->addWidget(yearLabel_);
     durationLabel_ = new QLabel(detailsWidget); detailsLayout->addWidget(durationLabel_);
     summaryLabel_ = new QLabel(detailsWidget); summaryLabel_->setWordWrap(true); detailsLayout->addWidget(summaryLabel_);
     coverPathLabel_ = new QLabel(detailsWidget); detailsLayout->addWidget(coverPathLabel_);
-
     attributesGroup_ = new QGroupBox("Attributes", detailsWidget);
     attributesWidget_ = new QWidget(attributesGroup_);
     attributesForm_ = new QFormLayout(attributesWidget_);
     QVBoxLayout* attrLay = new QVBoxLayout(attributesGroup_);
     attrLay->addWidget(attributesWidget_);
     detailsLayout->addWidget(attributesGroup_);
-
     detailsLayout->addStretch();
-
     QHBoxLayout* buttonLayout = new QHBoxLayout();
     editBtn_ = new QPushButton("Edit", detailsWidget);
     editBtn_->setObjectName("editBtn"); editBtn_->setIcon(loadIconByNameDP("edit")); editBtn_->setIconSize(QSize(20,20));
@@ -75,7 +67,6 @@ void DetailsPanel::setupUi() {
     buttonLayout->setAlignment(Qt::AlignHCenter);
     buttonLayout->setSpacing(12);
     detailsLayout->addLayout(buttonLayout);
-
     layout_->addWidget(detailsWidget);
 }
 
@@ -162,7 +153,6 @@ void DetailsPanel::showMedia(Media* media) {
     titleLabel_->setText(QString::fromStdString(media->getTitle()));
     authorLabel_->setText("Author: " + QString::fromStdString(media->getAuthor()));
     yearLabel_->setText("Year: " + QString::fromStdString(media->getReleaseDate().toString()));
-
     auto loadPixmapWithFallbacks = [&](const QString& rawPath)->QPixmap{
         QPixmap p(rawPath);
         if (!p.isNull()) return p;
@@ -176,7 +166,6 @@ void DetailsPanel::showMedia(Media* media) {
         for (const QString& t : tries) { QPixmap candidate(t); if (!candidate.isNull()) return candidate; }
         return QPixmap();
     };
-
     QPixmap pix = loadPixmapWithFallbacks(QString::fromStdString(media->getImagePath()));
     if (!pix.isNull()) {
         coverImage_->setPixmap(pix.scaled(coverImage_->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));

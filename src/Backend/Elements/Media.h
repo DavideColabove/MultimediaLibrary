@@ -7,7 +7,6 @@
 #include "../Enums/Languages.h"
 #include "MediaVisitor.h"
 
-
 class Media{ 
     protected:
         std::string title;          
@@ -17,29 +16,14 @@ class Media{
         unsigned int kbSize;        
         bool isAvailable;           
         std::string imagePath;      
-        
     public:
-        
         Media(std::string t, std::string a, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im);
-        
-        
         Media(const Media& media);
-        
-        
         Media();
-        
-        
         virtual ~Media() = default;
-
-        
         virtual bool isValid() const = 0;
-        
-        
-    virtual void accept(MediaVisitor& visitor) const = 0;
-    virtual void accept(MediaVisitorMutable& visitor) = 0;
-
-
-        
+        virtual void accept(MediaVisitor& visitor) const = 0;
+        virtual void accept(MediaVisitorMutable& visitor) = 0;
         Media& setTitle(const std::string& t);
         const std::string& getTitle() const;
         Media& setAuthor(const std::string& a);

@@ -15,32 +15,17 @@ class Song : public Media {
         std::string label;          
         unsigned int trackNumber;   
         Enums::MusicGenre genre;    
-        
     public:
-        
         Song(std::string title, std::string author, Enums::MusicGenre genre, Date releaseDate, 
              unsigned int id, unsigned int kbSize, bool isAvailable, std::string imagePath,
              std::string artist, std::string album, unsigned int duration, std::string format,
              std::string label, unsigned int trackNumber);
-        
-        
         Song(const Song& song);
-        
-        
         Song();
-        
-        
         virtual ~Song();
-
-        
         virtual bool isValid() const override;
-        
-        
         virtual void accept(MediaVisitor& visitor) const override;
-    virtual void accept(MediaVisitorMutable& visitor) override { visitor.visit(*this); }
-
-
-        
+        virtual void accept(MediaVisitorMutable& visitor) override { visitor.visit(*this); }
         std::string getArtist() const;
         Song& setArtist(const std::string& art);
         std::string getAlbum() const;
@@ -53,8 +38,6 @@ class Song : public Media {
         Song& setLabel(const std::string& lab);
         unsigned int getTrackNumber() const;
         Song& setTrackNumber(unsigned int track);
-        
-        
         Enums::MusicGenre getGenre() const;
         Song& setGenre(Enums::MusicGenre genre);
         std::string getGenreString() const;

@@ -3,18 +3,22 @@
 #include <QWidget>
 #include <algorithm>
 
-FlowLayout::FlowLayout(QWidget *parent, int margin, int hSpacing, int vSpacing)
-    : QLayout(parent), m_hSpace(hSpacing), m_vSpace(vSpacing) {
+FlowLayout::FlowLayout(QWidget *parent, int margin, int hSpacing, int vSpacing): QLayout(parent), m_hSpace(hSpacing), m_vSpace(vSpacing) {
     setContentsMargins(margin, margin, margin, margin);
 }
 
 FlowLayout::~FlowLayout() { qDeleteAll(itemList); }
 
 void FlowLayout::addItem(QLayoutItem *item) { itemList.append(item); }
+
 int FlowLayout::count() const { return itemList.size(); }
+
 QLayoutItem *FlowLayout::itemAt(int index) const { return itemList.value(index); }
+
 QLayoutItem *FlowLayout::takeAt(int index) { return index>=0 && index<itemList.size() ? itemList.takeAt(index) : nullptr; }
+
 QSize FlowLayout::sizeHint() const { return minimumSize(); }
+
 QSize FlowLayout::minimumSize() const {
     QSize size;
     for (QLayoutItem *item : itemList) size = size.expandedTo(item->minimumSize());
@@ -25,12 +29,12 @@ QSize FlowLayout::minimumSize() const {
 }
 
 int FlowLayout::horizontalSpacing() const { return m_hSpace >= 0 ? m_hSpace : smartSpacing(QStyle::PM_LayoutHorizontalSpacing); }
+
 int FlowLayout::verticalSpacing() const { return m_vSpace >= 0 ? m_vSpace : smartSpacing(QStyle::PM_LayoutVerticalSpacing); }
 
 void FlowLayout::setGeometry(const QRect &rect) { QLayout::setGeometry(rect); doLayout(rect, false); }
 
 int FlowLayout::heightForWidth(int width) const {
-    
     QRect rect(0, 0, width, 0);
     return doLayout(rect, true);
 }
@@ -44,7 +48,6 @@ int FlowLayout::doLayout(const QRect &rect, bool testOnly) const {
     int lineHeight = 0;
     const int hSpace = horizontalSpacing() >= 0 ? horizontalSpacing() : 24;
     const int vSpace = verticalSpacing() >= 0 ? verticalSpacing() : 24;
-
     for (QLayoutItem *item : itemList) {
         int spaceX = hSpace;
         int spaceY = vSpace;

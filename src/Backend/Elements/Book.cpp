@@ -9,17 +9,14 @@ Book::Book(std::string title, std::string author, Enums::BookGenre genre, Date r
     : Media(title, author, releaseDate, id, kbSize, isAvailable, imagePath),
       publisher(publisher), pages(pages), isbn(isbn), language(language), genre(genre) {}
 
-Book::Book(const Book& book) 
-    : Media(book), publisher(book.publisher), pages(book.pages), isbn(book.isbn), language(book.language), genre(book.genre) {}
+Book::Book(const Book& book): Media(book), publisher(book.publisher), pages(book.pages), isbn(book.isbn), language(book.language), genre(book.genre) {}
 
 Book::Book() : Media(), publisher(""), pages(0), isbn(""), language(Enums::Language::ITALIAN), genre(Enums::BookGenre::FICTION) {}
 
 Book::~Book() {}
 
-
 bool Book::isValid() const {
-    return !getTitle().empty() && !getAuthor().empty() && !publisher.empty() && 
-           pages > 0 && !isbn.empty();
+    return !getTitle().empty() && !getAuthor().empty() && !publisher.empty() && pages > 0 && !isbn.empty();
 }
 
 std::string Book::getPublisher() const {

@@ -17,28 +17,23 @@ TopBarWidget::TopBarWidget(QWidget* parent) : QWidget(parent) {
 void TopBarWidget::setupUi() {
     layout_ = new QHBoxLayout(this);
     layout_->setContentsMargins(20,10,20,10);
-
     search_ = new QLineEdit(this);
     search_->setObjectName("searchInput");
     search_->setPlaceholderText("Search...");
     search_->setMinimumHeight(35);
     layout_->addWidget(search_);
-
     advancedBtn_ = new QToolButton(this);
     advancedBtn_->setText("Advanced");
     setIcon(advancedBtn_, "filter-advanced");
     layout_->addWidget(advancedBtn_);
-
     clearBtn_ = new QToolButton(this);
     clearBtn_->setText("Clear");
     setIcon(clearBtn_, "filter-clear");
     layout_->addWidget(clearBtn_);
-
     sortCombo_ = new QComboBox(this);
     sortCombo_->addItems({"Title ▲","Title ▼","Date ▲","Date ▼"});
     sortCombo_->setFixedSize(100,35);
     layout_->addWidget(sortCombo_);
-
     addBtn_ = new QToolButton(this); addBtn_->setText("Add"); setIcon(addBtn_, "add"); layout_->addWidget(addBtn_);
     importBtn_ = new QToolButton(this); importBtn_->setText("Import"); setIcon(importBtn_, "import"); layout_->addWidget(importBtn_);
     exportBtn_ = new QToolButton(this); exportBtn_->setText("Export"); setIcon(exportBtn_, "export"); layout_->addWidget(exportBtn_);

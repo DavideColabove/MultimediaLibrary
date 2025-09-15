@@ -114,8 +114,6 @@ bool XmlPersistence::load(Library& library, const std::string& filePath) const {
     std::ifstream in(filePath);
     if (!in.is_open()) return false;
     library.clear();
-    // Minimal loader skipped for brevity: creating empty-attr objects like JSON loader
-    // Minimal line-based parser for demo purposes
     std::string line;
     while (std::getline(in, line)) {
         if (line.find("<media") != std::string::npos) {
@@ -131,7 +129,6 @@ bool XmlPersistence::load(Library& library, const std::string& filePath) const {
             std::string idStr = getAttr("id");
             unsigned id = idStr.empty() ? 0u : static_cast<unsigned>(std::stoi(idStr));
 
-            // Read next lines until closing </media>
             std::string block = line + "\n";
             while (std::getline(in, line)) {
                 block += line + "\n";
@@ -152,7 +149,6 @@ bool XmlPersistence::load(Library& library, const std::string& filePath) const {
             std::string sizeStr = getTag("size");
             std::string availStr = getTag("available");
             std::string imagePath = getTag("imagePath");
-            // Resolve relative imagePath against the XML file directory
             try {
                 namespace fs = std::filesystem;
                 fs::path imgPath = fs::path(imagePath);
@@ -162,7 +158,6 @@ bool XmlPersistence::load(Library& library, const std::string& filePath) const {
                     if (fs::exists(candidate)) imagePath = candidate.generic_string();
                 }
             } catch (...) {
-                // ignore
             }
 
             unsigned sizeKb = sizeStr.empty()?0u:static_cast<unsigned>(std::stoi(sizeStr));
@@ -171,7 +166,6 @@ bool XmlPersistence::load(Library& library, const std::string& filePath) const {
 
             std::unique_ptr<Media> media;
             if (type == "Book") {
-                // Extract book attrs from singleton tag
                 auto getAttrIn = [&](const std::string& t, const char* key)->std::string{
                     std::string k = std::string(key) + "=\"";
                     size_t p = t.find(k); if (p==std::string::npos) return {};
