@@ -188,7 +188,8 @@ bool JsonPersistence::load(Library& library, const std::string& filePath) const 
             } else {
                 if (!std::filesystem::exists(imgPath)) { 
                     // caso cover NON trovata: UI mostra placeholder di default
-                    }
+                }
+            }
         } catch (...) {}
         unsigned id = static_cast<unsigned>(getInt("id"));
         unsigned sizeKb = static_cast<unsigned>(getInt("size"));

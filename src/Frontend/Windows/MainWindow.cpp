@@ -397,7 +397,11 @@ void MainWindow::saveTriggered(){
 }
 
 void MainWindow::about(){
-    QMessageBox::about(this, "About Multimedia Library", "Multimedia Library v1.0.0\n\n", "credits: Oussama Mahdi, Davide Colabove\n\n");
+    QMessageBox::about(
+        this,
+        "About Multimedia Library",
+        "Multimedia Library v1.0.0\n\nCredits: Oussama Mahdi, Davide Colabove\n\n"
+    );
 } 
 
 void MainWindow::showShortcuts(){
