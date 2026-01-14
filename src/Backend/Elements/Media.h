@@ -1,0 +1,44 @@
+#ifndef MEDIA_H
+#define MEDIA_H
+
+#include<string>
+#include "Date.h"
+#include "../Enums/Genres.h"
+#include "../Enums/Languages.h"
+
+class Media{ 
+    protected:
+        std::string title;
+        std::string author;
+        // Genre will be handled by derived classes with specific enum types
+        Date releaseDate;
+        unsigned int id;
+        unsigned int kbSize;
+        bool isAvailable;
+        std::string imagePath;
+    public:
+        Media(std::string t, std::string a, Date rD, unsigned int id, unsigned int kb, bool isAv, std::string im);
+        Media(const Media& media);
+        Media();
+        virtual ~Media() = default; // Virtual destructor
+
+        // Virtual methods for non-trivial polymorphism
+        virtual bool isValid() const = 0; // Validates media-specific attributes
+
+        Media& setTitle(const std::string& t);
+        const std::string& getTitle() const;
+        Media& setAuthor(const std::string& a);
+        const std::string& getAuthor() const;
+        Media& setReleaseDate(const Date& rD);
+        const Date& getReleaseDate() const;
+        Media& setID(unsigned int id);
+        unsigned int getID() const;
+        Media& setKbSize(unsigned int kb);
+        unsigned int getKbSize() const;
+        Media& setIsAvailable(bool isAv);
+        bool getIsAvailable() const;
+        Media& setImagePath(const std::string& im);
+        const std::string& getImagePath() const;
+};
+
+#endif // MEDIA_H
