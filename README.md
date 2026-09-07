@@ -17,10 +17,6 @@ The project demonstrates core OOP principles such as encapsulation, inheritance,
 - `test/`: Unit tests  
 - `docs/`: Documentation and UML diagrams (if applicable)
 
-## ✅ Features
-
-- [List here the main functionalities your project implements]
-
 ## 🤝 Contributors
 
 - **Davide** - [GitHub](https://github.com/DavideColabove)
